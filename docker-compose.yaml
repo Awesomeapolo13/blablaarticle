@@ -1,0 +1,62 @@
+version: "3.8"
+
+networks:
+  nginx-php-8.0-postgresql:
+
+services:
+
+  # ngnx
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/blablaarticle
+      - ./deployment/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    links:
+      - php-8.0
+    # контейнер nginx должен запуститься после php и postgres
+    depends_on:
+      - php-8.0
+      - postgresql
+    networks:
+      - nginx-php-8.0-postgresql
+
+  # php
+  php-8.0:
+    build:
+      context: .
+      dockerfile: ./deployment/php/Dockerfile
+    container_name: php-8.0
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./:/var/www/blablaarticle
+    networks:
+      - nginx-php-8.0-postgresql
+
+  # postgresql
+  postgresql:
+    image: postgres:13
+    container_name: postgres-13
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./deployment/postgresql/volumes/:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - nginx-php-8.0-postgresql
+
+  # node
+  node:
+    image: node:latest
+    container_name: node
+    volumes:
+      - ./app:/var/www/blablaarticle
+    working_dir: /var/www/blablaarticle
+    networks:
+      - nginx-php-8.0-postgresql
