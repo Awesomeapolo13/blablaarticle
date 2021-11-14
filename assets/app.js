@@ -4,6 +4,7 @@
  * We recommend including the built version of this JavaScript file
  * (and its CSS file) in your base layout (base.html.twig).
  */
+const jQuery = require('jquery');
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
@@ -11,6 +12,4 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
-import './js/bootstrap/bootstrap.bundle.min.js';
-import './js/jquery-easing/jquery.easing.min.js';
-import './js/jquery/jquery.min.js';
+import './js/scripts';

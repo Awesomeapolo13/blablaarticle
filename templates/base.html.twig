@@ -16,165 +16,90 @@
 </head>
 
 <body>
+{% block navbar %}
+    <nav class="navbar navbar-light bg-light static-top">
+        <div class="container">
+            <span class="navbar-brand">BlaBlaArticle</span>
+            <a class="js-scroll-trigger" href="#services">Сервисы</a>
+            <a class="js-scroll-trigger" href="#author">Автор</a>
+            <a class="btn btn-primary" href="login.html">Войти</a>
+        </div>
+    </nav>
+{% endblock %}
 
-<nav class="navbar navbar-light bg-light static-top">
-    <div class="container">
-        <span class="navbar-brand">BlaBlaArticle</span>
-        <a class="js-scroll-trigger" href="#services">Сервисы</a>
-        <a class="js-scroll-trigger" href="#author">Автор</a>
-        <a class="btn btn-primary" href="login.html">Войти</a>
-    </div>
-</nav>
-
-<header class="masthead text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-9 mx-auto">
-                <h1 class="mb-5">Создай уникальную статью идеально подходящую для вашего бизнеса, сайта или
-                    проекта!</h1>
-            </div>
-            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <div class="form-row">
-                    <div class="col-12 col-md-6 mx-auto">
-                        <a type="submit" class="btn btn-block btn-lg btn-primary" href="try.html">Попробовать</a>
+{% block header %}
+    <header class="masthead text-white text-center">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <h1 class="mb-5">Создай уникальную статью идеально подходящую для вашего бизнеса, сайта или
+                        проекта!</h1>
+                </div>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <div class="form-row">
+                        <div class="col-12 col-md-6 mx-auto">
+                            <a type="submit" class="btn btn-block btn-lg btn-primary" href="try.html">Попробовать</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
+{% endblock %}
 
-<section class="features-icons bg-light text-center" id="services">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-                    <div class="features-icons-icon d-flex">
-                        <i class="fas fa-comment-dots m-auto text-primary"></i>
-                    </div>
-                    <h3>Свои Слова</h3>
-                    <p class="lead mb-0">Вставляйте нужные вам слова!</p>
+{% block content %}{% endblock %}
+
+{% block register %}
+    <section class="call-to-action text-white text-center">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <h2 class="mb-4">Готовы начать? Регистрируйтесь прямо сейчас!</h2>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
-                    <div class="features-icons-icon d-flex">
-                        <i class="fas fa-photo-video m-auto text-primary"></i>
-                    </div>
-                    <h3>Свои Изображения</h3>
-                    <p class="lead mb-0">Размещайте правильные изображения!</p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="features-icons-item mx-auto mb-0 mb-lg-3">
-                    <div class="features-icons-icon d-flex">
-                        <i class="fas fa-network-wired m-auto text-primary"></i>
-                    </div>
-                    <h3>API</h3>
-                    <p class="lead mb-0">Подключайтесь к сервису по API!</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="showcase">
-    <div class="container-fluid p-0">
-        <div class="row no-gutters">
-
-            <div class="col-lg-6 order-lg-2 text-white showcase-img"
-                 style="background-image: url('image/bg-showcase-1.jpg');"></div>
-            <div class="col-lg-6 order-lg-1 my-auto showcase-text">
-                <h2>Добавляйте свои слова</h2>
-                <p class="lead mb-0">При генерации контента статьи, вы можете наполнить его нужными словами для вашего
-                    бизнеса. Столько сколько нужно. Хоть все ими заполоните!</p>
-            </div>
-        </div>
-        <div class="row no-gutters">
-            <div class="col-lg-6 text-white showcase-img" style="background-image: url('image/bg-showcase-2.jpg');"></div>
-            <div class="col-lg-6 my-auto showcase-text">
-                <h2>Вставляйте изображения</h2>
-                <p class="lead mb-0">Надоели стандартные красивые изображения. Прикрепляйте к вашим статьям свою
-                    уникальные фотографии. Смазанные, с пальцем на пол фотографии, с кривым лицом. Все пойдет - вы здесь
-                    главный!</p>
-            </div>
-        </div>
-        <div class="row no-gutters">
-            <div class="col-lg-6 order-lg-2 text-white showcase-img"
-                 style="background-image: url('image/bg-showcase-3.jpg');"></div>
-            <div class="col-lg-6 order-lg-1 my-auto showcase-text">
-                <h2>Интегрируйтесь по API</h2>
-                <p class="lead mb-0">Придумайте и настройте свою собственную интеграцию с сервисом. Нужно ответить на
-                    комментарий в соц.сети - получите его по API. Нужно написать новую статью по программированию -
-                    получите ее по API. Хотите вкусно покушать - сходите за едой, а статью пускай за вас напишет
-                    API!</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="testimonials text-center bg-light" id="author">
-    <div class="container">
-        <h2 class="mb-5">Автор проекта</h2>
-        <div class="row">
-            <div class="col-lg-4 mx-auto">
-                <div class="testimonial-item mx-auto mb-5 mb-lg-0">
-                    <img class="img-fluid rounded-circle mb-3" src="image/testimonials-1.jpg" alt="">
-                    <h5>Пирожкова П.</h5>
-                    <p class="font-weight-light mb-0">Программист / PR / и ген.дир</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="call-to-action text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xl-9 mx-auto">
-                <h2 class="mb-4">Готовы начать? Регистрируйтесь прямо сейчас!</h2>
-            </div>
-            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                <div class="form-row">
-                    <div class="col-12 col-md-6 mx-auto">
-                        <a href="register.html" class="btn btn-block btn-lg btn-primary">Регистрация</a>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <div class="form-row">
+                        <div class="col-12 col-md-6 mx-auto">
+                            <a href="register.html" class="btn btn-block btn-lg btn-primary">Регистрация</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+{% endblock %}
 
-<footer class="footer bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
-                <p class="text-muted small mb-4 mb-lg-0">&copy; BlaBlaArticle 2020.</p>
-            </div>
-            <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
-                <ul class="list-inline mb-0">
-                    <li class="list-inline-item mr-3">
-                        <a href="#"><i class="fab fa-facebook fa-2x fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item mr-3">
-                        <a href="#"><i class="fab fa-vk fa-2x fa-fw"></i></a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="#"><i class="fab fa-instagram fa-2x fa-fw"></i></a>
-                    </li>
-                </ul>
+{% block footer %}
+    <footer class="footer bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                    <p class="text-muted small mb-4 mb-lg-0">&copy; BlaBlaArticle 2020.</p>
+                </div>
+                <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item mr-3">
+                            <a href="#"><i class="fab fa-facebook fa-2x fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item mr-3">
+                            <a href="#"><i class="fab fa-vk fa-2x fa-fw"></i></a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#"><i class="fab fa-instagram fa-2x fa-fw"></i></a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+{% endblock %}
 
-{#<script src="vendor/jquery/jquery.min.js"></script>#}
-{#<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>#}
-{#<script src="vendor/jquery-easing/jquery.easing.min.js"></script>#}
-{{ encore_entry_script_tags('app') }}
-{# <script src="js/scripts.js"></script> #}
+{% block scripts %}
+
+    {{ encore_entry_script_tags('app') }}
+
+{% endblock %}
 
 </body>
 
