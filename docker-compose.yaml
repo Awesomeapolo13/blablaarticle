@@ -56,7 +56,7 @@ services:
     image: node:latest
     container_name: node
     volumes:
-      - ./app:/var/www/blablaarticle
+      - ./:/var/www/blablaarticle
     working_dir: /var/www/blablaarticle
     networks:
       - nginx-php-8.0-postgresql
