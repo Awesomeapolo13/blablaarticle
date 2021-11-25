@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% block navbar %}
+        <nav class="navbar navbar-light bg-light static-top">
+            <div class="container">
+                <span class="navbar-brand">BlaBlaArticle</span>
+                <a class="js-scroll-trigger" href="#services">Сервисы</a>
+                <a class="js-scroll-trigger" href="#author">Автор</a>
+                <a class="btn btn-primary" href="login.html">Войти</a>
+            </div>
+        </nav>
+    {% endblock %}
+
+    {% block header %}
+        <header class="masthead text-white text-center">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-9 mx-auto">
+                        <h1 class="mb-5">Создай уникальную статью идеально подходящую для вашего бизнеса, сайта или
+                            проекта!</h1>
+                    </div>
+                    <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                        <div class="form-row">
+                            <div class="col-12 col-md-6 mx-auto">
+                                <a type="submit" class="btn btn-block btn-lg btn-primary"
+                                   href="try.html">Попробовать</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+
+    {% block register %}
+        <section class="call-to-action text-white text-center">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-9 mx-auto">
+                        <h2 class="mb-4">Готовы начать? Регистрируйтесь прямо сейчас!</h2>
+                    </div>
+                    <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                        <div class="form-row">
+                            <div class="col-12 col-md-6 mx-auto">
+                                <a href="register.html" class="btn btn-block btn-lg btn-primary">Регистрация</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endblock %}
+
+    {% block footer %}
+        <footer class="footer bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 h-100 text-center text-lg-left my-auto">
+                        <p class="text-muted small mb-4 mb-lg-0">&copy; BlaBlaArticle 2020.</p>
+                    </div>
+                    <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item mr-3">
+                                <a href="#"><i class="fab fa-facebook fa-2x fa-fw"></i></a>
+                            </li>
+                            <li class="list-inline-item mr-3">
+                                <a href="#"><i class="fab fa-vk fa-2x fa-fw"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#"><i class="fab fa-instagram fa-2x fa-fw"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    {% endblock %}
+
+    {% block scripts %}
+
+        {{ encore_entry_script_tags('app') }}
+
+    {% endblock %}
+{% endblock %}
