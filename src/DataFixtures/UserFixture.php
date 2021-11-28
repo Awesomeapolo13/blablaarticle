@@ -24,7 +24,6 @@ class UserFixture extends BaseFixtures
             $manager,
             'plusSubscriber@mail.ru',
             'Petrusha',
-            'Sidorov',
             ['ROLE_PLUS_SUBSCRIBER']
         );
 
@@ -32,7 +31,6 @@ class UserFixture extends BaseFixtures
             $manager,
             'proSubscriber@mail.ru',
             'Nadezhda',
-            'Petrova',
             ['ROLE_PRO_SUBSCRIBER']
         );
 
@@ -40,7 +38,6 @@ class UserFixture extends BaseFixtures
             $user
                 ->setEmail($this->faker->email)
                 ->setFirstName($this->faker->firstName)
-                ->setSecondName($this->faker->lastName)
                 ->setPassword($this->passwordEncoder->encodePassword($user, '123456'))
             ;
 
@@ -56,7 +53,6 @@ class UserFixture extends BaseFixtures
      * @param ObjectManager $manager
      * @param string $email
      * @param string $firstname
-     * @param string $secondName
      * @param string $password
      * @param array $roles
      */
@@ -64,7 +60,6 @@ class UserFixture extends BaseFixtures
         ObjectManager $manager,
         string        $email,
         string        $firstname,
-        string        $secondName,
         array         $roles = [],
         string        $password = '123456'
 
@@ -74,14 +69,12 @@ class UserFixture extends BaseFixtures
             $manager,
             $email,
             $firstname,
-            $secondName,
             $password,
             $roles
         ) {
            $user
                ->setEmail($email)
                ->setFirstName($firstname)
-               ->setSecondName($secondName)
                ->setRoles($roles)
                ->setPassword($this->passwordEncoder->encodePassword($user, $password))
            ;

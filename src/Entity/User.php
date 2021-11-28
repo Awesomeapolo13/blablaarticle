@@ -36,14 +36,9 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $firstName;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $second_name;
 
     public function getId(): ?int
     {
@@ -134,18 +129,6 @@ class User implements UserInterface
     public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getSecondName(): ?string
-    {
-        return $this->second_name;
-    }
-
-    public function setSecondName(?string $second_name): self
-    {
-        $this->second_name = $second_name;
 
         return $this;
     }
