@@ -25,6 +25,16 @@ class SecurityController extends AbstractController
     }
 
     /**
+     * Отображает страницу с формой регистрации и регистрирует нового пользователя
+     *
+     * @Route("/register", name="app_register")
+     */
+    public function register(): Response
+    {
+        return $this->render('security/register.html.twig');
+    }
+
+    /**
      * Отвечает за выход пользователя
      *
      * @Route("/logout", name="app_logout")

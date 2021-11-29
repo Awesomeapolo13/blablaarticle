@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация на BlaBlaArticle{% endblock %}
+
+{% block bodyClass %}signin-body{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Регистрация</h5>
+                        <div class="alert alert-success" role="alert">
+                            Для завершения регистрации подтвердите ваш email
+                        </div>
+                        <form class="form-signin">
+                            <div class="form-label-group">
+                                <input
+                                        type="text"
+                                        id="inputName"
+                                        class="form-control"
+                                        name="first_name"
+                                        placeholder="Ваше имя" required
+                                        autofocus
+                                >
+                                <label for="inputName">Ваше имя</label>
+                            </div>
+                            <div class="form-label-group">
+                                <input
+                                        type="email"
+                                        id="inputEmail"
+                                        class="form-control"
+                                        name="email"
+                                        placeholder="Ваш Email"
+                                        required
+                                >
+                                <label for="inputEmail">Ваш Email</label>
+                            </div>
+
+                            <div class="form-label-group">
+                                <input
+                                        type="password"
+                                        id="inputPassword"
+                                        class="form-control"
+                                        name="password"
+                                        placeholder="Пароль"
+                                        required
+                                >
+                                <label for="inputPassword">Пароль</label>
+                            </div>
+
+                            <div class="form-label-group">
+                                <input
+                                        type="password"
+                                        id="inputConfirmPassword"
+                                        class="form-control"
+                                        placeholder="Подтверждение пароля"
+                                        required
+                                >
+                                <label for="inputConfirmPassword">Подтверждение пароля</label>
+                            </div>
+
+                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
+                            </button>
+                            <hr class="my-4">
+                            <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
