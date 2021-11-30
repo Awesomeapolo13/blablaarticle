@@ -14,58 +14,63 @@
                         <div class="alert alert-success" role="alert">
                             Для завершения регистрации подтвердите ваш email
                         </div>
-                        <form class="form-signin">
-                            <div class="form-label-group">
-                                <input
-                                        type="text"
-                                        id="inputName"
-                                        class="form-control"
-                                        name="first_name"
-                                        placeholder="Ваше имя" required
-                                        autofocus
-                                >
-                                <label for="inputName">Ваше имя</label>
-                            </div>
-                            <div class="form-label-group">
-                                <input
-                                        type="email"
-                                        id="inputEmail"
-                                        class="form-control"
-                                        name="email"
-                                        placeholder="Ваш Email"
-                                        required
-                                >
-                                <label for="inputEmail">Ваш Email</label>
-                            </div>
+                        {{ form_start(registrationForm, {
+                            attr: {class: 'form-signin'}
+                            }) }}
+                        {{ form_row(registrationForm.firstName, {
+                            attr: {class: 'form-label-group'}
+                        }) }}
+                        <div class="form-label-group">
+                            <input
+                                    type="text"
+                                    id="inputName"
+                                    class="form-control"
+                                    name="first_name"
+                                    placeholder="Ваше имя" required
+                                    autofocus
+                            >
+                            <label for="inputName">Ваше имя</label>
+                        </div>
+                        <div class="form-label-group">
+                            <input
+                                    type="email"
+                                    id="inputEmail"
+                                    class="form-control"
+                                    name="email"
+                                    placeholder="Ваш Email"
+                                    required
+                            >
+                            <label for="inputEmail">Ваш Email</label>
+                        </div>
 
-                            <div class="form-label-group">
-                                <input
-                                        type="password"
-                                        id="inputPassword"
-                                        class="form-control"
-                                        name="password"
-                                        placeholder="Пароль"
-                                        required
-                                >
-                                <label for="inputPassword">Пароль</label>
-                            </div>
+                        <div class="form-label-group">
+                            <input
+                                    type="password"
+                                    id="inputPassword"
+                                    class="form-control"
+                                    name="password"
+                                    placeholder="Пароль"
+                                    required
+                            >
+                            <label for="inputPassword">Пароль</label>
+                        </div>
 
-                            <div class="form-label-group">
-                                <input
-                                        type="password"
-                                        id="inputConfirmPassword"
-                                        class="form-control"
-                                        placeholder="Подтверждение пароля"
-                                        required
-                                >
-                                <label for="inputConfirmPassword">Подтверждение пароля</label>
-                            </div>
+                        <div class="form-label-group">
+                            <input
+                                    type="password"
+                                    id="inputConfirmPassword"
+                                    class="form-control"
+                                    placeholder="Подтверждение пароля"
+                                    required
+                            >
+                            <label for="inputConfirmPassword">Подтверждение пароля</label>
+                        </div>
 
-                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
-                            </button>
-                            <hr class="my-4">
-                            <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
-                        </form>
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
+                        </button>
+                        <hr class="my-4">
+                        <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
+                        {{ form_end(registrationForm) }}
                     </div>
                 </div>
             </div>

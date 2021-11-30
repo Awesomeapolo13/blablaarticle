@@ -238,6 +238,9 @@
             ".env"
         ]
     },
+    "symfony/form": {
+        "version": "v5.2.12"
+    },
     "symfony/framework-bundle": {
         "version": "5.2",
         "recipe": {
@@ -266,6 +269,9 @@
     },
     "symfony/http-kernel": {
         "version": "v5.2.14"
+    },
+    "symfony/intl": {
+        "version": "v5.2.12"
     },
     "symfony/mailer": {
         "version": "5.2",
@@ -309,8 +315,14 @@
             "config/packages/dev/monolog.yaml"
         ]
     },
+    "symfony/options-resolver": {
+        "version": "v5.2.12"
+    },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.23.1"
+    },
+    "symfony/polyfill-intl-icu": {
+        "version": "v1.23.0"
     },
     "symfony/polyfill-intl-idn": {
         "version": "v1.23.0"

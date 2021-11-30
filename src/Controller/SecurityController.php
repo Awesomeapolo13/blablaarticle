@@ -2,9 +2,15 @@
 
 namespace App\Controller;
 
+use App\Form\UserRegistrationFormType;
+use App\Security\LoginFormAuthenticator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -29,9 +35,26 @@ class SecurityController extends AbstractController
      *
      * @Route("/register", name="app_register")
      */
-    public function register(): Response
+    public function register(
+        Request                      $request,
+        UserPasswordEncoderInterface $passwordEncoder,
+        GuardAuthenticatorHandler    $guard,
+        LoginFormAuthenticator       $authenticator,
+        EntityManagerInterface       $em
+    ): Response
     {
-        return $this->render('security/register.html.twig');
+        $form = $this->createForm(UserRegistrationFormType::class);
+        // ToDo: Отвязать от объекта User и привязать к DTO
+        // обрабатываем запрос
+        $form->handleRequest($request);
+        // если форма отправлена и данные ее валидны, начинаем их обработку
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+        }
+
+        return $this->render('security/register.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
     }
 
     /**
