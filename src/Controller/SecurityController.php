@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,12 +46,35 @@ class SecurityController extends AbstractController
     ): Response
     {
         $form = $this->createForm(UserRegistrationFormType::class);
-        // ToDo: Отвязать от объекта User и привязать к DTO
         // обрабатываем запрос
         $form->handleRequest($request);
         // если форма отправлена и данные ее валидны, начинаем их обработку
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+            /** @var UserRegistrationFormModel $userModel */
+            $userModel = $form->getData();
+            $user = new User();
+
+            $user
+                ->setFirstName($userModel->email)
+                ->setEmail($userModel->email)
+                ->setPassword($passwordEncoder->encodePassword(
+                    $user,
+                    $userModel->planePassword
+                ))
+            ;
+
+            $em->persist($user);
+            $em->flush();
+            // ToDo: Сделать отправку письма для подтверждения email, Сделать метод для подтверждения email
+
+            // редиректим пользователя на страницу регистрации
+            return $guard
+                ->authenticateUserAndHandleSuccess(
+                    $user,
+                    $request,
+                    $authenticator,
+                    'main'
+                );
         }
 
         return $this->render('security/register.html.twig', [

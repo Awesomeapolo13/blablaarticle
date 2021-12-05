@@ -14,56 +14,35 @@
                         <div class="alert alert-success" role="alert">
                             Для завершения регистрации подтвердите ваш email
                         </div>
+{#                        ToDo: Сообщения об ошибках налезают на поля. Нужно их отредактировать #}
                         {{ form_start(registrationForm, {
                             attr: {class: 'form-signin'}
                             }) }}
-                        {{ form_row(registrationForm.firstName, {
-                            attr: {class: 'form-label-group'}
-                        }) }}
                         <div class="form-label-group">
-                            <input
-                                    type="text"
-                                    id="inputName"
-                                    class="form-control"
-                                    name="first_name"
-                                    placeholder="Ваше имя" required
-                                    autofocus
-                            >
-                            <label for="inputName">Ваше имя</label>
+                            {{ form_widget(registrationForm.firstName, {
+                                attr: {placeholder: 'Ваше имя'}
+                            }) }}
+                            {{ form_label(registrationForm.firstName, 'Ваше имя') }}
                         </div>
                         <div class="form-label-group">
-                            <input
-                                    type="email"
-                                    id="inputEmail"
-                                    class="form-control"
-                                    name="email"
-                                    placeholder="Ваш Email"
-                                    required
-                            >
-                            <label for="inputEmail">Ваш Email</label>
+                            {{ form_widget(registrationForm.email, {
+                                attr: {placeholder: 'Ваш Email'}
+                            }) }}
+                            {{ form_label(registrationForm.email, 'Ваш Email') }}
                         </div>
 
                         <div class="form-label-group">
-                            <input
-                                    type="password"
-                                    id="inputPassword"
-                                    class="form-control"
-                                    name="password"
-                                    placeholder="Пароль"
-                                    required
-                            >
-                            <label for="inputPassword">Пароль</label>
+                            {{ form_widget(registrationForm.planePassword, {
+                                attr: {placeholder: 'Пароль'}
+                            }) }}
+                            {{ form_label(registrationForm.planePassword, 'Пароль') }}
                         </div>
 
                         <div class="form-label-group">
-                            <input
-                                    type="password"
-                                    id="inputConfirmPassword"
-                                    class="form-control"
-                                    placeholder="Подтверждение пароля"
-                                    required
-                            >
-                            <label for="inputConfirmPassword">Подтверждение пароля</label>
+                            {{ form_widget(registrationForm.confirmPassword, {
+                                attr: {placeholder: 'Подтверждение пароля'}
+                            }) }}
+                            {{ form_label(registrationForm.confirmPassword, 'Подтверждение пароля') }}
                         </div>
 
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
