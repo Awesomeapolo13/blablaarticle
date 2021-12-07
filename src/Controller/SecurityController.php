@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,10 +44,12 @@ class SecurityController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         GuardAuthenticatorHandler    $guard,
         LoginFormAuthenticator       $authenticator,
-        EntityManagerInterface       $em
+        EntityManagerInterface       $em,
+        EventDispatcherInterface     $dispatcher
     ): Response
     {
         $form = $this->createForm(UserRegistrationFormType::class);
+        $success = false;
         // обрабатываем запрос
         $form->handleRequest($request);
         // если форма отправлена и данные ее валидны, начинаем их обработку
@@ -65,9 +69,15 @@ class SecurityController extends AbstractController
 
             $em->persist($user);
             $em->flush();
-            // ToDo: Сделать отправку письма для подтверждения email, Сделать метод для подтверждения email
-
-            // редиректим пользователя на страницу регистрации
+            $dispatcher->dispatch(new UserRegisteredEvent($user));
+            $success = true;
+            // авторизуем пользователя и делаем редирект на страницу указанную в методе onAuthenticationSuccess аутентификатора
+            /* ToDo:
+                1) По итогу регистрации выводить вместо формы сообщение об успехе
+                2) Сообщения об ошибках выводить над формой согласно ТЗ
+                3) Добавить в БД поле isConfirmedEmail типа bool
+                4) Создать отдельный метод, который будет завершать регистрацию при подтверждении email. Он же будет редиректить на дашборд
+            */
             return $guard
                 ->authenticateUserAndHandleSuccess(
                     $user,
@@ -79,6 +89,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'success' => $success,
         ]);
     }
 

@@ -11,13 +11,15 @@
                 <div class="card card-signin my-5">
                     <div class="card-body">
                         <h5 class="card-title text-center">Регистрация</h5>
-                        <div class="alert alert-success" role="alert">
-                            Для завершения регистрации подтвердите ваш email
-                        </div>
-{#                        ToDo: Сообщения об ошибках налезают на поля. Нужно их отредактировать #}
+                        {% if success %}
+                            <div class="alert alert-success" role="alert">
+                                Для завершения регистрации подтвердите ваш email
+                            </div>
+                        {% endif %}
+                        {# ToDo: Сообщения об ошибках налезают на поля. Нужно их отредактировать #}
                         {{ form_start(registrationForm, {
                             attr: {class: 'form-signin'}
-                            }) }}
+                        }) }}
                         <div class="form-label-group">
                             {{ form_widget(registrationForm.firstName, {
                                 attr: {placeholder: 'Ваше имя'}
