@@ -7,6 +7,9 @@ parameters:
     # имя и email отправителя для рассылки с сайта
     sender.email: '%env(SENDER_EMAIL)%'
     sender.name: '%env(SENDER_NAME)%'
+    # протокол и хост для перехода по ссылке указанной в письме рассылки
+    router.request_context.scheme: '%env(SITE_BASE_SCHEME)%'
+    router.request_context.host: '%env(SITE_BASE_HOST)%'
     # шаблоны email рассылок
     confirm_email.email.template: 'email/%env(CONFIRM_EMAIL_TEMPLATE)%'
 

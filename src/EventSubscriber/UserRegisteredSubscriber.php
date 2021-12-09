@@ -27,7 +27,11 @@ class UserRegisteredSubscriber implements EventSubscriberInterface
      */
     public function onUserRegistered(UserRegisteredEvent $event): void
     {
-        $this->mailer->sendConfirmEmailLetter($event->getUser());
+
+        $this->mailer->sendConfirmEmailLetter(
+            $event->getUser(),
+            base64_encode(json_encode(['email' => $event->getUser()->getEmail()]))
+        );
     }
 
     public static function getSubscribedEvents(): array

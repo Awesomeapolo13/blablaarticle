@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Event\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
+use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -42,14 +43,13 @@ class SecurityController extends AbstractController
     public function register(
         Request                      $request,
         UserPasswordEncoderInterface $passwordEncoder,
-        GuardAuthenticatorHandler    $guard,
-        LoginFormAuthenticator       $authenticator,
         EntityManagerInterface       $em,
         EventDispatcherInterface     $dispatcher
     ): Response
     {
-        $form = $this->createForm(UserRegistrationFormType::class);
+        // переменная для вывода сообщения об успешной регистрации
         $success = false;
+        $form = $this->createForm(UserRegistrationFormType::class);
         // обрабатываем запрос
         $form->handleRequest($request);
         // если форма отправлена и данные ее валидны, начинаем их обработку
@@ -65,32 +65,78 @@ class SecurityController extends AbstractController
                     $user,
                     $userModel->planePassword
                 ))
+                ->setIsEmailConfirmed(false)
             ;
 
             $em->persist($user);
             $em->flush();
             $dispatcher->dispatch(new UserRegisteredEvent($user));
             $success = true;
-            // авторизуем пользователя и делаем редирект на страницу указанную в методе onAuthenticationSuccess аутентификатора
             /* ToDo:
-                1) По итогу регистрации выводить вместо формы сообщение об успехе
-                2) Сообщения об ошибках выводить над формой согласно ТЗ
-                3) Добавить в БД поле isConfirmedEmail типа bool
-                4) Создать отдельный метод, который будет завершать регистрацию при подтверждении email. Он же будет редиректить на дашборд
+                1) Сообщения об ошибках выводить над формой согласно ТЗ
+                2) Создать класс voter для всех админских страниц. Пускать на них только пользователей с подтвержденным email
             */
-            return $guard
-                ->authenticateUserAndHandleSuccess(
-                    $user,
-                    $request,
-                    $authenticator,
-                    'main'
-                );
+
         }
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
             'success' => $success,
         ]);
+    }
+
+    /**
+     * Метод подтверждения email для завершения регистрации
+     *
+     * Обращение к методу идет при переходе по ссылке для подтверждения email.
+     *
+     *
+     * @Route("/register/confirm_email", name="app_confirm_email")
+     *
+     * @param Request $request
+     * @param GuardAuthenticatorHandler $guard
+     * @param LoginFormAuthenticator $authenticator
+     * @param EntityManagerInterface $em
+     * @param UserRepository $userRepository
+     * @return Response|null
+     * @throws \Exception
+     */
+    public function confirmEmail(
+        Request $request,
+        GuardAuthenticatorHandler    $guard,
+        LoginFormAuthenticator       $authenticator,
+        EntityManagerInterface       $em,
+        UserRepository $userRepository
+    )
+    {
+        // проверяем корректна ли ссылка
+         if (empty($request->query->get('hash'))) {
+             //ToDo: спросить, что делать, если сгенерирует некорректную ссылку. Быть может стоит при повторной регистрации
+             // генерить новую, если пользователь не подтвердил email?
+             throw new \Exception('Некорректная ссылка для подтверждение email.');
+         }
+        $email = json_decode(base64_decode($request->query->get('hash')), true)['email'];
+        $user = $userRepository->findOneBy(['email' => $email]);
+        // проверяем есть ли такой пользователь
+        if (!isset($user)) {
+            throw new \Exception('Некорректная ссылка. Такого пользователя не существует');
+        }
+        // если поста подтверждена - редирект на аутентификацию
+        if ($user->getIsEmailConfirmed()) {
+            $this->redirect('app_login');
+        }
+        // подтверждаем email
+        $user->setIsEmailConfirmed(true);
+        $em->persist($user);
+        $em->flush();
+        // авторизуем пользователя и делаем редирект на страницу указанную в методе onAuthenticationSuccess аутентификатора
+        return $guard
+            ->authenticateUserAndHandleSuccess(
+                $user,
+                $request,
+                $authenticator,
+                'main'
+            );
     }
 
     /**

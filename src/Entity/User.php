@@ -49,6 +49,11 @@ class User implements UserInterface
      */
     private $firstName;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isEmailConfirmed;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,6 +143,18 @@ class User implements UserInterface
     public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getIsEmailConfirmed(): ?bool
+    {
+        return $this->isEmailConfirmed;
+    }
+
+    public function setIsEmailConfirmed(bool $isEmailConfirmed): self
+    {
+        $this->isEmailConfirmed = $isEmailConfirmed;
 
         return $this;
     }

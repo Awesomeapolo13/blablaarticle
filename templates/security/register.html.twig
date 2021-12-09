@@ -15,43 +15,44 @@
                             <div class="alert alert-success" role="alert">
                                 Для завершения регистрации подтвердите ваш email
                             </div>
+                        {% else %}
+                            {# ToDo: Сообщения об ошибках налезают на поля. Нужно их отредактировать #}
+                            {{ form_start(registrationForm, {
+                                attr: {class: 'form-signin'}
+                            }) }}
+                            <div class="form-label-group">
+                                {{ form_widget(registrationForm.firstName, {
+                                    attr: {placeholder: 'Ваше имя'}
+                                }) }}
+                                {{ form_label(registrationForm.firstName, 'Ваше имя') }}
+                            </div>
+                            <div class="form-label-group">
+                                {{ form_widget(registrationForm.email, {
+                                    attr: {placeholder: 'Ваш Email'}
+                                }) }}
+                                {{ form_label(registrationForm.email, 'Ваш Email') }}
+                            </div>
+
+                            <div class="form-label-group">
+                                {{ form_widget(registrationForm.planePassword, {
+                                    attr: {placeholder: 'Пароль'}
+                                }) }}
+                                {{ form_label(registrationForm.planePassword, 'Пароль') }}
+                            </div>
+
+                            <div class="form-label-group">
+                                {{ form_widget(registrationForm.confirmPassword, {
+                                    attr: {placeholder: 'Подтверждение пароля'}
+                                }) }}
+                                {{ form_label(registrationForm.confirmPassword, 'Подтверждение пароля') }}
+                            </div>
+
+                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
+                            </button>
+                            <hr class="my-4">
+                            <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
+                            {{ form_end(registrationForm) }}
                         {% endif %}
-                        {# ToDo: Сообщения об ошибках налезают на поля. Нужно их отредактировать #}
-                        {{ form_start(registrationForm, {
-                            attr: {class: 'form-signin'}
-                        }) }}
-                        <div class="form-label-group">
-                            {{ form_widget(registrationForm.firstName, {
-                                attr: {placeholder: 'Ваше имя'}
-                            }) }}
-                            {{ form_label(registrationForm.firstName, 'Ваше имя') }}
-                        </div>
-                        <div class="form-label-group">
-                            {{ form_widget(registrationForm.email, {
-                                attr: {placeholder: 'Ваш Email'}
-                            }) }}
-                            {{ form_label(registrationForm.email, 'Ваш Email') }}
-                        </div>
-
-                        <div class="form-label-group">
-                            {{ form_widget(registrationForm.planePassword, {
-                                attr: {placeholder: 'Пароль'}
-                            }) }}
-                            {{ form_label(registrationForm.planePassword, 'Пароль') }}
-                        </div>
-
-                        <div class="form-label-group">
-                            {{ form_widget(registrationForm.confirmPassword, {
-                                attr: {placeholder: 'Подтверждение пароля'}
-                            }) }}
-                            {{ form_label(registrationForm.confirmPassword, 'Подтверждение пароля') }}
-                        </div>
-
-                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
-                        </button>
-                        <hr class="my-4">
-                        <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
-                        {{ form_end(registrationForm) }}
                     </div>
                 </div>
             </div>
