@@ -13,7 +13,7 @@ class UserRegistrationFormModel
 {
     /**
      * @var string - имя нового пользователя
-     * @Assert\NotBlank(message="Заполните имя")
+     * @Assert\NotBlank(message="Заполните поле имя")
      * @Assert\Length(min="2", minMessage="Минимальная длина имени 2 символа")
      */
     public $firstName;
@@ -36,7 +36,6 @@ class UserRegistrationFormModel
     /**
      * @var string - пароль для подтверждения
      * @Assert\NotBlank(message="Введите пароль")
-     * @Assert\Length(min="6", minMessage="Минимальная длина пароля 6 символов")
      * @ConfirmPassword(propertyPath="planePassword")
      */
     public $confirmPassword;

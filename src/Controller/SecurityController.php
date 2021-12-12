@@ -11,6 +11,7 @@ use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,6 +53,7 @@ class SecurityController extends AbstractController
         $form = $this->createForm(UserRegistrationFormType::class);
         // обрабатываем запрос
         $form->handleRequest($request);
+
         // если форма отправлена и данные ее валидны, начинаем их обработку
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UserRegistrationFormModel $userModel */
@@ -73,15 +75,18 @@ class SecurityController extends AbstractController
             $dispatcher->dispatch(new UserRegisteredEvent($user));
             $success = true;
             /* ToDo:
-                1) Сообщения об ошибках выводить над формой согласно ТЗ
-                2) Создать класс voter для всех админских страниц. Пускать на них только пользователей с подтвержденным email
+                1) Разобраться почему отправляется два письма а не одно
             */
 
         }
+        // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
+        // ошибок отдельных полей
+        $errors = $form->getErrors(true);
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
             'success' => $success,
+            'errors' => $errors
         ]);
     }
 
@@ -89,9 +94,10 @@ class SecurityController extends AbstractController
      * Метод подтверждения email для завершения регистрации
      *
      * Обращение к методу идет при переходе по ссылке для подтверждения email.
+     * Расшифровывается гет параметр, содержащий почту, находится пользователь, затем подтверждается email
+     * и он авторизуется
      *
-     *
-     * @Route("/register/confirm_email", name="app_confirm_email")
+     * @Route("/confirm_email", name="app_confirm_email")
      *
      * @param Request $request
      * @param GuardAuthenticatorHandler $guard
@@ -113,17 +119,17 @@ class SecurityController extends AbstractController
          if (empty($request->query->get('hash'))) {
              //ToDo: спросить, что делать, если сгенерирует некорректную ссылку. Быть может стоит при повторной регистрации
              // генерить новую, если пользователь не подтвердил email?
-             throw new \Exception('Некорректная ссылка для подтверждение email.');
+             throw new \Exception('Некорректная ссылка для подтверждение email. Обратитесь в службу поддержки.');
          }
         $email = json_decode(base64_decode($request->query->get('hash')), true)['email'];
         $user = $userRepository->findOneBy(['email' => $email]);
         // проверяем есть ли такой пользователь
         if (!isset($user)) {
-            throw new \Exception('Некорректная ссылка. Такого пользователя не существует');
+            throw new \Exception('Некорректная ссылка для подтверждение email. Такого пользователя не существует');
         }
-        // если поста подтверждена - редирект на аутентификацию
+        // если почта подтверждена - редирект на аутентификацию
         if ($user->getIsEmailConfirmed()) {
-            $this->redirect('app_login');
+            return $this->redirectToRoute('app_login');
         }
         // подтверждаем email
         $user->setIsEmailConfirmed(true);
