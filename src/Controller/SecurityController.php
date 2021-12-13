@@ -74,10 +74,6 @@ class SecurityController extends AbstractController
             $em->flush();
             $dispatcher->dispatch(new UserRegisteredEvent($user));
             $success = true;
-            /* ToDo:
-                1) Разобраться почему отправляется два письма а не одно
-            */
-
         }
         // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
         // ошибок отдельных полей

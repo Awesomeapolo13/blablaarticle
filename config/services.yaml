@@ -48,12 +48,6 @@ services:
         namespace: App\EventSubscriber\
         resource: '../src/EventSubscriber/'
         tags: ['app_event_subscriber']
-    # Подписчик на событие регистрации
-    app.event_subscriber.user_registration_subscriber:
-        class: App\EventSubscriber\UserRegisteredSubscriber
-#        app.mailer.base $confirmEmailMailer: '@app.mailer.confirm_email'
-#        arguments:
-#            $confirmEmailMailer: '@app.mailer.base'
 
     app.mailer.confirm_email:
         class: App\Mailer\ConfirmEmailMailer
