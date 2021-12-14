@@ -39,6 +39,7 @@ class UserFixture extends BaseFixtures
                 ->setEmail($this->faker->email)
                 ->setFirstName($this->faker->firstName)
                 ->setPassword($this->passwordEncoder->encodePassword($user, '123456'))
+                ->setIsEmailConfirmed($this->faker->boolean(70))
             ;
 
             $manager->persist($user);
@@ -51,17 +52,19 @@ class UserFixture extends BaseFixtures
      * Для создания юзера с конкретными данными, например для админа или другой роли
      *
      * @param ObjectManager $manager
-     * @param string $email
-     * @param string $firstname
-     * @param string $password
-     * @param array $roles
+     * @param string $email - электронная почта пользователя
+     * @param string $firstname - имя пользователя
+     * @param array $roles - роли пользователя
+     * @param string $password - пароль пользователя
+     * @param bool $isEmailConfirmed - подтверждена ли электронная почта
      */
     private function createUser(
         ObjectManager $manager,
         string        $email,
         string        $firstname,
         array         $roles = [],
-        string        $password = '123456'
+        string        $password = '123456',
+        bool          $isEmailConfirmed = false
 
     ): void
     {
@@ -70,13 +73,15 @@ class UserFixture extends BaseFixtures
             $email,
             $firstname,
             $password,
-            $roles
+            $roles,
+            $isEmailConfirmed
         ) {
            $user
                ->setEmail($email)
                ->setFirstName($firstname)
                ->setRoles($roles)
                ->setPassword($this->passwordEncoder->encodePassword($user, $password))
+               ->setIsEmailConfirmed($isEmailConfirmed)
            ;
 
            $manager->persist($user);

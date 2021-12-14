@@ -4,6 +4,15 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    # имя и email отправителя для рассылки с сайта
+    sender.email: '%env(SENDER_EMAIL)%'
+    sender.name: '%env(SENDER_NAME)%'
+    # протокол и хост для перехода по ссылке указанной в письме рассылки
+    router.request_context.scheme: '%env(SITE_BASE_SCHEME)%'
+    router.request_context.host: '%env(SITE_BASE_HOST)%'
+    # шаблоны email рассылок
+    confirm_email.email.template: 'email/%env(CONFIRM_EMAIL_TEMPLATE)%'
+
 
 services:
     # default configuration for services in *this* file
@@ -26,6 +35,23 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+    # Сервисы email рассылок
+    app.mailer:
+        namespace: App\Mailer\
+        resource: '../src/Mailer/'
+        tags: ['app_mailer']
+    # Регистрация переменной $confirmEmailMailer как экземпляра класса ConfirmEmailMailer
+    App\Mailer\BaseMailer $confirmEmailMailer: '@App\Mailer\ConfirmEmailMailer'
+
+    # Сервисы подписчиков на события
+    app.event_subscriber:
+        namespace: App\EventSubscriber\
+        resource: '../src/EventSubscriber/'
+        tags: ['app_event_subscriber']
+
+    app.mailer.confirm_email:
+        class: App\Mailer\ConfirmEmailMailer
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
