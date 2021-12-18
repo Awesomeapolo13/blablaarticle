@@ -3,14 +3,16 @@
 {% block body %}
     {% block navbar %}
         <nav class="navbar navbar-light bg-light static-top">
-            <div class="container">
-                <span class="navbar-brand">BlaBlaArticle</span>
-                <a class="js-scroll-trigger" href="#services">Сервисы</a>
-                <a class="js-scroll-trigger" href="#author">Автор</a>
-                <a class="btn btn-primary" href="{{ path('app_login') }}">Войти</a>
-            </div>
-        </nav>
+        <div class="container">
+        <span class="navbar-brand">BlaBlaArticle</span>
+    {% block info_hrefs %}
+        <a class="js-scroll-trigger" href="#services">Сервисы</a>
+        <a class="js-scroll-trigger" href="#author">Автор</a>
     {% endblock %}
+    <a class="btn btn-primary" href="{{ path('app_login') }}">Войти</a>
+    </div>
+    </nav>
+{% endblock %}
 
     {% block header %}
         <header class="masthead text-white text-center">
@@ -21,14 +23,16 @@
                         <h1 class="mb-5">Создай уникальную статью идеально подходящую для вашего бизнеса, сайта или
                             проекта!</h1>
                     </div>
-                    <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                        <div class="form-row">
-                            <div class="col-12 col-md-6 mx-auto">
-                                <a type="submit" class="btn btn-block btn-lg btn-primary"
-                                   href="try.html">Попробовать</a>
+                    {% block try %}
+                        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                            <div class="form-row">
+                                <div class="col-12 col-md-6 mx-auto">
+                                    <a type="submit" class="btn btn-block btn-lg btn-primary"
+                                       href="{{ path('app_article_demo') }}">Попробовать</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endblock %}
                 </div>
             </div>
         </header>
@@ -47,7 +51,7 @@
                     <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
                         <div class="form-row">
                             <div class="col-12 col-md-6 mx-auto">
-                                <a href="register.html" class="btn btn-block btn-lg btn-primary">Регистрация</a>
+                                <a href="{{ path('app_register') }}" class="btn btn-block btn-lg btn-primary">Регистрация</a>
                             </div>
                         </div>
                     </div>
