@@ -25,6 +25,11 @@ class Article
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $theme;
+
+    /**
      * Заголовок статьи
      *
      * @ORM\Column(type="string", length=60)
@@ -45,7 +50,7 @@ class Article
     /**
      * Продвигаемое в статье слово
      *
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="json", nullable=true)
      * @Assert\NotBlank(message="Введите продвигаемые слово")
      */
     private $promotedWords;
@@ -55,15 +60,10 @@ class Article
      *
      * Содержит html разметку и текст сгенерированной статьи
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="json")
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
      */
     private $body;
-
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $theme;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -114,9 +114,11 @@ class Article
     /**
      * @param mixed $size
      */
-    public function setSize(int $size): void
+    public function setSize(int $size): self
     {
         $this->size = $size;
+
+        return $this;
     }
 
     public function getPromotedWords(): array
@@ -131,12 +133,12 @@ class Article
         return $this;
     }
 
-    public function getBody(): ?string
+    public function getBody(): ?array
     {
         return $this->body;
     }
 
-    public function setBody(string $body): self
+    public function setBody(array $body): self
     {
         $this->body = $body;
 
@@ -165,5 +167,32 @@ class Article
         $this->images = $images;
 
         return $this;
+    }
+
+    /**
+     * Фабричный метод создания статьи
+     *
+     * @param string $theme - тематика
+     * @param string $title - заголовок
+     * @param int $size - размер
+     * @param array $promotedWords - продвигаемое слово
+     * @param array $body - тело статьи
+     * @return Article
+     */
+    public static function create(
+        string $theme,
+        string $title,
+        int $size,
+        array $promotedWords,
+        array $body
+    ): Article
+    {
+        return (new self())
+                ->setTheme($theme)
+                ->setTitle($title)
+                ->setSize($size)
+                ->setPromotedWords($promotedWords)
+                ->setBody($body)
+            ;
     }
 }

@@ -42,6 +42,8 @@ services:
         tags: ['app_mailer']
     # Регистрация переменной $confirmEmailMailer как экземпляра класса ConfirmEmailMailer
     App\Mailer\BaseMailer $confirmEmailMailer: '@App\Mailer\ConfirmEmailMailer'
+    App\ArticleGeneration\PromotedWordInserter $wordInserter: '@App\ArticleGeneration\PromotedWordInserter'
+
 
     # Сервисы подписчиков на события
     app.event_subscriber:
@@ -52,8 +54,11 @@ services:
     app.mailer.confirm_email:
         class: App\Mailer\ConfirmEmailMailer
 
+    # Сервисы генерации статьи
+    app.article_demo_generation:
+        class: App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy
+
+    app.promoted_word_inserter:
+        class: App\ArticleGeneration\PromotedWordInserter
+
     Twig\Extension\StringLoaderExtension:
-
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones

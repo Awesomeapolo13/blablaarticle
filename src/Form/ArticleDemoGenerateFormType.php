@@ -16,12 +16,7 @@ class ArticleDemoGenerateFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class, [
-                //  задал тут, чтобы потом изменить при отображении
-                'attr' => [
-                    'value' => 'Тестовая статья'
-                ]
-            ])
+            ->add('title', TextType::class)
             ->add('promotedWord', TextType::class)
         ;
     }

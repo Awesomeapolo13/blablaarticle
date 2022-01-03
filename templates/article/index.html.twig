@@ -24,7 +24,8 @@
                             {{ form_widget(articleDemoGenerateForm.title, {
                                 attr: {
                                     placeholder: 'Заголовок статьи',
-                                    autofocus: true
+                                    autofocus: true,
+                                    value: article.title|default('Тестовая статья')
                                 }
                             }) }}
                             {{ form_label(articleDemoGenerateForm.title, 'Заголовок статьи', {
@@ -33,7 +34,10 @@
                         </div>
                         <div class="form-label-group">
                             {{ form_widget(articleDemoGenerateForm.promotedWord, {
-                                attr: {placeholder: 'Продвигаемое слово',}
+                                attr: {
+                                    placeholder: 'Продвигаемое слово',
+                                    value: article.promotedWords.0.word|default('')
+                                }
                             }) }}
                             {{ form_label(articleDemoGenerateForm.promotedWord, 'Продвигаемое слово', {
                                 errors: null,
@@ -55,7 +59,7 @@
     <section>
         <div class="container my-5">
             <div class="row">
-                {% include 'article/components/article_demo.html.twig' with {title: title, article: content} %}
+                {% include 'article/components/article_demo.html.twig' with { article: article } %}
             </div>
         </div>
     </section>

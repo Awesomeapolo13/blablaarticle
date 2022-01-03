@@ -14,6 +14,9 @@ use Faker\Factory;
  */
 class DemoArticleGenerationStrategy implements ArticleGenerationInterface
 {
+    /**
+     * @var string - модуль с одним параграфом
+     */
     private $addYourWordsModule = '<div class="row">
                         <div class="p-3">
                             <h2>{{title}}</h2>
@@ -21,6 +24,9 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                         </div>
                     </div>';
 
+    /**
+     * @var string - модуль с картинкой и несколькими параграфами
+     */
     private $pasteImagesModule = '<div class="row">
                         <div class="showcase-text p-3">
                             <div class="media">
@@ -35,6 +41,9 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                         </div>
                     </div>';
 
+    /**
+     * @var string - модуль с одним параграфом (ToDo: попробовать заменить на вышестоящий с одним параграфом)
+     */
     private $apiModule = '<div class="row">
                         <div class="p-3">
                             <h2>{{ title }}</h2>
@@ -46,8 +55,9 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
      * @var PromotedWordInserter - сервис для вставки продвигаемого слова
      */
     private $wordInserter;
+
     /**
-     * @var string
+     * @var ArticleDemoFormModel - модель формы для демонстрационной генерации статьи
      */
     private $articleDemoFormModel;
 
@@ -58,9 +68,11 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
     }
 
     /**
-     * @inheritDoc
+     * Генерирует демонстрационную статьи
+     *
+     * @return array - вложенный массив для сохранения с данными новой статьи
      */
-    public function generate()
+    public function generate(): array
     {
         $faker = Factory::create();
 
@@ -84,6 +96,11 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
 
         return [
             'title' => $this->articleDemoFormModel->title,
+            'theme' => 'demo',
+            'size' => 3,
+            'promotedWords' => [
+                ['word' => $this->articleDemoFormModel->promotedWord, 'count' => 1],
+            ],
             'content' => [
                 [
                     'title' => $faker->sentence(3),

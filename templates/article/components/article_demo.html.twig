@@ -1,8 +1,8 @@
 <div class="col-lg-12 mx-auto">
-    <h2 class="card-title text-center mb-4">{{ title }}</h2>
+    <h2 class="card-title text-center mb-4">{{ article.title|default('Тестовая статья') }}</h2>
+
     {% if article is not null %}
-        {# ToDo: посмотреть как выводятся файлы с помощью flysystem #}
-        {% for content in article.content %}
+        {% for content in article.body %}
             {% autoescape %}
                 {% include template_from_string(content.module) with {
                     title: content.title|default(''),
@@ -11,7 +11,6 @@
                 } %}
             {% endautoescape %}
         {% endfor %}
-
     {% else %}
 
         <div class="row">
