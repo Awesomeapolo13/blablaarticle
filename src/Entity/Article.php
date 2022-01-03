@@ -33,12 +33,22 @@ class Article
     private $title;
 
     /**
+     * Размер статьи
+     *
+     * Количество модулей для генерации статьи
+     *
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="Укажите размер статьи")
+     */
+    private $size;
+
+    /**
      * Продвигаемое в статье слово
      *
-     * @ORM\Column(type="string", length=60)
-     * @Assert\NotBlank(message="Введите продвигаемое слово")
+     * @ORM\Column(type="json")
+     * @Assert\NotBlank(message="Введите продвигаемые слово")
      */
-    private $promotedWord;
+    private $promotedWords;
 
     /**
      * Тело статьи
@@ -49,6 +59,16 @@ class Article
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
      */
     private $body;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $theme;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $images;
 
     /**
      * @var \DateTime
@@ -83,14 +103,30 @@ class Article
         return $this;
     }
 
-    public function getPromotedWord(): ?string
+    /**
+     * @return mixed
+     */
+    public function getSize()
     {
-        return $this->promotedWord;
+        return $this->size;
     }
 
-    public function setPromotedWord(string $promotedWord): self
+    /**
+     * @param mixed $size
+     */
+    public function setSize(int $size): void
     {
-        $this->promotedWord = $promotedWord;
+        $this->size = $size;
+    }
+
+    public function getPromotedWords(): array
+    {
+        return array_unique($this->promotedWords);
+    }
+
+    public function setPromotedWords(array $promotedWords): self
+    {
+        $this->promotedWords = $promotedWords;
 
         return $this;
     }
@@ -103,6 +139,30 @@ class Article
     public function setBody(string $body): self
     {
         $this->body = $body;
+
+        return $this;
+    }
+
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(string $theme): self
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getImages(): ?string
+    {
+        return $this->images;
+    }
+
+    public function setImages(?string $images): self
+    {
+        $this->images = $images;
 
         return $this;
     }

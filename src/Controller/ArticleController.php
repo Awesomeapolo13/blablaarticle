@@ -2,7 +2,11 @@
 
 namespace App\Controller;
 
+use App\ArticleGeneration\ArticleGenerator;
+use App\ArticleGeneration\PromotedWordInserter;
+use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
 use App\Form\ArticleDemoGenerateFormType;
+use App\Form\Model\ArticleDemoFormModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,35 +21,45 @@ class ArticleController extends AbstractController
     {
         /**
          * ToDo:
-         *      1) Создать форму для демонстрации генерации статьи
-         *          - создать сам объект формы и DTO для него
-         *          - повторную отправку блокировать кукой с id статьи этой статьи (спросить преподавателя про
-         *          использование ip в БД для привязки к незарегистрированному пользователю)
-         *          - попробовать еще раз создать тему формы, т.к. оформление полей такое же как в регистрации
-         *      2) Для генерации статей использовать паттерн Стратегия.
+         *      Если внешний ключ модуля пустой, то это один из дефолтных модулей для генерации
+         *      1) Для генерации статей использовать паттерн Стратегия.
          *      Разбить генерацию на 4 стратегии по виду подписки:
          *          - демонстрационная
          *          - FREE
          *          - PLUS
          *          - PRO
-         *      Сейчас реализовать только демонстрационную стратегию
-         *      3) Создать в БД таблицу для хранения статей, она должна содержать:
-         *          - продвигаемое слово;
-         *          - ip компьютера, с которого сделан запрос (чтобы нельзя было сделать его дважды или сделать бесконечную куку?)
-         *          - тематику пока сделать массивом
-         *      4) Реализовать сервис вставки продвигаемого слова в полученные абзацы
-         *          Как получить абзацы для демонстрационной генерации (с помощью DiDom? брать их в БД в качестве модулей? со статусом demo?
-         *      5) Реализовать блокировку формы после отправки
+         *      Т.к. для генерации мы используем фейкер, не нужно ли его переместить в обычные зависимости?
+         *      Нет плейсхолдеров для отображения заголовков внутри модулей. Эти заголовки должны добавляться
+         *      из тематик?
+         *      Исправить тип колонки body на json, чтоб хранить в нем разные поля для вставки в модули.
+         *      2) Реализовать сервис вставки продвигаемого слова в полученные абзацы
+         *      3) Реализовать стратегию демонстрационной генерации статьи
+         *      4) Реализовать блокировку формы после отправки
+         *          - повторную отправку блокировать кукой с id статьи этой статьи (спросить преподавателя про
+         *          использование ip в БД для привязки к незарегистрированному пользователю)
+         *          - попробовать еще раз создать тему формы, т.к. оформление полей такое же как в регистрации
          */
-
+        // Новая сгенерированная статья
+        $newArticle = null;
+        // Заголовок статьи по умолчанию
+        $title = 'Тестовая статья';
         $form = $this->createForm(ArticleDemoGenerateFormType::class);
 
         $form->handleRequest($request);
 
-        dd($form->getData());
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ArticleDemoFormModel  $articleDemoModel */
+            $articleDemoModel = $form->getData();
+            $articleGenerator = new ArticleGenerator(new DemoArticleGenerationStrategy($articleDemoModel, new PromotedWordInserter()));
+            $newArticle = $articleGenerator->generateArticle();
+            $title = $newArticle['title'];
+//            dd($newArticle);
+        }
 
         return $this->render('article/index.html.twig', [
             'articleDemoGenerateForm' => $form->createView(),
+            'title' => $title,
+            'content' => $newArticle,
         ]);
     }
 }
