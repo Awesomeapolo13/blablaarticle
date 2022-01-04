@@ -42,29 +42,13 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                     </div>';
 
     /**
-     * @var string - модуль с одним параграфом (ToDo: попробовать заменить на вышестоящий с одним параграфом)
-     */
-    private $apiModule = '<div class="row">
-                        <div class="p-3">
-                            <h2>{{ title }}</h2>
-                            <p class="lead mb-0">{{ paragraph }}</p>
-                        </div>
-                    </div>';
-
-    /**
-     * @var PromotedWordInserter - сервис для вставки продвигаемого слова
-     */
-    private $wordInserter;
-
-    /**
      * @var ArticleDemoFormModel - модель формы для демонстрационной генерации статьи
      */
     private $articleDemoFormModel;
 
-    public function __construct(ArticleDemoFormModel $articleDemoFormModel, PromotedWordInserter $wordInserter)
+    public function __construct(ArticleDemoFormModel $articleDemoFormModel)
     {
         $this->articleDemoFormModel = $articleDemoFormModel;
-        $this->wordInserter = $wordInserter;
     }
 
     /**
@@ -75,16 +59,17 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
     public function generate(): array
     {
         $faker = Factory::create();
+        $wordInserter = new PromotedWordInserter();
 
-        $addWordsParagraph = $this->wordInserter->pasteWordIntoText(
+        $addWordsParagraph = $wordInserter->pasteWordIntoText(
             $this->articleDemoFormModel->promotedWord,
             $faker->paragraph()
         );
-        $putImagesParagraphs = $this->wordInserter->pasteWordIntoParagraphs(
+        $putImagesParagraphs = $wordInserter->pasteWordIntoParagraphs(
             $this->articleDemoFormModel->promotedWord,
             $faker->paragraphs(2)
         );
-        $useApiParagraph = $this->wordInserter->pasteWordIntoText(
+        $useApiParagraph = $wordInserter->pasteWordIntoText(
             $this->articleDemoFormModel->promotedWord,
             $faker->paragraph(4)
         );
@@ -115,7 +100,7 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                 [
                     'title' => $faker->sentence(3),
                     'paragraph' => $useApiParagraph,
-                    'module' => $this->apiModule,
+                    'module' => $this->addYourWordsModule,
                 ],
             ]
         ];

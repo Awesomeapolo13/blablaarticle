@@ -2,6 +2,9 @@
 
 namespace App\ArticleGeneration;
 
+/**
+ * Класс контекста для стратегий генерации статей
+ */
 class ArticleGenerator
 {
     /**

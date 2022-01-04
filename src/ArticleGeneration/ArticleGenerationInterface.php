@@ -2,6 +2,9 @@
 
 namespace App\ArticleGeneration;
 
+/**
+ * Интерфейс для стратегий генерации статей
+ */
 interface ArticleGenerationInterface
 {
     /**

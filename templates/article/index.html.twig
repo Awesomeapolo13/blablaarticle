@@ -11,43 +11,48 @@
                 <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
 
                     <h2 class="card-title text-center mb-4">Создание статьи</h2>
-                    {# start ToDo: отображать этот блок после генерации статьи #}
-                    <div class="alert alert-info" role="alert">
-                        Чтобы создать статью по настоящему <a href="{{ path('app_register') }}">Зарегистрируйтесь</a>
-                    </div>
-                    {# end отображать этот блок после генерации статьи #}
 
+                    {% if articleId is not null %}
+                        <div class="alert alert-info" role="alert">
+                            Чтобы создать статью по настоящему <a
+                                    href="{{ path('app_register') }}">Зарегистрируйтесь</a>
+                        </div>
+                    {% endif %}
+                    {# Форма генепации статьи #}
                     {{ form_start(articleDemoGenerateForm, {
                         attr: {class: 'form-signin'}
                     }) }}
-                        <div class="form-label-group">
-                            {{ form_widget(articleDemoGenerateForm.title, {
-                                attr: {
-                                    placeholder: 'Заголовок статьи',
-                                    autofocus: true,
-                                    value: article.title|default('Тестовая статья')
-                                }
-                            }) }}
-                            {{ form_label(articleDemoGenerateForm.title, 'Заголовок статьи', {
-                                errors: null,
-                            }) }}
-                        </div>
-                        <div class="form-label-group">
-                            {{ form_widget(articleDemoGenerateForm.promotedWord, {
-                                attr: {
-                                    placeholder: 'Продвигаемое слово',
-                                    value: article.promotedWords.0.word|default('')
-                                }
-                            }) }}
-                            {{ form_label(articleDemoGenerateForm.promotedWord, 'Продвигаемое слово', {
-                                errors: null,
-                            }) }}
-                        </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleDemoGenerateForm.title, {
+                            attr: {
+                                placeholder: 'Заголовок статьи',
+                                autofocus: true,
+                                value: article.title|default('Тестовая статья'),
+                                disabled: articleId|default(false)
+                            }
+                        }) }}
+                        {{ form_label(articleDemoGenerateForm.title, 'Заголовок статьи', {
+                            errors: null,
+                        }) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleDemoGenerateForm.promotedWord, {
+                            attr: {
+                                placeholder: 'Продвигаемое слово',
+                                value: article.promotedWords.0.word|default(''),
+                                disabled: articleId|default(false)
+                            }
+                        }) }}
+                        {{ form_label(articleDemoGenerateForm.promotedWord, 'Продвигаемое слово', {
+                            errors: null,
+                        }) }}
+                    </div>
 
-                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" >
-                            Попробовать
-                        </button>
-                        {{ form_end(articleDemoGenerateForm) }}
+                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit"
+                            {% if articleId is not null %} disabled {% endif %}>
+                        Попробовать
+                    </button>
+                    {{ form_end(articleDemoGenerateForm) }}
                 </div>
             </div>
         </div>
@@ -55,7 +60,7 @@
 
 
     <hr>
-
+    {# Блок вывода демо-генерации статьи #}
     <section>
         <div class="container my-5">
             <div class="row">
