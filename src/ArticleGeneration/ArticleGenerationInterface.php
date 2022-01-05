@@ -8,9 +8,10 @@ namespace App\ArticleGeneration;
 interface ArticleGenerationInterface
 {
     /**
-     * Генерирует статью
+     * Генерирует статью из переданных данных
      *
+     * @var object - объект с данными для генерации статьи
      * @return mixed
      */
-    public function generate();
+    public function generate(object $articleDTO);
 }

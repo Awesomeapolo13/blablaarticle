@@ -12,15 +12,42 @@ class ArticleGenerator
      *
      * @var ArticleGenerationInterface
      */
-    private $generator;
+    private $strategy;
 
-    public function __construct(ArticleGenerationInterface $generator)
+    /**
+     * @var object
+     */
+    private $articleDTO;
+
+    /**
+     * @param object $articleDTO - объект с данными для генерации статьи
+     * @return ArticleGenerator
+     */
+    public function setArticleDTO(object $articleDTO): ArticleGenerator
     {
-        $this->generator = $generator;
+        $this->articleDTO = $articleDTO;
+
+        return $this;
     }
+
+    /**
+     * @param ArticleGenerationInterface $strategy
+     * @return ArticleGenerator
+     */
+    public function setGenerationStrategy(ArticleGenerationInterface $strategy): ArticleGenerator
+    {
+        $this->strategy = $strategy;
+
+        return $this;
+    }
+
 
     public function generateArticle()
     {
-        return $this->generator->generate();
+        if (empty($this->strategy) || empty($this->articleDTO)) {
+            throw new \Exception('Для генерации статьи необходимо указать стратегию и данные для генерации');
+        }
+
+        return $this->strategy->generate($this->articleDTO);
     }
 }

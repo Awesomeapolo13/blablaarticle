@@ -60,7 +60,7 @@ class Article
      *
      * Содержит html разметку и текст сгенерированной статьи
      *
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
      */
     private $body;
@@ -133,12 +133,12 @@ class Article
         return $this;
     }
 
-    public function getBody(): ?array
+    public function getBody(): ?string
     {
         return $this->body;
     }
 
-    public function setBody(array $body): self
+    public function setBody(string $body): self
     {
         $this->body = $body;
 
@@ -176,7 +176,7 @@ class Article
      * @param string $title - заголовок
      * @param int $size - размер
      * @param array $promotedWords - продвигаемое слово
-     * @param array $body - тело статьи
+     * @param string $body - тело статьи
      * @return Article
      */
     public static function create(
@@ -184,7 +184,7 @@ class Article
         string $title,
         int $size,
         array $promotedWords,
-        array $body
+        string $body
     ): Article
     {
         return (new self())

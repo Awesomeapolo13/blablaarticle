@@ -4,8 +4,8 @@ namespace App\ArticleGeneration\Strategy;
 
 use App\ArticleGeneration\ArticleGenerationInterface;
 use App\ArticleGeneration\PromotedWordInserter;
-use App\Form\Model\ArticleDemoFormModel;
 use Faker\Factory;
+use Twig\Environment;
 
 /**
  * Стратегия для демонстрационной генерации статьи
@@ -42,51 +42,60 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                     </div>';
 
     /**
-     * @var ArticleDemoFormModel - модель формы для демонстрационной генерации статьи
+     * @var PromotedWordInserter - сервис вставки продвигаемых слов
      */
-    private $articleDemoFormModel;
+    private $wordInserter;
 
-    public function __construct(ArticleDemoFormModel $articleDemoFormModel)
+    /**
+     * @var Environment - сервис для рендеринга контента в шаблон
+     */
+    private $twig;
+
+    public function __construct(PromotedWordInserter $wordInserter, Environment $twig)
     {
-        $this->articleDemoFormModel = $articleDemoFormModel;
+        $this->wordInserter = $wordInserter;
+        $this->twig = $twig;
     }
 
     /**
      * Генерирует демонстрационную статьи
      *
-     * @return array - вложенный массив для сохранения с данными новой статьи
+     * @param object $articleDTO
+     * @return string - вложенный массив для сохранения с данными новой статьи
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
-    public function generate(): array
+    public function generate(object $articleDTO): string
     {
         $faker = Factory::create();
-        $wordInserter = new PromotedWordInserter();
 
-        $addWordsParagraph = $wordInserter->pasteWordIntoText(
-            $this->articleDemoFormModel->promotedWord,
+        $addWordsParagraph = $this->wordInserter->pasteWordIntoText(
+            $articleDTO->promotedWord,
             $faker->paragraph()
         );
-        $putImagesParagraphs = $wordInserter->pasteWordIntoParagraphs(
-            $this->articleDemoFormModel->promotedWord,
+        $putImagesParagraphs = $this->wordInserter->pasteWordIntoParagraphs(
+            $articleDTO->promotedWord,
             $faker->paragraphs(2)
         );
-        $useApiParagraph = $wordInserter->pasteWordIntoText(
-            $this->articleDemoFormModel->promotedWord,
+        $useApiParagraph = $this->wordInserter->pasteWordIntoText(
+            $articleDTO->promotedWord,
             $faker->paragraph(4)
         );
         $putImagesParagraphsStr = null;
         // вставляем параграфы из массива в теги
         foreach ($putImagesParagraphs as $paragraph) {
-            $putImagesParagraphsStr .= '<p class="lead mb-0">' . $paragraph . '</p>';
+            $putImagesParagraphsStr .= '<p class="lead mb-0">' .$paragraph. '</p>';
         }
 
-        return [
-            'title' => $this->articleDemoFormModel->title,
+        $articleData = [
+            'title' => '<h2 class="card-title text-center mb-4">' .$articleDTO->title. '</h2>',
             'theme' => 'demo',
             'size' => 3,
             'promotedWords' => [
-                ['word' => $this->articleDemoFormModel->promotedWord, 'count' => 1],
+                ['word' => $articleDTO->promotedWord, 'count' => 1],
             ],
-            'content' => [
+            'body' => [
                 [
                     'title' => $faker->sentence(3),
                     'paragraph' => $addWordsParagraph,
@@ -104,5 +113,7 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                 ],
             ]
         ];
+
+        return $this->twig->render('article/components/article_demo.html.twig', ['article' => $articleData]);
     }
 }

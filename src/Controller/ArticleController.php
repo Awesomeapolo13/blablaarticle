@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\PromotedWordInserter;
 use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
 use App\Entity\Article;
 use App\Form\ArticleDemoGenerateFormType;
 use App\Form\Model\ArticleDemoFormModel;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +24,15 @@ class ArticleController extends AbstractController
      * Выводит страницу демонстрационной генерации статьи, обрабатывает форму демо-генерации и выводит ее результат
      *
      * @Route("/article", name="app_article_demo")
+     * @throws Exception
      */
-    public function index(Request $request, EntityManagerInterface $em, ArticleRepository $articleRepository): Response
+    public function index(
+        Request $request,
+        EntityManagerInterface $em,
+        ArticleRepository $articleRepository,
+        ArticleGenerator $articleGenerator,
+        DemoArticleGenerationStrategy $demoStrategy
+    ): Response
     {
         // Id статьи, получаем из куки, если она существует
         $articleId = $request->cookies->get('articleId');
@@ -41,25 +48,27 @@ class ArticleController extends AbstractController
         if (!isset($articleId) && $form->isSubmitted() && $form->isValid()) {
             /** @var ArticleDemoFormModel $articleDemoModel */
             $articleDemoModel = $form->getData();
-            // Генерируем статью в соответствии с демо-стратегией
-            $articleGenerator = new ArticleGenerator(
-                new DemoArticleGenerationStrategy($articleDemoModel)
-            );
+            // Задаем данные для генерации статьи в соответствии с демо-стратегией
+            $articleGenerator
+                ->setArticleDTO($articleDemoModel)
+                ->setGenerationStrategy($demoStrategy)
+            ;
 
             $newArticle = $articleGenerator->generateArticle();
+            // ToDo: Тематику, и продвигаемые слова пока оставляем в таком виде, будет рефакторинг после разработки
+            //  полноценного функционала генерации статей
             $article = Article::create(
-                $newArticle['theme'],
-                $newArticle['title'],
-                $newArticle['size'],
-                $newArticle['promotedWords'],
-                $newArticle['content']
+                'demo',
+                $articleDemoModel->title,
+                3,
+                [['word' => $articleDemoModel->promotedWord, 'count' => 1]],
+                $newArticle
             );
-
             $em->persist($article);
             $em->flush();
             // Записываем в куки id статьи
             $articleId = $article->getId();
-            $cookie = new Cookie('articleId', $article->getId(), 2147483647, '/');
+            $cookie = new Cookie('articleId', $articleId, 2147483647, '/');
             $response->headers->setCookie($cookie);
         }
 
