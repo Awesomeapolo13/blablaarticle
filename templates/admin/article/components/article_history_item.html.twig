@@ -2,5 +2,5 @@
     <th scope="row">{{ article.id }}</th>
     <td>{{ article.title }}</td>
     <td>{{ article.description|default('-') }}</td>
-    <td><a href="dashboard_article_detail.html"><i class="fas fa-eye"></i></a></td>
+    <td><a href="{{ path('app_admin_article_show', {id: article.id}) }}"><i class="fas fa-eye"></i></a></td>
 </tr>
