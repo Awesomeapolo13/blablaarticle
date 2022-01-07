@@ -13,3 +13,4 @@ import './styles/app.css';
 import './bootstrap';
 
 import './js/scripts';
+import './js/dashboard';

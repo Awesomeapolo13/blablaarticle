@@ -3,16 +3,16 @@
 {% block body %}
     {% block navbar %}
         <nav class="navbar navbar-light bg-light static-top">
-        <div class="container">
-        <span class="navbar-brand">BlaBlaArticle</span>
-    {% block info_hrefs %}
-        <a class="js-scroll-trigger" href="#services">Сервисы</a>
-        <a class="js-scroll-trigger" href="#author">Автор</a>
+            <div class="container">
+                <span class="navbar-brand">BlaBlaArticle</span>
+                {% block info_hrefs %}
+                    <a class="js-scroll-trigger" href="#services">Сервисы</a>
+                    <a class="js-scroll-trigger" href="#author">Автор</a>
+                {% endblock %}
+                <a class="btn btn-primary" href="{{ path('app_login') }}">Войти</a>
+            </div>
+        </nav>
     {% endblock %}
-    <a class="btn btn-primary" href="{{ path('app_login') }}">Войти</a>
-    </div>
-    </nav>
-{% endblock %}
 
     {% block header %}
         <header class="masthead text-white text-center">

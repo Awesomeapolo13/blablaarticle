@@ -1,0 +1,29 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">История статей</h1>
+    <div class="row">
+
+        <div class="col-xl-8">
+
+            <table class="table table-hover table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Описание</th>
+                    <th scope="col">Просмотр</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for article in articles %}
+                    {% include 'admin/article/components/article_history_item.html.twig' with {article: article} %}
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {{ knp_pagination_render(articles) }}
+
+        </div>
+    </div>
+{% endblock %}
