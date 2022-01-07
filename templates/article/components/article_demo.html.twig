@@ -1,0 +1,10 @@
+{{ article.title|raw }}
+{% for content in article.body %}
+    {% autoescape %}
+        {% include template_from_string(content.module) with {
+            title: content.title|default(''),
+            paragraph: content.paragraph|default(''),
+            paragraphs: content.paragraphs|default(''),
+        } %}
+    {% endautoescape %}
+{% endfor %}
