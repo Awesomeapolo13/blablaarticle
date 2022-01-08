@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="d-flex" id="wrapper">
+        {% block sidebar %}
+            <div class="bg-light border-right" id="sidebar-wrapper">
+                <div class="sidebar-heading">BlaBlaArticle</div>
+                <div class="list-group list-group-flush">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action bg-light">Рабочий стол</a>
+                    <a href="dashboard_create_article.html" class="list-group-item list-group-item-action bg-light">Создать
+                        статью</a>
+                    <a href="{{ path('app_admin_article') }}" class="list-group-item list-group-item-action active">История
+                        статей</a>
+                    <a href="dashboard_subscription.html" class="list-group-item list-group-item-action bg-light">Подписка</a>
+                    <a href="dashboard_profile.html" class="list-group-item list-group-item-action bg-light">Профиль</a>
+                    <a href="dashboard_modules.html" class="list-group-item list-group-item-action bg-light">Модули
+                        генератора</a>
+                </div>
+            </div>
+        {% endblock %}
+
+        <div id="page-content-wrapper">
+            {% block navbar %}
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                    <button class="btn btn-primary" id="menu-toggle">Скрыть меню</button>
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Показать/Скрыть навигацию">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{{ path('app_logout') }}">Выйти</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            {% endblock %}
+            <div class="container-fluid">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% block scripts %}
+
+        {{ encore_entry_script_tags('app') }}
+
+    {% endblock %}
+{% endblock %}
