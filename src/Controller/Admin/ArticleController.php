@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Form\ArticleGenerationFormType;
 use App\Repository\ArticleRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +38,34 @@ class ArticleController extends AbstractController
 
         return $this->render('admin/article/index.html.twig', [
             'articles' => $paginatedArticles,
+        ]);
+    }
+
+    /**
+     * Отображает страницу генерации статьи и обрабатывает форму генерации
+     *
+     * @Route("/admin/article/create", name="app_admin_article_create")
+     * @param Request $request
+     * @return Response
+     */
+    public function create(
+        Request $request
+    ): Response
+    {
+        /**
+         * ToDo:
+         *  1) Добавить ключевое слово в миграцию и модель
+         *  2) Создать форму для генерации статьи
+         *  3) Расставить валидацию (подумать какие поля нуждаются в кастомных валидаторах)
+         *      - заголовок должен формироваться из тематики, если его нет
+         */
+        $form = $this->createForm(ArticleGenerationFormType::class);
+        $form->handleRequest($request);
+
+
+        return $this->render('admin/article/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'errors' => $form->getErrors(true),
         ]);
     }
 

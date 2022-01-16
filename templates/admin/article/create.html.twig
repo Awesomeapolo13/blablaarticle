@@ -1,0 +1,180 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">Создание статьи</h1>
+    <div class="mt-4">
+        <div class="col-xl-6">
+            {% form_theme articleForm 'form/form_file_widget.html.twig' %}
+            {{ form_start(articleForm) }}
+
+            {# Выводим ошибки формы #}
+            {% if errors.count %}
+                {% include 'components/error.html.twig' with {errors: errors} %}
+                <div class="alert alert-danger" role="alert">
+                    Превышен лимит создания статей, чтобы снять лимит <a href="dashboard_subscription.html">Улучшите
+                        подписку</a>
+                </div>
+            {% endif %}
+
+            {{ form_row(articleForm.theme) }}
+
+            <div class="form-label-group">
+                {{ form_widget(articleForm.title) }}
+                {{ form_label(articleForm.title) }}
+            </div>
+
+            <div class="form-label-group">
+                {{ form_row(articleForm.description) }}
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="card-title">Ключевое слово</p>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article0Word) }}
+                        {{ form_label(articleForm.article0Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article1Word) }}
+                        {{ form_label(articleForm.article1Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article2Word) }}
+                        {{ form_label(articleForm.article2Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article3Word) }}
+                        {{ form_label(articleForm.article3Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article4Word) }}
+                        {{ form_label(articleForm.article4Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article5Word) }}
+                        {{ form_label(articleForm.article5Word) }}
+                    </div>
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.article6Word) }}
+                        {{ form_label(articleForm.article6Word) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.sizeFrom) }}
+                        {{ form_label(articleForm.sizeFrom) }}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-label-group">
+                        {{ form_widget(articleForm.sizeTo) }}
+                        {{ form_label(articleForm.sizeTo) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="card-title">Продвигаемые слова</p>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted1Word) }}
+                                {{ form_label(articleForm.promoted1Word) }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted1WordCount) }}
+                                {{ form_label(articleForm.promoted1WordCount) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted2Word) }}
+                                {{ form_label(articleForm.promoted2Word) }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted2WordCount) }}
+                                {{ form_label(articleForm.promoted2WordCount) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted3Word) }}
+                                {{ form_label(articleForm.promoted3Word) }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-label-group">
+                                {{ form_widget(articleForm.promoted3WordCount) }}
+                                {{ form_label(articleForm.promoted3WordCount) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(articleForm.images) }}
+                {{ form_widget(articleForm.images) }}
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled>Создать</button
+
+            {{ form_end(articleForm) }}
+        </div>
+    </div>
+
+    <hr>
+
+    <h2 class="mt-4">Ваша статья</h2>
+
+    <hr>
+
+    <div class="row">
+
+        <div class="col-xl-6">
+
+            <h1 class="mt-4">Тестовая статья</h1>
+            <div class="media">
+                <img class="mr-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
+                <div class="media-body">
+                    <p>Lorem Ipsum <b>EXAMPLE</b> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <b>EXAMPLE</b> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="col-sm-6">
+                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit <b>EXAMPLE</b>, sed do eiusmod tempor incididunt ut labore et dolore magna <b>EXAMPLE</b> aliqua. </p>
+                    <p>Lorem Ipsum dolor sit amet, consectetur <b>EXAMPLE</b> adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+
+            <div class="media">
+                <div class="media-body">
+                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad <b>EXAMPLE</b> minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <img class="ml-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
+            </div>
+
+            <h3>Eheu, domina!</h3>
+            <p><b>EXAMPLE</b> Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+
+    </div>
+{% endblock %}

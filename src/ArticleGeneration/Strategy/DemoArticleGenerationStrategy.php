@@ -90,6 +90,7 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
 
         $articleData = [
             'title' => '<h2 class="card-title text-center mb-4">' .$articleDTO->title. '</h2>',
+            'description' => 'Статья сгенерированная для демонстрации функционала генерации статей',
             'theme' => 'demo',
             'size' => 3,
             'promotedWords' => [
