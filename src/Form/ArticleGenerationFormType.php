@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Form\Model\ArticleFormModel;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -74,36 +75,36 @@ class ArticleGenerationFormType extends AbstractType
                     'class' => 'form-control-file',
                 ]
             ])
-        ;
-        // добавляем поля для ключевого слова и его словоформ
-        for ($i = 0; $i < 7; $i++) {
-            $builder->add('article' . $i . 'Word', TextType::class, [
-                'label' => !empty($this->morphLabels[$i]) ? $this->morphLabels[$i] : '',
-                'required' => false,
-                'attr' => [
-                    'placeholder' => !empty($this->morphLabels[$i]) ? $this->morphLabels[$i] : '',
-                ],
-            ]);
-        }
-
-        for ($i = 1; $i < 4; $i++) {
-            $builder
-                ->add('promoted' . $i . 'Word', TextType::class, [
+            ->add('articleWords', CollectionType::class, [
+                'data' => ['', '', '', '', '', '', '',],
+                'entry_type' => TextType::class,
+            ])
+            ->add('promotedWords', CollectionType::class, [
+                'data' => [''],
+                'entry_type' => TextType::class,
+                'allow_add' => true,
+                'entry_options' => [
                     'label' => 'Продвигаемое слово',
                     'required' => false,
                     'attr' => [
                         'placeholder' => 'Продвигаемое слово'
-                    ]
-                ])
-                ->add('promoted' . $i . 'WordCount', TextType::class, [
+                    ],
+                ],
+            ])
+            ->add('promotedWordCount', CollectionType::class, [
+                'data' => [''],
+                'entry_type' => TextType::class,
+                'allow_add' => true,
+                'label' => 'кол-во',
+                'entry_options' => [
                     'label' => 'кол-во',
                     'required' => false,
                     'attr' => [
                         'placeholder' => 'кол-во'
-                    ]
-                ])
-            ;
-        }
+                    ],
+                ],
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

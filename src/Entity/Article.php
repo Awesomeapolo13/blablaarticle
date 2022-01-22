@@ -35,7 +35,10 @@ class Article
     /**
      * Ключевые слова
      *
+     * Ключевое слово и его словоформы (обязательно наличие хотя бы инфинитивной части)
+     *
      * @ORM\Column(type="json")
+     * @Assert\NotBlank(message="Введите ключевое слово")
      */
     private $keyWord;
 
@@ -69,7 +72,6 @@ class Article
      * Продвигаемое в статье слово
      *
      * @ORM\Column(type="json", nullable=true)
-     * @Assert\NotBlank(message="Введите продвигаемые слово")
      */
     private $promotedWords;
 
