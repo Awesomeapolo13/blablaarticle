@@ -83,6 +83,7 @@ class ArticleGenerationFormType extends AbstractType
                 'data' => [''],
                 'entry_type' => TextType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'entry_options' => [
                     'label' => 'Продвигаемое слово',
                     'required' => false,
@@ -95,6 +96,7 @@ class ArticleGenerationFormType extends AbstractType
                 'data' => [''],
                 'entry_type' => TextType::class,
                 'allow_add' => true,
+                'allow_delete' => true,
                 'label' => 'кол-во',
                 'entry_options' => [
                     'label' => 'кол-во',
