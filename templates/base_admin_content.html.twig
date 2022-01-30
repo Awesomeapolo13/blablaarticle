@@ -21,7 +21,13 @@
                     >
                         История статей
                     </a>
-                    <a href="dashboard_subscription.html" class="list-group-item list-group-item-action bg-light">Подписка</a>
+                    <a
+                            href="{{ path('app_admin_subscription') }}"
+                            class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_subscription') ? 'active' : 'bg-light' }}"
+                    >
+                        Подписка
+                    </a>
                     <a href="dashboard_profile.html" class="list-group-item list-group-item-action bg-light">Профиль</a>
                     <a href="dashboard_modules.html" class="list-group-item list-group-item-action bg-light">Модули
                         генератора</a>
