@@ -7,23 +7,24 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
+/**
+ * Класс формы создания статьи
+ */
 class ArticleGenerationFormType extends AbstractType
 {
-    private $morphLabels = [
-        'Ключевое слово',
-        'Родительный падеж',
-        'Дательный падеж',
-        'Винительный падеж',
-        'Творительный падеж',
-        'Предложный падеж',
-        'Множественное число',
-    ];
-
+    /**
+     * Строит форму создания статьи
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -50,16 +51,20 @@ class ArticleGenerationFormType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'rows' => 5,
+                    'errors' => false,
+                ],
+                'label_attr' => [
+                    'errors' => false
                 ],
             ])
-            ->add('sizeFrom', TextType::class, [
+            ->add('sizeFrom', IntegerType::class, [
                 'label' => 'Размер статьи от',
                 'required' => false,
                 'attr' => [
                     'placeholder' => 'Размер статьи от',
                 ],
             ])
-            ->add('sizeTo', TextType::class, [
+            ->add('sizeTo', IntegerType::class, [
                 'label' => 'До',
                 'required' => false,
                 'attr' => [
@@ -73,7 +78,7 @@ class ArticleGenerationFormType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Выбрать файлы',
                     'class' => 'form-control-file',
-                ]
+                ],
             ])
             ->add('articleWords', CollectionType::class, [
                 'data' => ['', '', '', '', '', '', '',],
@@ -93,8 +98,8 @@ class ArticleGenerationFormType extends AbstractType
                 ],
             ])
             ->add('promotedWordCount', CollectionType::class, [
-                'data' => [''],
-                'entry_type' => TextType::class,
+                'data' => [0],
+                'entry_type' => IntegerType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'label' => 'кол-во',
@@ -102,13 +107,18 @@ class ArticleGenerationFormType extends AbstractType
                     'label' => 'кол-во',
                     'required' => false,
                     'attr' => [
-                        'placeholder' => 'кол-во'
+                        'placeholder' => 'кол-во',
                     ],
                 ],
             ])
         ;
     }
 
+    /**
+     * Конфигурация опций
+     *
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

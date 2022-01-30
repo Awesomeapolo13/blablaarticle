@@ -27,7 +27,9 @@
 
             {# Описание статьи #}
             <div class="form-label-group">
-                {{ form_row(articleForm.description) }}
+                {{ form_row(articleForm.description, {
+                    errors: null
+                }) }}
             </div>
 
             {# Ключевое слово #}
@@ -90,13 +92,19 @@
                 <div class="col">
                     <div class="form-label-group">
                         {{ form_widget(articleForm.sizeFrom) }}
-                        {{ form_label(articleForm.sizeFrom) }}
+                        {{ form_label(articleForm.sizeFrom, '', {
+                            errors: null
+                        }) }}
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-label-group">
-                        {{ form_widget(articleForm.sizeTo) }}
-                        {{ form_label(articleForm.sizeTo) }}
+                        {{ form_widget(articleForm.sizeTo, {
+                            errors: null
+                        }) }}
+                        {{ form_label(articleForm.sizeTo, '', {
+                            errors: null
+                        }) }}
                     </div>
                 </div>
             </div>
@@ -107,7 +115,6 @@
                     <p class="card-title">Продвигаемые слова</p>
                     <div class="row">
                         <div
-{#                                id="promoted-word-list"#}
                                 class="col promoted-word-list"
                                 data-prototype="{{ form_widget(articleForm.promotedWords.vars.prototype)|e }}{{ form_label(articleForm.promotedWords.vars.prototype)|e }}"
                                 data-widget-tags="{{ '<div class="form-label-group"></div>'|e }}"
@@ -134,6 +141,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {# Блок кнопок для добавления или удаления полей продвигаемых слов #}
                     <div class="row">
                         <button
                                 type="button"
@@ -155,11 +163,16 @@
             </div>
 
             <div class="form-group">
-                {{ form_label(articleForm.images) }}
+                {{ form_label(articleForm.images, '', {
+                    errors: null
+                }) }}
                 {{ form_widget(articleForm.images) }}
             </div>
 
-            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled>Создать</button
+            {{ form_rest(articleForm) }}
+
+            {# ToDo: Сделать блокировку кнопки согласно условиям конкретной подписки после реализации этого функционала #}
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Создать</button
 
             {{ form_end(articleForm) }}
         </div>
@@ -172,70 +185,83 @@
     <hr>
 
     <div class="row">
+        {% if success %}
+            <div class="col-xl-6">
 
-        <div class="col-xl-6">
-
-            <h1 class="mt-4">Тестовая статья</h1>
-            <div class="media">
-                <img class="mr-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
-                <div class="media-body">
-                    <p>Lorem Ipsum <b>EXAMPLE</b> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                        ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. <b>EXAMPLE</b> Ut enim ad minim veniam, quis nostrud exercitation
-                        ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <h1 class="mt-4">Тестовая статья</h1>
+                <div class="media">
+                    <img class="mr-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
+                    <div class="media-body">
+                        <p>Lorem Ipsum <b>EXAMPLE</b> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                            exercitation
+                            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit
+                            in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. <b>EXAMPLE</b> Ut enim ad minim veniam, quis nostrud
+                            exercitation
+                            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit
+                            in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim veniam, quis
+                            nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea commodo consequat.
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            mollit anim id est laborum.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit <b>EXAMPLE</b>, sed do eiusmod tempor
+                            incididunt ut labore et dolore magna <b>EXAMPLE</b> aliqua. </p>
+                        <p>Lorem Ipsum dolor sit amet, consectetur <b>EXAMPLE</b> adipiscing elit, sed do eiusmod tempor
+                            incididunt ut labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim
+                            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea
+                            commodo
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                            officia
+                            deserunt mollit anim id est laborum.</p>
+                    </div>
+                </div>
+
+                <div class="media">
+                    <div class="media-body">
+                        <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+                            voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat
+                            non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. Ut enim ad <b>EXAMPLE</b> minim veniam, quis nostrud
+                            exercitation
+                            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                            reprehenderit
+                            in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    </div>
+                    <img class="ml-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
+                </div>
+
+                <h3>Eheu, domina!</h3>
+                <p><b>EXAMPLE</b> Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+                    esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa
+                    qui officia deserunt mollit anim id est laborum.</p>
             </div>
-
-            <div class="row">
-                <div class="col-sm-6">
-                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                        mollit anim id est laborum.</p>
-                </div>
-                <div class="col-sm-6">
-                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit <b>EXAMPLE</b>, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna <b>EXAMPLE</b> aliqua. </p>
-                    <p>Lorem Ipsum dolor sit amet, consectetur <b>EXAMPLE</b> adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore <b>EXAMPLE</b> magna <b>EXAMPLE</b> aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex <b>EXAMPLE</b> ea commodo
-                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                        deserunt mollit anim id est laborum.</p>
-                </div>
-            </div>
-
-            <div class="media">
-                <div class="media-body">
-                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                        non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    <p>Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad <b>EXAMPLE</b> minim veniam, quis nostrud exercitation
-                        ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-                        in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                </div>
-                <img class="ml-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
-            </div>
-
-            <h3>Eheu, domina!</h3>
-            <p><b>EXAMPLE</b> Lorem Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                qui officia deserunt mollit anim id est laborum.</p>
-        </div>
+        {% endif %}
 
     </div>
 {% endblock %}

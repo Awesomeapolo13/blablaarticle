@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Form\ArticleGenerationFormType;
+use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,22 +53,22 @@ class ArticleController extends AbstractController
         Request $request
     ): Response
     {
-        /**
-         * ToDo:
-         *  1) Создать форму для генерации статьи
-         *      - создать отдельный метод в контроллере, который будет перестраивать форму (добавлять либо ключевое
-         *          слово, либо продвигаемое)
-         *      - понять как устроить работу с DTO если количество полей изменяемое
-         *  2) Расставить валидацию (подумать какие поля нуждаются в кастомных валидаторах)
-         *      - заголовок должен формироваться из тематики, если его нет
-         */
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
 
+        $success = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ArticleFormModel $articleModel */
+            $articleModel = $form->getData();
+            dump($articleModel);
+            $success = true;
+        }
 
         return $this->render('admin/article/create.html.twig', [
             'articleForm' => $form->createView(),
-            'errors' => $form->getErrors(true),
+            'errors' => $form->getErrors(true), // ошибки в форме
+            'success' => $success
         ]);
     }
 
