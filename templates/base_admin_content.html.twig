@@ -7,10 +7,20 @@
                 <div class="sidebar-heading">BlaBlaArticle</div>
                 <div class="list-group list-group-flush">
                     <a href="dashboard.html" class="list-group-item list-group-item-action bg-light">Рабочий стол</a>
-                    <a href="dashboard_create_article.html" class="list-group-item list-group-item-action bg-light">Создать
-                        статью</a>
-                    <a href="{{ path('app_admin_article') }}" class="list-group-item list-group-item-action active">История
-                        статей</a>
+                    <a
+                            href="{{ path('app_admin_article_create') }}"
+                            class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_article_create') ? 'active' : 'bg-light' }}"
+                    >
+                        Создать статью
+                    </a>
+                    <a
+                            href="{{ path('app_admin_article') }}"
+                            class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_article') ? 'active' : 'bg-light' }}"
+                    >
+                        История статей
+                    </a>
                     <a href="dashboard_subscription.html" class="list-group-item list-group-item-action bg-light">Подписка</a>
                     <a href="dashboard_profile.html" class="list-group-item list-group-item-action bg-light">Профиль</a>
                     <a href="dashboard_modules.html" class="list-group-item list-group-item-action bg-light">Модули

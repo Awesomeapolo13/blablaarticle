@@ -25,9 +25,22 @@ class Article
     private $id;
 
     /**
+     * Тематика статьи
+     *
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank(message="Укажите тематику статьи")
      */
     private $theme;
+
+    /**
+     * Ключевые слова
+     *
+     * Ключевое слово и его словоформы (обязательно наличие хотя бы инфинитивной части)
+     *
+     * @ORM\Column(type="json")
+     * @Assert\NotBlank(message="Введите ключевое слово")
+     */
+    private $keyWord;
 
     /**
      * Заголовок статьи
@@ -36,6 +49,14 @@ class Article
      * @Assert\NotBlank(message="Введите заголовок")
      */
     private $title;
+
+    /**
+     * Краткое описание статьи
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\LessThanOrEqual(255)
+     */
+    private $description;
 
     /**
      * Размер статьи
@@ -51,7 +72,6 @@ class Article
      * Продвигаемое в статье слово
      *
      * @ORM\Column(type="json", nullable=true)
-     * @Assert\NotBlank(message="Введите продвигаемые слово")
      */
     private $promotedWords;
 
@@ -60,7 +80,7 @@ class Article
      *
      * Содержит html разметку и текст сгенерированной статьи
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
      */
     private $body;
@@ -91,6 +111,30 @@ class Article
         return $this->id;
     }
 
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(string $theme): self
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getKeyWord(): array
+    {
+        return array_unique($this->keyWord);
+    }
+
+    public function setKeyWord(array $keyWord): self
+    {
+        $this->keyWord = $keyWord;
+
+        return $this;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -99,6 +143,18 @@ class Article
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -145,18 +201,6 @@ class Article
         return $this;
     }
 
-    public function getTheme(): ?string
-    {
-        return $this->theme;
-    }
-
-    public function setTheme(string $theme): self
-    {
-        $this->theme = $theme;
-
-        return $this;
-    }
-
     public function getImages(): ?string
     {
         return $this->images;
@@ -173,25 +217,39 @@ class Article
      * Фабричный метод создания статьи
      *
      * @param string $theme - тематика
+     * @param array $keyWord - массив ключевого слова и его словоформ
      * @param string $title - заголовок
      * @param int $size - размер
      * @param array $promotedWords - продвигаемое слово
      * @param string $body - тело статьи
+     * @param string|null $description - краткое описание статьи
      * @return Article
      */
     public static function create(
         string $theme,
+        array $keyWord,
         string $title,
         int $size,
-        array $promotedWords,
-        string $body
+        string $body,
+        array $promotedWords = [],
+        string $description = null
     ): Article
     {
-        return (new self())
+        //ToDo: Добавить вставку ключевого слова, проверить вызов функции при демонстрационной генерации статьи
+        $article = new self();
+        if (isset($description)) {
+            $article->setDescription($description);
+        }
+
+        if (!empty($promotedWords)) {
+            $article->setPromotedWords($promotedWords);
+        }
+
+        return $article
                 ->setTheme($theme)
+                ->setKeyWord($keyWord)
                 ->setTitle($title)
                 ->setSize($size)
-                ->setPromotedWords($promotedWords)
                 ->setBody($body)
             ;
     }

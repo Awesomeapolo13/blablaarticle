@@ -112,6 +112,9 @@
     "gedmo/doctrine-extensions": {
         "version": "v3.3.0"
     },
+    "imagine/imagine": {
+        "version": "1.2.4"
+    },
     "knplabs/knp-components": {
         "version": "v3.2.0"
     },
@@ -121,14 +124,45 @@
     "laminas/laminas-code": {
         "version": "4.4.3"
     },
+    "league/flysystem": {
+        "version": "2.4.0"
+    },
     "league/html-to-markdown": {
         "version": "5.0.2"
+    },
+    "league/mime-type-detection": {
+        "version": "1.9.0"
+    },
+    "liip/imagine-bundle": {
+        "version": "2.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.8",
+            "ref": "d1227d002b70d1a1f941d91845fcd7ac7fbfc929"
+        },
+        "files": [
+            "config/packages/liip_imagine.yaml",
+            "config/routes/liip_imagine.yaml"
+        ]
     },
     "monolog/monolog": {
         "version": "2.3.5"
     },
     "nikic/php-parser": {
         "version": "v4.13.1"
+    },
+    "oneup/flysystem-bundle": {
+        "version": "4.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "4.0",
+            "ref": "3ae1b83985e89138f5443bbc2d9b8c074b497d49"
+        },
+        "files": [
+            "config/packages/oneup_flysystem.yaml"
+        ]
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -225,6 +259,9 @@
     },
     "symfony/event-dispatcher-contracts": {
         "version": "v2.4.0"
+    },
+    "symfony/expression-language": {
+        "version": "v5.2.12"
     },
     "symfony/filesystem": {
         "version": "v5.2.12"
@@ -347,6 +384,9 @@
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
+    },
+    "symfony/process": {
+        "version": "v5.2.12"
     },
     "symfony/property-access": {
         "version": "v5.2.12"

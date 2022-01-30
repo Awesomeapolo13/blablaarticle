@@ -22,11 +22,7 @@
                             }) }}
                             {# Выводим ошибки формы #}
                             {% if errors.count %}
-                                <div class="alert alert-danger">
-                                    {% for error in errors %}
-                                        {{ error.message }}
-                                    {% endfor %}
-                                </div>
+                                {% include 'components/error.html.twig' with {errors: errors} %}
                             {% endif %}
 
                             <div class="form-label-group">

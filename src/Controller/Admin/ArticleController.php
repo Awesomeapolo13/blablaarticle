@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Form\ArticleGenerationFormType;
+use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +39,36 @@ class ArticleController extends AbstractController
 
         return $this->render('admin/article/index.html.twig', [
             'articles' => $paginatedArticles,
+        ]);
+    }
+
+    /**
+     * Отображает страницу генерации статьи и обрабатывает форму генерации
+     *
+     * @Route("/admin/article/create", name="app_admin_article_create")
+     * @param Request $request
+     * @return Response
+     */
+    public function create(
+        Request $request
+    ): Response
+    {
+        $form = $this->createForm(ArticleGenerationFormType::class);
+        $form->handleRequest($request);
+
+        $success = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ArticleFormModel $articleModel */
+            $articleModel = $form->getData();
+            dump($articleModel);
+            $success = true;
+        }
+
+        return $this->render('admin/article/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'errors' => $form->getErrors(true), // ошибки в форме
+            'success' => $success
         ]);
     }
 

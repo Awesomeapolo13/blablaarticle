@@ -59,10 +59,12 @@ class ArticleController extends AbstractController
             //  полноценного функционала генерации статей
             $article = Article::create(
                 'demo',
+                ['demonstration'],
                 $articleDemoModel->title,
                 3,
+                $newArticle,
                 [['word' => $articleDemoModel->promotedWord, 'count' => 1]],
-                $newArticle
+                'Статья '
             );
             $em->persist($article);
             $em->flush();
