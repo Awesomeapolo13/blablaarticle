@@ -53,7 +53,7 @@ class Article
     /**
      * Краткое описание статьи
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      * @Assert\LessThanOrEqual(255)
      */
     private $description;
@@ -80,7 +80,7 @@ class Article
      *
      * Содержит html разметку и текст сгенерированной статьи
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
      */
     private $body;
@@ -217,6 +217,7 @@ class Article
      * Фабричный метод создания статьи
      *
      * @param string $theme - тематика
+     * @param array $keyWord - массив ключевого слова и его словоформ
      * @param string $title - заголовок
      * @param int $size - размер
      * @param array $promotedWords - продвигаемое слово
@@ -226,10 +227,11 @@ class Article
      */
     public static function create(
         string $theme,
+        array $keyWord,
         string $title,
         int $size,
-        array $promotedWords,
         string $body,
+        array $promotedWords = [],
         string $description = null
     ): Article
     {
@@ -245,9 +247,9 @@ class Article
 
         return $article
                 ->setTheme($theme)
+                ->setKeyWord($keyWord)
                 ->setTitle($title)
                 ->setSize($size)
-                ->setPromotedWords($promotedWords)
                 ->setBody($body)
             ;
     }

@@ -59,11 +59,12 @@ class ArticleController extends AbstractController
             //  полноценного функционала генерации статей
             $article = Article::create(
                 'demo',
+                ['demonstration'],
                 $articleDemoModel->title,
                 3,
-                [['word' => $articleDemoModel->promotedWord, 'count' => 1]],
                 $newArticle,
-                'Статья сгенерированная для демонстрации функционала генерации статей'
+                [['word' => $articleDemoModel->promotedWord, 'count' => 1]],
+                'Статья '
             );
             $em->persist($article);
             $em->flush();
@@ -72,8 +73,6 @@ class ArticleController extends AbstractController
             $cookie = new Cookie('articleId', $articleId, 2147483647, '/');
             $response->headers->setCookie($cookie);
         }
-
-//        dd($form->createView());
 
         return $this->render('article/index.html.twig',
             [
