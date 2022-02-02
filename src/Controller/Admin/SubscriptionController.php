@@ -23,6 +23,10 @@ class SubscriptionController extends AbstractController
         /**
          * ToDo:
          *      1) Создать сущность subscription, подумать что в нее должно входить.
+         *          - title
+         *          - price
+         *          - opportunities
+         *          Последний это json с ключами name:, isEnabled:, description:
          *      2) Создать миграцию для таблицы подписки
          *      3) Составить фикстуры для подписок
          *      4) Выполнить вывод всех подписок из базы на страницу и ограничить доступ к админке для неавторизованных

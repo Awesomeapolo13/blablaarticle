@@ -54,6 +54,12 @@ class User implements UserInterface
      */
     private $isEmailConfirmed;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Subscription::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $subscription;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -154,6 +160,18 @@ class User implements UserInterface
     public function setIsEmailConfirmed(bool $isEmailConfirmed): self
     {
         $this->isEmailConfirmed = $isEmailConfirmed;
+
+        return $this;
+    }
+
+    public function getSubscription(): ?Subscription
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(?Subscription $subscription): self
+    {
+        $this->subscription = $subscription;
 
         return $this;
     }
