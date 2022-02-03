@@ -25,6 +25,11 @@ abstract class BaseFixtures extends Fixture
      */
     protected $manager;
 
+    /**
+     * @var array - массив ссылок на уже созданные элементы
+     */
+    private $referencesIndex =[];
+
     public function load(ObjectManager $manager): void
     {
         $this->faker = Factory::create();
@@ -67,9 +72,44 @@ abstract class BaseFixtures extends Fixture
     protected function createMany(string $className, int $modelCount, callable $factory): void
     {
         for($i = 0; $i < $modelCount; $i++) {
-            $this->create($className, $factory);
+            $entity = $this->create($className, $factory);
+
+            /**
+             * В качестве первого параметра принимает id объекта (по нему его получают из системы), второй - его сущность.
+             * Теперь можно связывать сущности фикстур
+             */
+            $this->addReference("$className|$i", $entity);
         }
 
         $this->manager->flush();
+    }
+
+    /**
+     * Возвращает рандомный объект переданного класса
+     *
+     * @param $className
+     * @return object
+     * @throws \Exception
+     */
+    protected function getRandomReference($className): object
+    {
+        // Если данные внутри класса уже есть, если нет то заходит внутрь
+        if (!isset($this->referencesIndex[$className])) {
+            $this->referencesIndex[$className] = [];
+            // выбираем все связи из объекта referenceRepository
+            foreach ($this->referenceRepository->getReferences() as $key => $reference) {
+                // проверяем содержит ли ключ этой связи имя класса
+                if (strpos($key, $className . '|') === 0) {
+                    // если да то собираем массив из элементов, указывающих на нужный класс
+                    $this->referencesIndex[$className][] = $key;
+                }
+            }
+        }
+        // если referencesIndex пустой, то исключение
+        if (empty($this->referencesIndex[$className])) {
+            throw new \Exception('Не найдены ссылки на класс ' . $className);
+        }
+
+        return $this->getReference($this->faker->randomElement($this->referencesIndex[$className]));
     }
 }
