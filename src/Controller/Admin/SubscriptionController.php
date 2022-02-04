@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Repository\SubscriptionRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,27 +15,25 @@ class SubscriptionController extends AbstractController
      * Отображает страницу с информацией о подписке пользователя
      *
      * @Route("/admin/subscription", name="app_admin_subscription" )
-     * @param Request $request
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @param SubscriptionRepository $subscriptionRepository
      * @return Response
      */
-    public function index(
-        Request $request
-    ): Response
+    public function index(SubscriptionRepository $subscriptionRepository): Response
     {
         /**
          * ToDo:
-         *      1) Создать сущность subscription, подумать что в нее должно входить.
-         *          - title
-         *          - price
-         *          - opportunities
-         *          Последний это json с ключами name:, isEnabled:, description:
-         *      2) Создать миграцию для таблицы подписки
-         *      3) Составить фикстуры для подписок
-         *      4) Выполнить вывод всех подписок из базы на страницу и ограничить доступ к админке для неавторизованных
+         *      1) Выполнить вывод всех подписок из базы на страницу и ограничить доступ к админке для неавторизованных
          *          пользователей
-         *      5) Реализовать механизм изменения подписки в соостветствии с ТЗ
+         *      2) Реализовать механизм изменения подписки в соостветствии с ТЗ
          */
+        $user = $this->getUser();
 
-        return $this->render('admin/subscription/index.html.twig', []);
+        $subscriptions = $subscriptionRepository->findAll();
+
+        return $this->render('admin/subscription/index.html.twig', [
+            'subscriptions' => $subscriptions,
+            'userSubscriptionId' => ($user->getSubscription())->getId(),
+        ]);
     }
 }

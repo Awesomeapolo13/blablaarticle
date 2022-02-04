@@ -3,11 +3,16 @@
 namespace App\DataFixtures;
 
 use App\Entity\Subscription;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Класс фикстур для подписок
+ */
 class SubscriptionFixtures extends BaseFixtures
 {
+    /**
+     * @var array[] - дефолтные подписки для фикстур
+     */
     private $defaultSubscription = [
         [
             'name' => 'FREE',

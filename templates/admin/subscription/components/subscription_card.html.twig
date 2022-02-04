@@ -1,0 +1,30 @@
+<div class="col-lg-4">
+    <div class="card mb-5 mb-lg-0">
+        <div class="card-body">
+            <h5 class="card-title text-muted text-uppercase text-center">{{ subscription.name }}</h5>
+            <h6 class="card-price text-center">${{ subscription.price|number_format }}<span class="period">/неделя</span></h6>
+            <hr>
+
+            <ul class="fa-ul">
+                {% for opportunity in subscription.opportunities %}
+                    {% if opportunity.isEnabled %}
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>{{ opportunity.description }}
+                        </li>
+                    {% else %}
+                        <li class="text-muted">
+                            <span class="fa-li"><i class="fas fa-times"></i></span>{{ opportunity.description }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if userSubscriptionId == subscription.id %}
+            <a href="#" class="btn btn-block btn-secondary text-uppercase" disabled>Текущий
+                уровень</a>
+            {% endif %}
+            {% if userSubscriptionId < subscription.id %}
+            <a href="#" class="btn btn-block btn-primary text-uppercase">Оформить</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
