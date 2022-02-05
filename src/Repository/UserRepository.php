@@ -49,7 +49,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Метод получения всех пользователем с истекшим сроком подписки
+     * Метод получения всех пользователем с истекшим сроком подписки кроме FREE
      *
      * @param QueryBuilder|null $qb
      * @return int|mixed|string
@@ -57,8 +57,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findAllExpiredUsers(QueryBuilder $qb = null)
     {
         return $this->getOrCreateQueryBuilder($qb)
+            ->leftJoin('u.subscription', 's')
+            ->addSelect('s')
             ->setParameter('today', new \DateTime())
             ->andWhere('u.expireAt < :today')
+            ->setParameter('subscriptionName', 'FREE')
+            ->andWhere('s.name != :subscriptionName')
             ->getQuery()
             ->getResult()
             ;
