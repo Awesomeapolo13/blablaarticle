@@ -5,16 +5,23 @@
     <div class="row">
 
         <div class="col-xl-8">
-            {# ToDo: Отображать, после успешной подписки #}
-            <div class="alert alert-success" role="alert">
-                Подписка Plus оформлена, до 01.01.1970
-            </div>
+            {% if change %}
+                <div class="alert alert-success" role="alert">
+                    Подписка {{ userSubscription.name }} оформлена, до {{ expireAt|date("d.m.Y") }}
+                </div>
+            {% endif %}
             <section class="pricing py-2 row">
                 <div class="container">
                     <div class="row">
+                        {% if subscriptions %}
                         {% for subscription in subscriptions %}
                             {% include 'admin/subscription/components/subscription_card.html.twig' with {subscription: subscription} %}
                         {% endfor %}
+                        {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Список подписок приложения пуст
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </section>

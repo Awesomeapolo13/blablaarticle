@@ -2,7 +2,8 @@
     <div class="card mb-5 mb-lg-0">
         <div class="card-body">
             <h5 class="card-title text-muted text-uppercase text-center">{{ subscription.name }}</h5>
-            <h6 class="card-price text-center">${{ subscription.price|number_format }}<span class="period">/неделя</span></h6>
+            <h6 class="card-price text-center">${{ subscription.price|number_format }}<span
+                        class="period">/неделя</span></h6>
             <hr>
 
             <ul class="fa-ul">
@@ -18,12 +19,13 @@
                     {% endif %}
                 {% endfor %}
             </ul>
-            {% if userSubscriptionId == subscription.id %}
-            <a href="#" class="btn btn-block btn-secondary text-uppercase" disabled>Текущий
-                уровень</a>
+            {% if userSubscription.price == subscription.price %}
+                <a href="#" class="btn btn-block btn-secondary text-uppercase" disabled>Текущий
+                    уровень</a>
             {% endif %}
-            {% if userSubscriptionId < subscription.id %}
-            <a href="#" class="btn btn-block btn-primary text-uppercase">Оформить</a>
+            {% if userSubscription.price < subscription.price %}
+                <a href="{{ path('app_admin_subscription_change', {id: subscription.id}) }}"
+                   class="btn btn-block btn-primary text-uppercase">Оформить</a>
             {% endif %}
         </div>
     </div>
