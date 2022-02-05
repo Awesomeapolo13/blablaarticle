@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Event\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
+use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,7 +45,8 @@ class SecurityController extends AbstractController
         Request                      $request,
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface       $em,
-        EventDispatcherInterface     $dispatcher
+        EventDispatcherInterface     $dispatcher,
+        SubscriptionRepository       $subscriptionRepository
     ): Response
     {
         // переменная для вывода сообщения об успешной регистрации
@@ -58,6 +60,7 @@ class SecurityController extends AbstractController
             /** @var UserRegistrationFormModel $userModel */
             $userModel = $form->getData();
             $user = new User();
+            $subscription = $subscriptionRepository->findOneBy(['name' => 'FREE']);
 
             $user
                 ->setFirstName($userModel->email)
@@ -67,6 +70,8 @@ class SecurityController extends AbstractController
                     $userModel->planePassword
                 ))
                 ->setIsEmailConfirmed(false)
+                ->setExpireAt(new \DateTime('+1 week'))
+                ->setSubscription($subscription)
             ;
 
             $em->persist($user);
