@@ -7,6 +7,7 @@ parameters:
     router.request_context.host: '%env(SITE_BASE_HOST)%'
     # шаблоны email рассылок
     confirm_email.email.template: 'email/%env(CONFIRM_EMAIL_TEMPLATE)%'
+    user_change_subscription.email.template: 'email/%env(USER_CHANGE_SUBSCRIPTION)%'
 
 services:
     _defaults:
@@ -29,8 +30,10 @@ services:
         namespace: App\Mailer\
         resource: '../src/Mailer/'
         tags: ['app_mailer']
-    # Регистрация переменной $confirmEmailMailer как экземпляра класса ConfirmEmailMailer
+    # Регистрация переменной $confirmEmailMailer как экземпляра класса BaseMailer
     App\Mailer\BaseMailer $confirmEmailMailer: '@App\Mailer\ConfirmEmailMailer'
+    # Регистрация переменной $subscriptionMailer как экземпляра класса BaseMailer
+    App\Mailer\BaseMailer $subscriptionMailer: '@App\Mailer\SubscriptionMailer'
 
     # Сервисы подписчиков на события
     app.event_subscriber:
@@ -38,8 +41,13 @@ services:
         resource: '../src/EventSubscriber/'
         tags: ['app_event_subscriber']
 
+    # Сервис для отправки ссылок на подтверждение
     app.mailer.confirm_email:
         class: App\Mailer\ConfirmEmailMailer
+
+    # Сервис для отправки сообщений, касающихся подписок
+    app.mailer.subscription:
+        class: App\Mailer\SubscriptionMailer
 
     # Сервисы генерации статьи
     app.article_generation_strategy:

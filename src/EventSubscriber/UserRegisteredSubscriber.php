@@ -23,11 +23,12 @@ class UserRegisteredSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * Вызывает email-рассылку для подтверждения почты пользователя после регистрации
+     *
      * @throws TransportExceptionInterface
      */
     public function onUserRegistered(UserRegisteredEvent $event): void
     {
-
         $this->mailer->sendConfirmEmailLetter(
             $event->getUser(),
             base64_encode(json_encode(['email' => $event->getUser()->getEmail()]))
