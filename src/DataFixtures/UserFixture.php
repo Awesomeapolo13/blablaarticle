@@ -43,6 +43,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
                 ->setPassword($this->passwordEncoder->encodePassword($user, '123456'))
                 ->setIsEmailConfirmed($this->faker->boolean(70))
                 ->setSubscription($this->getRandomReference(Subscription::class))
+                ->setExpireAt($this->faker->dateTimeThisYear('+1 week'))
             ;
 
             $manager->persist($user);
@@ -87,6 +88,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
                ->setPassword($this->passwordEncoder->encodePassword($user, $password))
                ->setIsEmailConfirmed($isEmailConfirmed)
                ->setSubscription($this->getRandomReference(Subscription::class))
+               ->setExpireAt($this->faker->dateTimeBetween('now', '+1 week'))
            ;
 
            $manager->persist($user);

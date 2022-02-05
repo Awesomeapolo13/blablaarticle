@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,6 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    use TimestampableEntity;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -53,6 +57,27 @@ class User implements UserInterface
      * @ORM\Column(type="boolean")
      */
     private $isEmailConfirmed;
+
+    /**
+     * Дата истечения подписки
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $expireAt;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     */
+    protected $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Subscription::class, inversedBy="users")
@@ -172,6 +197,25 @@ class User implements UserInterface
     public function setSubscription(?Subscription $subscription): self
     {
         $this->subscription = $subscription;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getExpireAt(): \DateTime
+    {
+        return $this->expireAt;
+    }
+
+    /**
+     * @param \DateTime $expireAt
+     * @return $this
+     */
+    public function setExpireAt(\DateTime $expireAt): User
+    {
+        $this->expireAt = $expireAt;
 
         return $this;
     }

@@ -20,7 +20,16 @@ final class Version20220131203401 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('CREATE SEQUENCE subscription_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE subscription (id INT NOT NULL, name VARCHAR(255) NOT NULL, price NUMERIC(10, 2) NOT NULL, opportunities TEXT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql(
+            'CREATE TABLE subscription (
+                 id INT NOT NULL, 
+                 name VARCHAR(255) NOT NULL, 
+                 price NUMERIC(10, 2) NOT NULL, 
+                 opportunities TEXT NOT NULL, 
+                 created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
+                 updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
+                 PRIMARY KEY(id))'
+        );
         $this->addSql('COMMENT ON COLUMN subscription.opportunities IS \'(DC2Type:array)\'');
     }
 

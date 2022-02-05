@@ -14,14 +14,25 @@ final class Version20211116203639 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Создает таблицу для хранения пользователей';
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE "user_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE "user" (id INT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, first_name VARCHAR(255) DEFAULT NULL, second_name VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql(
+            'CREATE TABLE "user" (
+                 id INT NOT NULL, 
+                 email VARCHAR(180) NOT NULL, 
+                 roles JSON NOT NULL, 
+                 password VARCHAR(255) NOT NULL, 
+                 first_name VARCHAR(255) NOT NULL,  
+                 is_email_confirmed BOOLEAN NOT NULL,
+                 created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
+                 updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
+                 PRIMARY KEY(id))'
+        );
         $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
     }
 
