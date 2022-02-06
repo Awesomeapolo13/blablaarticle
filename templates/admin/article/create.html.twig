@@ -11,7 +11,7 @@
             {% if errors.count %}
                 {% include 'components/error.html.twig' with {errors: errors} %}
                 <div class="alert alert-danger" role="alert">
-                    Превышен лимит создания статей, чтобы снять лимит <a href="dashboard_subscription.html">Улучшите
+                    Превышен лимит создания статей, чтобы снять лимит <a href="{{ path('app_admin_subscription') }}">Улучшите
                         подписку</a>
                 </div>
             {% endif %}
