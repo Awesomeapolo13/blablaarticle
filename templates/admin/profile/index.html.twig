@@ -1,0 +1,44 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">Профиль</h1>
+    <div class="row">
+
+        <div class="col-xl-6">
+            <div class="alert alert-success" role="alert">
+                Профиль успешно изменен
+            </div>
+
+            <div class="card my-4">
+                <div class="card-body">
+
+                    <p>Ваш API токен: asft21sfsvzxvghk1912t1g12m</p>
+                    <button class="btn btn-outline-primary">Создать новый</button>
+                </div>
+            </div>
+
+            <form>
+                <div class="form-label-group">
+                    <input type="text" id="inputName" class="form-control" placeholder="Ваше имя" required value="Волков Михаил" autofocus>
+                    <label for="inputName">Ваше имя</label>
+                </div>
+                <div class="form-label-group">
+                    <input type="email" id="inputEmail" class="form-control" placeholder="Ваш Email" required value="email@example.com">
+                    <label for="inputEmail">Ваш Email</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
+                    <label for="inputPassword">Пароль</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Подтверждение пароля" required>
+                    <label for="inputConfirmPassword">Подтверждение пароля</label>
+                </div>
+
+                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Изменить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
