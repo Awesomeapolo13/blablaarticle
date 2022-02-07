@@ -12,14 +12,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserRegistrationFormModel
 {
     /**
-     * @var string - имя нового пользователя
+     * Имя нового пользователя
+     *
+     * @var string
      * @Assert\NotBlank(message="Заполните поле имя")
      * @Assert\Length(min="2", minMessage="Минимальная длина имени 2 символа")
      */
     public $firstName;
 
     /**
-     * @var string - электронная почта
+     * Электронная почта
+     *
+     * @var string
      * @Assert\NotBlank()
      * @Assert\Email()
      * @UniqueUser()
@@ -27,16 +31,44 @@ class UserRegistrationFormModel
     public $email;
 
     /**
-     * @var string - пароль
+     * Пароль
+     *
+     * @var string
      * @Assert\NotBlank(message="Введите пароль")
      * @Assert\Length(min="6", minMessage="Минимальная длина пароля 6 символов")
      */
     public $planePassword;
 
     /**
-     * @var string - пароль для подтверждения
+     * Повторенный пароль для подтверждения
+     *
+     * @var string
      * @Assert\NotBlank(message="Введите пароль")
      * @ConfirmPassword(propertyPath="planePassword")
      */
     public $confirmPassword;
+
+    /**
+     * Фабричный метод
+     *
+     * @param string $firstName
+     * @param string $email
+     * @param string $planePassword
+     * @return UserRegistrationFormModel
+     */
+    public static function create(
+        string $firstName,
+        string $email,
+        string $planePassword = ''
+    )
+    {
+        $model = new self();
+
+        $model->firstName = $firstName;
+        $model->email = $email;
+        $model->planePassword = $planePassword;
+        $model->confirmPassword = $planePassword;
+
+        return $model;
+    }
 }

@@ -9,6 +9,7 @@ use App\Form\UserRegistrationFormType;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
+use App\Security\Service\UserDataService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -46,39 +47,20 @@ class SecurityController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface       $em,
         EventDispatcherInterface     $dispatcher,
-        SubscriptionRepository       $subscriptionRepository
+        SubscriptionRepository       $subscriptionRepository,
+        UserDataService              $userDataService
     ): Response
     {
         // переменная для вывода сообщения об успешной регистрации
         $success = false;
         $form = $this->createForm(UserRegistrationFormType::class);
-        // обрабатываем запрос
-        $form->handleRequest($request);
+        $user = $userDataService->handleAndSaveUserData($request, $form, $passwordEncoder, $em, $subscriptionRepository);
 
-        // если форма отправлена и данные ее валидны, начинаем их обработку
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UserRegistrationFormModel $userModel */
-            $userModel = $form->getData();
-            $user = new User();
-            $subscription = $subscriptionRepository->findOneBy(['name' => 'FREE']);
-
-            $user
-                ->setFirstName($userModel->email)
-                ->setEmail($userModel->email)
-                ->setPassword($passwordEncoder->encodePassword(
-                    $user,
-                    $userModel->planePassword
-                ))
-                ->setIsEmailConfirmed(false)
-                ->setExpireAt(new \DateTime('+1 week'))
-                ->setSubscription($subscription)
-            ;
-
-            $em->persist($user);
-            $em->flush();
+        if ($user) {
             $dispatcher->dispatch(new UserRegisteredEvent($user));
             $success = true;
         }
+
         // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
         // ошибок отдельных полей
         $errors = $form->getErrors(true);
@@ -108,19 +90,19 @@ class SecurityController extends AbstractController
      * @throws \Exception
      */
     public function confirmEmail(
-        Request $request,
-        GuardAuthenticatorHandler    $guard,
-        LoginFormAuthenticator       $authenticator,
-        EntityManagerInterface       $em,
-        UserRepository $userRepository
+        Request                   $request,
+        GuardAuthenticatorHandler $guard,
+        LoginFormAuthenticator    $authenticator,
+        EntityManagerInterface    $em,
+        UserRepository            $userRepository
     ): ?Response
     {
         // проверяем корректна ли ссылка
-         if (empty($request->query->get('hash'))) {
-             //ToDo: спросить, что делать, если сгенерирует некорректную ссылку. Быть может стоит при повторной регистрации
-             // генерить новую, если пользователь не подтвердил email?
-             throw new \Exception('Некорректная ссылка для подтверждение email. Обратитесь в службу поддержки.');
-         }
+        if (empty($request->query->get('hash'))) {
+            //ToDo: спросить, что делать, если сгенерирует некорректную ссылку. Быть может стоит при повторной регистрации
+            // генерить новую, если пользователь не подтвердил email?
+            throw new \Exception('Некорректная ссылка для подтверждение email. Обратитесь в службу поддержки.');
+        }
         $email = json_decode(base64_decode($request->query->get('hash')), true)['email'];
         $user = $userRepository->findOneBy(['email' => $email]);
         // проверяем есть ли такой пользователь

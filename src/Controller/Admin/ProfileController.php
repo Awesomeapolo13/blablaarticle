@@ -2,11 +2,18 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\User;
+use App\Form\Model\UserRegistrationFormModel;
+use App\Form\UserRegistrationFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Контроллер отвечающий за работу с профилем пользователя
+ */
 class ProfileController extends AbstractController
 {
     /**
@@ -15,7 +22,7 @@ class ProfileController extends AbstractController
      * @Route("/admin/profile", name="app_admin_profile")
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         /**
          * ToDo:
@@ -25,6 +32,19 @@ class ProfileController extends AbstractController
          *      3) Реализовать частичное изменение данных, не измененные данные в БД отправляться не должны
          */
 
-        return $this->render('admin/profile/index.html.twig', []);
+        $user = $this->getUser();
+
+        $userModel = UserRegistrationFormModel::create($user->getFirstName(), $user->getEmail());
+
+        $form = $this->createForm(UserRegistrationFormType::class, $userModel);
+
+        $form->handleRequest($request);
+
+        $errors = $form->getErrors(true);
+
+        return $this->render('admin/profile/index.html.twig', [
+            'userForm' => $form->createView(),
+            'errors' => $errors,
+        ]);
     }
 }

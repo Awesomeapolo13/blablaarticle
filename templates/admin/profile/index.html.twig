@@ -8,6 +8,10 @@
             <div class="alert alert-success" role="alert">
                 Профиль успешно изменен
             </div>
+            {# Выводим ошибки формы #}
+            {% if errors.count %}
+                {% include 'components/error.html.twig' with {errors: errors} %}
+            {% endif %}
 
             <div class="card my-4">
                 <div class="card-body">
@@ -17,28 +21,45 @@
                 </div>
             </div>
 
-            <form>
-                <div class="form-label-group">
-                    <input type="text" id="inputName" class="form-control" placeholder="Ваше имя" required value="Волков Михаил" autofocus>
-                    <label for="inputName">Ваше имя</label>
-                </div>
-                <div class="form-label-group">
-                    <input type="email" id="inputEmail" class="form-control" placeholder="Ваш Email" required value="email@example.com">
-                    <label for="inputEmail">Ваш Email</label>
-                </div>
+            {{ form_start(userForm) }}
+            <div class="form-label-group">
+                {{ form_widget(userForm.firstName, {
+                    attr: {placeholder: 'Ваше имя'}
+                }) }}
+                {{ form_label(userForm.firstName, 'Ваше имя', {
+                    errors: null
+                }) }}
+            </div>
+            <div class="form-label-group">
+                {{ form_widget(userForm.email, {
+                    attr: {placeholder: 'Ваш Email'}
+                }) }}
+                {{ form_label(userForm.email, 'Ваш Email', {
+                    errors: null
+                }) }}
+            </div>
 
-                <div class="form-label-group">
-                    <input type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
-                    <label for="inputPassword">Пароль</label>
-                </div>
+            <div class="form-label-group">
+                {{ form_widget(userForm.planePassword, {
+                    attr: {placeholder: 'Пароль'}
+                }) }}
+                {{ form_label(userForm.planePassword, 'Пароль', {
+                    errors: null
+                }) }}
+            </div>
 
-                <div class="form-label-group">
-                    <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Подтверждение пароля" required>
-                    <label for="inputConfirmPassword">Подтверждение пароля</label>
-                </div>
+            <div class="form-label-group">
+                {{ form_widget(userForm.confirmPassword, {
+                    attr: {placeholder: 'Подтверждение пароля'},
+                    errors: false
+                }) }}
+                {{ form_label(userForm.confirmPassword, 'Подтверждение пароля', {
+                    errors: null
+                }) }}
+            </div>
 
-                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Изменить</button>
-            </form>
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Изменить</button>
+            {{ form_end(userForm) }}
         </div>
     </div>
 {% endblock %}
