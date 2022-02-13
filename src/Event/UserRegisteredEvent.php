@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -11,19 +11,19 @@ use Symfony\Contracts\EventDispatcher\Event;
 class UserRegisteredEvent extends Event
 {
     /**
-     * @var User
+     * @var UserInterface
      */
     private $user;
 
-    public function __construct(User $user)
+    public function __construct(UserInterface $user)
     {
         $this->user = $user;
     }
 
     /**
-     * @return User
+     * @return UserInterface
      */
-    public function getUser(): User
+    public function getUser(): UserInterface
     {
         return $this->user;
     }

@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Event\UserRegisteredEvent;
-use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
@@ -44,9 +43,7 @@ class SecurityController extends AbstractController
      */
     public function register(
         Request                      $request,
-        UserPasswordEncoderInterface $passwordEncoder,
         EntityManagerInterface       $em,
-        EventDispatcherInterface     $dispatcher,
         SubscriptionRepository       $subscriptionRepository,
         UserDataService              $userDataService
     ): Response
@@ -54,11 +51,21 @@ class SecurityController extends AbstractController
         // переменная для вывода сообщения об успешной регистрации
         $success = false;
         $form = $this->createForm(UserRegistrationFormType::class);
-        $user = $userDataService->handleAndSaveUserData($request, $form, $passwordEncoder, $em, $subscriptionRepository);
+        $user = new User();
 
-        if ($user) {
-            $dispatcher->dispatch(new UserRegisteredEvent($user));
-            $success = true;
+        // обрабатываем запрос
+        $form->handleRequest($request);
+        // если форма отправлена и данные ее валидны, начинаем их обработку
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $userDataService->handleAndSaveUserData(
+                $request,
+                $form,
+                $em,
+                $subscriptionRepository,
+                $user
+            );
+
+            $success = isset($user);
         }
 
         // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения

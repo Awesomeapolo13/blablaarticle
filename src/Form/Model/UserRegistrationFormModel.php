@@ -26,7 +26,6 @@ class UserRegistrationFormModel
      * @var string
      * @Assert\NotBlank()
      * @Assert\Email()
-     * @UniqueUser()
      */
     public $email;
 
@@ -34,7 +33,6 @@ class UserRegistrationFormModel
      * Пароль
      *
      * @var string
-     * @Assert\NotBlank(message="Введите пароль")
      * @Assert\Length(min="6", minMessage="Минимальная длина пароля 6 символов")
      */
     public $planePassword;
@@ -43,8 +41,11 @@ class UserRegistrationFormModel
      * Повторенный пароль для подтверждения
      *
      * @var string
-     * @Assert\NotBlank(message="Введите пароль")
      * @ConfirmPassword(propertyPath="planePassword")
+     * @Assert\Expression(
+     *     "this.planePassword === this.confirmPassword",
+     *     message="Пароль не соответствует введенному"
+     * )
      */
     public $confirmPassword;
 
@@ -60,7 +61,7 @@ class UserRegistrationFormModel
         string $firstName,
         string $email,
         string $planePassword = ''
-    )
+    ): UserRegistrationFormModel
     {
         $model = new self();
 
