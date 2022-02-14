@@ -7,12 +7,16 @@ use App\Validator\UniqueUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Класс формы для регистрации пользователя и изменения его персональных данных
+ */
 class UserRegistrationFormType extends AbstractType
 {
     /**
@@ -28,26 +32,16 @@ class UserRegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Задаем валидацию для полей пароля и его подтверждения
-        $passwordConstraints = ['required' => false];
-        $confirmPasswordConstraints = ['required' => false];
-        $emailConstraint = [];
+        $passwordRequired = false;
+        $passwordConstraints = [];
+        $emailConstraints = [];
         // Пробуем получить текущего авторизованного пользователя
         $user = $this->security->getUser();
         if (!isset($user)) {
             // Если не можем получить пользователя, значит регистрируется впервые, необходимо включить дополнительную валидацию этих полей
-            $passwordConstraints = [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(['message' => 'Введите пароль']),
-                ]
-            ];
-            $confirmPasswordConstraints = [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(['message' => 'Введите пароль для подтверждения']),
-                ]
-            ];
-            $emailConstraint = [
+            $passwordRequired = true;
+            $passwordConstraints[] = new NotBlank(['message' => 'Введите пароль']);
+            $emailConstraints = [
                 'constraints' => [
                     new UniqueUser(),
                 ]
@@ -56,9 +50,13 @@ class UserRegistrationFormType extends AbstractType
 
         $builder
             ->add('firstName', TextType::class)
-            ->add('email', EmailType::class, $emailConstraint)
-            ->add('planePassword', PasswordType::class, $passwordConstraints)
-            ->add('confirmPassword', PasswordType::class, $confirmPasswordConstraints)
+            ->add('email', EmailType::class, $emailConstraints)
+            ->add('planePassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'Пароль не подтвержден',
+                'required' => $passwordRequired,
+                'constraints' => $passwordConstraints,
+            ])
         ;
     }
 

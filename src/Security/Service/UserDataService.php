@@ -58,8 +58,6 @@ class UserDataService
         UserInterface                $user
     )
     {
-//        dd($this->isNewEntity($user));
-
         /** @var UserRegistrationFormModel $userModel */
         $userModel = $form->getData();
         // Если новый пользователь (регистрация), то задаем все свойства и сохраняем пользователя

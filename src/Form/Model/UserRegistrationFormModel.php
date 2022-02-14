@@ -38,18 +38,6 @@ class UserRegistrationFormModel
     public $planePassword;
 
     /**
-     * Повторенный пароль для подтверждения
-     *
-     * @var string
-     * @ConfirmPassword(propertyPath="planePassword")
-     * @Assert\Expression(
-     *     "this.planePassword === this.confirmPassword",
-     *     message="Пароль не соответствует введенному"
-     * )
-     */
-    public $confirmPassword;
-
-    /**
      * Фабричный метод
      *
      * @param string $firstName
@@ -68,7 +56,6 @@ class UserRegistrationFormModel
         $model->firstName = $firstName;
         $model->email = $email;
         $model->planePassword = $planePassword;
-        $model->confirmPassword = $planePassword;
 
         return $model;
     }

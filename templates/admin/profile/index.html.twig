@@ -5,12 +5,9 @@
     <div class="row">
 
         <div class="col-xl-6">
-            <div class="alert alert-success" role="alert">
-                Профиль успешно изменен
-            </div>
-            {# Выводим ошибки формы #}
-            {% if errors.count %}
-                {% include 'components/error.html.twig' with {errors: errors} %}
+            {# Сообщение об успешном изменении данных #}
+            {% if success %}
+                {% include 'components/success.html.twig' with {message: 'Профиль успешно изменен'} %}
             {% endif %}
 
             <div class="card my-4">
@@ -21,45 +18,10 @@
                 </div>
             </div>
 
-            {{ form_start(userForm) }}
-            <div class="form-label-group">
-                {{ form_widget(userForm.firstName, {
-                    attr: {placeholder: 'Ваше имя'}
-                }) }}
-                {{ form_label(userForm.firstName, 'Ваше имя', {
-                    errors: null
-                }) }}
-            </div>
-            <div class="form-label-group">
-                {{ form_widget(userForm.email, {
-                    attr: {placeholder: 'Ваш Email'}
-                }) }}
-                {{ form_label(userForm.email, 'Ваш Email', {
-                    errors: null
-                }) }}
-            </div>
-
-            <div class="form-label-group">
-                {{ form_widget(userForm.planePassword, {
-                    attr: {placeholder: 'Пароль'}
-                }) }}
-                {{ form_label(userForm.planePassword, 'Пароль', {
-                    errors: null
-                }) }}
-            </div>
-
-            <div class="form-label-group">
-                {{ form_widget(userForm.confirmPassword, {
-                    attr: {placeholder: 'Подтверждение пароля'},
-                    errors: false
-                }) }}
-                {{ form_label(userForm.confirmPassword, 'Подтверждение пароля', {
-                    errors: null
-                }) }}
-            </div>
-
-            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Изменить</button>
-            {{ form_end(userForm) }}
+            {% include 'form/user_form.html.twig' with {
+                form: userForm,
+                buttonName: 'Изменить'
+            } %}
         </div>
     </div>
 {% endblock %}

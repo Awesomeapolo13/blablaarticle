@@ -13,60 +13,18 @@
                         <h5 class="card-title text-center">Регистрация</h5>
                         {# Выводим сообщение об успешной решистрации #}
                         {% if success %}
-                            <div class="alert alert-success" role="alert">
-                                Для завершения регистрации подтвердите ваш email
-                            </div>
+                        {% include 'components/success.html.twig' with {
+                            message: 'Для завершения регистрации подтвердите ваш email'
+                        } %}
                         {% else %}
-                            {{ form_start(registrationForm, {
-                                attr: {class: 'form-signin'},
-                            }) }}
-                            {# Выводим ошибки формы #}
-                            {% if errors.count %}
-                                {% include 'components/error.html.twig' with {errors: errors} %}
-                            {% endif %}
-
-                            <div class="form-label-group">
-                                {{ form_widget(registrationForm.firstName, {
-                                    attr: {placeholder: 'Ваше имя'}
-                                }) }}
-                                {{ form_label(registrationForm.firstName, 'Ваше имя', {
-                                    errors: null
-                                }) }}
-                            </div>
-                            <div class="form-label-group">
-                                {{ form_widget(registrationForm.email, {
-                                    attr: {placeholder: 'Ваш Email'}
-                                }) }}
-                                {{ form_label(registrationForm.email, 'Ваш Email', {
-                                    errors: null
-                                }) }}
-                            </div>
-
-                            <div class="form-label-group">
-                                {{ form_widget(registrationForm.planePassword, {
-                                    attr: {placeholder: 'Пароль'}
-                                }) }}
-                                {{ form_label(registrationForm.planePassword, 'Пароль', {
-                                    errors: null
-                                }) }}
-                            </div>
-
-                            <div class="form-label-group">
-                                {{ form_widget(registrationForm.confirmPassword, {
-                                    attr: {placeholder: 'Подтверждение пароля'},
-                                    errors: false
-                                }) }}
-                                {{ form_label(registrationForm.confirmPassword, 'Подтверждение пароля', {
-                                    errors: null
-                                }) }}
-                            </div>
-
-                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Регистрация
-                            </button>
-                            <hr class="my-4">
-                            <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
-                            {{ form_end(registrationForm) }}
+                            {% include 'form/user_form.html.twig' with {
+                                form: registrationForm,
+                                formClass: 'form-signin',
+                                buttonName: 'Регистрация'
+                            } %}
                         {% endif %}
+                        <hr class="my-4">
+                        <div class="text-center"><a href="{{ path('app_login') }}">Я уже зарегистрирован</a></div>
                     </div>
                 </div>
             </div>
