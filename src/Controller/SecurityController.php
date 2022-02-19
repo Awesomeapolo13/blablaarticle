@@ -3,26 +3,22 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Event\UserRegisteredEvent;
 use App\Form\UserRegistrationFormType;
-use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
-use App\Security\Service\UserDataService;
+use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
     /**
-     * Отображает страницу авторизации пользователя и выводит оишибки авторизации
+     * Отображает страницу авторизации пользователя и выводит ошибки авторизации
      *
      * @Route("/login", name="app_login")
      */
@@ -42,31 +38,17 @@ class SecurityController extends AbstractController
      * @Route("/register", name="app_register")
      */
     public function register(
-        Request                      $request,
-        EntityManagerInterface       $em,
-        SubscriptionRepository       $subscriptionRepository,
-        UserDataService              $userDataService
+        Request                  $request,
+        UserDataHandlerInterface $registrationDataHandler
     ): Response
     {
         // переменная для вывода сообщения об успешной регистрации
-        $success = false;
         $form = $this->createForm(UserRegistrationFormType::class);
         $user = new User();
 
-        // обрабатываем запрос
-        $form->handleRequest($request);
-        // если форма отправлена и данные ее валидны, начинаем их обработку
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $userDataService->handleAndSaveUserData(
-                $request,
-                $form,
-                $em,
-                $subscriptionRepository,
-                $user
-            );
+        $user = $registrationDataHandler->handleAndSaveUserData($request, $form, $user);
 
-            $success = isset($user);
-        }
+        $success = isset($user);
 
         // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
         // ошибок отдельных полей

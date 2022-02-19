@@ -6,7 +6,8 @@ parameters:
     router.request_context.scheme: '%env(SITE_BASE_SCHEME)%'
     router.request_context.host: '%env(SITE_BASE_HOST)%'
     # шаблоны email рассылок
-    confirm_email.email.template: 'email/%env(CONFIRM_EMAIL_TEMPLATE)%'
+    confirm_email_after_registration.email.template: 'email/%env(CONFIRM_EMAIL_AFTER_REGISTRATION_TEMPLATE)%'
+    confirm_email_after_change.email.template: 'email/%env(CONFIRM_EMAIL_AFTER_CHANGE)%'
     user_change_subscription.email.template: 'email/%env(USER_CHANGE_SUBSCRIPTION)%'
 
 services:
@@ -25,6 +26,18 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
+
+    App\Controller\SecurityController:
+        tags: [ 'controller.service_arguments' ]
+        bind:
+            $registrationDataHandler: '@app.registration_data_handler'
+
+    App\Controller\Admin\ProfileController:
+        tags: [ 'controller.service_arguments' ]
+        bind:
+            $changeUserDataHandler: '@app.change_user_data_handler'
+
+
     # Сервисы email рассылок
     app.mailer:
         namespace: App\Mailer\
@@ -63,3 +76,17 @@ services:
         class: App\ArticleGeneration\PromotedWordInserter
 
     Twig\Extension\StringLoaderExtension:
+
+    # Обработчики пользовательских данных
+    app.user_data_handler:
+        namespace: App\Security\Service\UserDataHandler\
+        resource: '../src/Security/Service/UserDataHandler'
+        tags: ['apps_user_data_handler']
+
+    # Обработчики данных при регистрации нового пользователя
+    app.registration_data_handler:
+        class: App\Security\Service\UserDataHandler\RegistrationDataHandler
+
+    # Обработчик данных при изменении пользовательских данных через форму в профиле
+    app.change_user_data_handler:
+        class: App\Security\Service\UserDataHandler\ChangeUserDataHandler
