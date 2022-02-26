@@ -7,9 +7,11 @@
         <div class="col-xl-6">
             {# Сообщение об успешном изменении данных #}
             {% if success %}
-                {% include 'components/success.html.twig' with {message: 'Профиль успешно изменен'} %}
+                {% include 'components/success.html.twig' with {message: 'Профиль успешно изменен. Если Вы изменили электронную почту, подтвердите ее, перейдя по ссылке в электронном письме'} %}
             {% endif %}
-
+            {% if isConfirmed %}
+                {% include 'components/success.html.twig' with {message: 'Электронная почта успешно подтверждена'} %}
+            {% endif %}
             <div class="card my-4">
                 <div class="card-body">
 
@@ -17,7 +19,11 @@
                     <button class="btn btn-outline-primary">Создать новый</button>
                 </div>
             </div>
-
+            {% if confirmationError %}
+                <div class="alert alert-danger" role="alert">
+                    {{ confirmationError }}
+                </div>
+            {% endif %}
             {% include 'form/user_form.html.twig' with {
                 form: userForm,
                 buttonName: 'Изменить'

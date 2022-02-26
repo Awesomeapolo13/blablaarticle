@@ -12,6 +12,11 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Регистрация</h5>
                         {# Выводим сообщение об успешной решистрации #}
+                        {% if confirmationError %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ confirmationError }}
+                            </div>
+                        {% endif %}
                         {% if success %}
                         {% include 'components/success.html.twig' with {
                             message: 'Для завершения регистрации подтвердите ваш email'

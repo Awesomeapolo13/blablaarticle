@@ -2,7 +2,7 @@
 
 namespace App\Security\Service\UserDataHandler;
 
-use App\Event\UserRegisteredEvent;
+use App\Event\UserChangeEmailEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -79,11 +79,10 @@ class ChangeUserDataHandler implements UserDataHandlerInterface
             if ($user->getEmail() !== $userModel->email) {
                 // записываем email в сессию для его записи в БД после подтверждения
                 ($request->getSession())->set('newEmail', $userModel->email);
-                $this->dispatcher->dispatch(new UserRegisteredEvent($user));
+                $this->dispatcher->dispatch(new UserChangeEmailEvent($user, $userModel->email));
             }
 
             return $user;
         }
-
     }
 }

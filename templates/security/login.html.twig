@@ -16,6 +16,11 @@
                                 {{ error.messageKey | trans(error.messageData, 'security') }}
                             </div>
                         {% endif %}
+                        {% if confirmationError %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ confirmationError }}
+                            </div>
+                        {% endif %}
                         <form class="form-signin" method="post">
                             <input
                                     type="hidden"

@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Event\UserRegisteredEvent;
 use App\Mailer\BaseMailer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Подписчик события регистрации нового пользователя
@@ -24,14 +23,14 @@ class UserRegisteredSubscriber implements EventSubscriberInterface
 
     /**
      * Вызывает email-рассылку для подтверждения почты пользователя после регистрации
-     *
-     * @throws TransportExceptionInterface
      */
     public function onUserRegistered(UserRegisteredEvent $event): void
     {
         $this->mailer->sendConfirmEmailLetter(
             $event->getUser(),
-            base64_encode(json_encode(['email' => $event->getUser()->getEmail()]))
+            'Подтвердите email для завершения регистрации',
+            base64_encode(json_encode(['email' => $event->getUser()->getEmail()])),
+            'confirm_email_after_registration.email.template'
         );
     }
 
