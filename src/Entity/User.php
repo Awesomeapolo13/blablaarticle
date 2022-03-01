@@ -85,6 +85,11 @@ class User implements UserInterface
      */
     private $subscription;
 
+    /**
+     * @ORM\OneToOne(targetEntity=ApiToken::class, mappedBy="client", cascade={"persist", "remove"})
+     */
+    private $apiToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -216,6 +221,22 @@ class User implements UserInterface
     public function setExpireAt(\DateTime $expireAt): User
     {
         $this->expireAt = $expireAt;
+
+        return $this;
+    }
+
+    public function getApiToken(): ?ApiToken
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(ApiToken $apiToken): self
+    {
+        if ($apiToken->getClient() !== $this) {
+            $apiToken->setClient($this);
+        }
+
+        $this->apiToken = $apiToken;
 
         return $this;
     }

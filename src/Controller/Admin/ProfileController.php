@@ -46,6 +46,8 @@ class ProfileController extends AbstractController
          */
 
         $user = $this->getUser();
+
+        $token = $user->getApiToken();
         // Если нельзя найти авторизованного пользователя, то прервать выполнение метода
         // ToDo Узнать стоит ли делать такую проверку, т.к. доступ в методу стоит IS_AUTHENTICATED_FULLY
         if (!isset($user)) {
@@ -70,7 +72,8 @@ class ProfileController extends AbstractController
             'errors' => $errors,
             'success' => $success,
             'isConfirmed' => $isConfirmed,
-            'confirmationError' => $confirmationError
+            'confirmationError' => $confirmationError,
+            'token' => $token
         ]);
     }
 
@@ -145,5 +148,11 @@ class ProfileController extends AbstractController
         return $this->redirectToRoute($redirectAlias, [
             'isConfirmed' => $isConfirmed,
         ]);
+    }
+
+    public function generateNewApiToken(Request $request)
+    {
+
+        return $this->json(['message' => 'Новый апи токен успешно сгенерирован']);
     }
 }

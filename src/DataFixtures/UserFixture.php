@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\ApiToken;
 use App\Entity\Subscription;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -46,7 +47,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
                 ->setExpireAt($this->faker->dateTimeThisYear('+1 week'))
             ;
 
-            $manager->persist($user);
+            $manager->persist(ApiToken::create($user));
         });
     }
 
@@ -91,6 +92,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
                ->setExpireAt($this->faker->dateTimeBetween('now', '+1 week'))
            ;
 
+           $manager->persist(ApiToken::create($user));
            $manager->persist($user);
         });
     }
