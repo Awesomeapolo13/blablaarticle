@@ -108,4 +108,14 @@ class ApiToken
             ->setExpiresAt(new \DateTime('+1 day'))
             ;
     }
+
+    /**
+     * Проверяет время жизни api токена
+     *
+     * @return bool - возвращает true, если текущая дата и время меньше черм время жизни токена
+     */
+    public function isExpired(): bool
+    {
+        return $this->getExpiresAt() <= new \DateTime();
+    }
 }

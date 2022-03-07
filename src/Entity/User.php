@@ -8,6 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,6 +29,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups("api_user")
      * @Assert\NotBlank()
      * @Assert\Email()
      */
@@ -48,6 +50,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("api_user")
      * @Assert\NotBlank(message="Заполните имя")
      * @Assert\Length(min="2", minMessage="Минимальная длинна имени 2 символа")
      */

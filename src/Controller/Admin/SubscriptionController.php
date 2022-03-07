@@ -48,6 +48,7 @@ class SubscriptionController extends AbstractController
      * @param int $id - идентификатор подписки
      * @param EntityManagerInterface $em
      * @param SubscriptionRepository $subscriptionRepository
+     * @param EventDispatcherInterface $dispatcher
      * @return Response
      */
     public function changeSubscription(

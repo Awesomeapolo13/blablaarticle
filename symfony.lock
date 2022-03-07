@@ -164,6 +164,15 @@
             "config/packages/oneup_flysystem.yaml"
         ]
     },
+    "phpdocumentor/reflection-common": {
+        "version": "2.2.0"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "5.3.0"
+    },
+    "phpdocumentor/type-resolver": {
+        "version": "1.6.0"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -435,6 +444,9 @@
     "symfony/security-http": {
         "version": "v5.2.12"
     },
+    "symfony/serializer": {
+        "version": "v5.2.12"
+    },
     "symfony/service-contracts": {
         "version": "v2.4.0"
     },
@@ -549,5 +561,8 @@
     },
     "twig/twig": {
         "version": "v3.3.3"
+    },
+    "webmozart/assert": {
+        "version": "1.10.0"
     }
 }

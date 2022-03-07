@@ -4,12 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
-use App\Repository\UserRepository;
 use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,27 +32,9 @@ class ProfileController extends AbstractController
         UserDataHandlerInterface $changeUserDataHandler
     ): Response
     {
-        /**
-         * ToDo:
-         *      1) Добавить в таблицу пользователя поле API токена, добавить в фикстуры генерацию этого токена
-         *      2) Реализовать частичное изменение данных, не измененные данные в БД отправляться не должны
-         *          - не изменять пароль, если он не указан
-         *          - подтверждение нового email отправлять только при его изменении
-         *          - новый email устанавливается только после подтверждения
-         *      !! Зарегистрировать новые сервисы пользователей
-         *      Можно передавать текущего пользователя в сервис по сохранению данных пользователя
-         *      и сравнивать их там. Если такой пользователь не найден, то сравнения просто не будет
-         *      Поместить в метод конфигурации формы логику для выбора того или иного DTO, либо сделать декоратор
-         */
-
         $user = $this->getUser();
 
         $token = $user->getApiToken();
-        // Если нельзя найти авторизованного пользователя, то прервать выполнение метода
-        // ToDo Узнать стоит ли делать такую проверку, т.к. доступ в методу стоит IS_AUTHENTICATED_FULLY
-        if (!isset($user)) {
-            throw new \Exception('User is not found');
-        }
 
         $isConfirmed = $request->query->get('isConfirmed');
         // Создаем DTO для передачи в форму
@@ -94,16 +76,10 @@ class ProfileController extends AbstractController
         LoggerInterface        $emailConfirmLogger
     ): RedirectResponse
     {
-        // TODO: Тут нужно использовать авторизованного пользователя или нет?? Мы же не можем изменить почту любого пользователя
         $redirectAlias = 'app_admin_profile';
         $confirmationError = 'Некорректная ссылка для подтверждения измененного email. Обратитесь в службу поддержки.';
 
-        // ToDo: Узнать нужна ли эта проверка если метод доступен только для IS_AUTHENTICATED_FULLY
         $user = $this->getUser();
-        if (!isset($user)) {
-            $emailConfirmLogger->error('Пользователь для изменения email не найден.');
-            return $this->redirectToRoute('app_login', ['confirmationError' => $confirmationError]);
-        }
         // Проверяем корректна ли ссылка, если нет то редирект на регистрацию и вывод ошибки
         if (empty($request->query->get('hash'))) {
             $emailConfirmLogger->error('Некорректная ссылка для подтверждения. Отсутствует параметр hash для подтверждения почты');
@@ -150,8 +126,20 @@ class ProfileController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/update_api_token", name="app_admin_profile_update_api_token")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function generateNewApiToken(Request $request)
     {
+        /*
+         * ToDo:
+         *  1) Реализовать авторизацию по token
+         *  2) Проверить авторизацию http методом
+         *  3) Реализовать скрипт по обновлению токена, с использованием авторизации по токену (передавать токен заголовком)
+         */
 
         return $this->json(['message' => 'Новый апи токен успешно сгенерирован']);
     }
