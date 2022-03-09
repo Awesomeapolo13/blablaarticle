@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
+use App\Repository\UserRepository;
 use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -127,20 +128,35 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Обновляет токен
+     *
      * @Route("/admin/update_api_token", name="app_admin_profile_update_api_token")
      *
-     * @param Request $request
+     * @param EntityManagerInterface $em
      * @return JsonResponse
      */
-    public function generateNewApiToken(Request $request)
+    public function generateNewApiToken(EntityManagerInterface $em): JsonResponse
     {
-        /*
-         * ToDo:
-         *  1) Реализовать авторизацию по token
-         *  2) Проверить авторизацию http методом
-         *  3) Реализовать скрипт по обновлению токена, с использованием авторизации по токену (передавать токен заголовком)
-         */
+        $user = $this->getUser();
 
-        return $this->json(['message' => 'Новый апи токен успешно сгенерирован']);
+        if (!isset($user)) {
+            $this->json(['message' => 'Такой пользователь не обнаружен пользователь'], 403);
+        }
+
+        $token = $user->getApiToken();
+        $token->setToken(sha1(uniqid('token', true)));
+        $token->setExpiresAt(new \DateTime('+1 day'));
+        $em->persist($token);
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Новый апи токен успешно сгенерирован',
+            'token' => $token->getToken(),
+            ],
+            200,
+            [],
+            [
+                'groups' => ['api_user']
+            ]);
     }
 }
