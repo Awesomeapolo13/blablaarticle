@@ -18,6 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Контроллер отвечающий за работу с профилем пользователя
+ *
+ * @IsGranted("IS_EMAIL_CONFIRMED", message="Для доступа к этой странице подтвердите электронную почту")
  */
 class ProfileController extends AbstractController
 {

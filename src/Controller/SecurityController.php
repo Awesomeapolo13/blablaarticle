@@ -48,6 +48,7 @@ class SecurityController extends AbstractController
         UserDataHandlerInterface $registrationDataHandler
     ): Response
     {
+        // ToDo: Посмотреть где можно заменить вывод сообщений на $this->addFlash('flash_message', 'Сообщение об успехе')
         $form = $this->createForm(UserRegistrationFormType::class);
         $user = new User();
         $user = $registrationDataHandler->handleAndSaveUserData($request, $form, $user);

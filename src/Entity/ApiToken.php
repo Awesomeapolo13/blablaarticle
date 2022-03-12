@@ -99,13 +99,14 @@ class ApiToken
      * @param UserInterface $user
      * @param string $dateTime - метка времени для передачи в объект \DateTime
      * @return ApiToken
+     * @throws \Exception
      */
     public static function create(UserInterface $user, string $dateTime = '+1 day'): ApiToken
     {
         return (new self())
             ->setToken(sha1(uniqid('token', true)))
             ->setClient($user)
-            ->setExpiresAt(new \DateTime('+1 day'))
+            ->setExpiresAt(new \DateTime($dateTime))
             ;
     }
 
