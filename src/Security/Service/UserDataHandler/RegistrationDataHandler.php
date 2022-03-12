@@ -2,6 +2,7 @@
 
 namespace App\Security\Service\UserDataHandler;
 
+use App\Entity\ApiToken;
 use App\Event\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Repository\SubscriptionRepository;
@@ -76,7 +77,9 @@ class RegistrationDataHandler implements UserDataHandlerInterface
                 ->setPassword($this->passwordEncoder->encodePassword($user, $userModel->planePassword))
                 ->setIsEmailConfirmed(false)
                 ->setExpireAt(new \DateTime('+1 week'))
-                ->setSubscription($subscription);
+                ->setSubscription($subscription)
+                ->setApiToken(ApiToken::create($user))
+            ;
 
             $this->em->persist($user);
             $this->em->flush();
