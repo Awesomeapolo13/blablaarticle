@@ -28,7 +28,13 @@
                     >
                         Подписка
                     </a>
-                    <a href="dashboard_profile.html" class="list-group-item list-group-item-action bg-light">Профиль</a>
+                    <a
+                            href="{{ path('app_admin_profile') }}"
+                            class="list-group-item list-group-item-action
+                             {{ (app.request.attributes.get('_route') == 'app_admin_profile') ? 'active' : 'bg-light' }}"
+                    >
+                        Профиль
+                    </a>
                     <a href="dashboard_modules.html" class="list-group-item list-group-item-action bg-light">Модули
                         генератора</a>
                 </div>

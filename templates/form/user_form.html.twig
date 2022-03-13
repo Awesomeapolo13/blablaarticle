@@ -1,0 +1,48 @@
+{{ form_start(form, {
+    attr: {class: formClass is not defined ? '' : formClass},
+}) }}
+{# Выводим ошибки формы #}
+{% if errors.count %}
+    {% include 'components/error.html.twig' with {errors: errors} %}
+{% endif %}
+
+<div class="form-label-group">
+    {{ form_widget(form.firstName, {
+        attr: {placeholder: 'Ваше имя'}
+    }) }}
+    {{ form_label(form.firstName, 'Ваше имя', {
+        errors: null
+    }) }}
+</div>
+<div class="form-label-group">
+    {{ form_widget(form.email, {
+        attr: {placeholder: 'Ваш Email'}
+    }) }}
+    {{ form_label(form.email, 'Ваш Email', {
+        errors: null
+    }) }}
+</div>
+
+<div class="form-label-group">
+    {{ form_widget(form.planePassword.first, {
+        attr: {placeholder: 'Пароль'}
+    }) }}
+    {{ form_label(form.planePassword.first, 'Пароль', {
+        errors: null
+    }) }}
+</div>
+
+<div class="form-label-group">
+    {{ form_widget(form.planePassword.second, {
+        attr: {placeholder: 'Подтверждение пароля'},
+        errors: false
+    }) }}
+    {{ form_label(form.planePassword.second, 'Подтверждение пароля', {
+        errors: null
+    }) }}
+</div>
+
+<button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
+    {{ buttonName }}
+</button>
+{{ form_end(form) }}

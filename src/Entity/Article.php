@@ -235,7 +235,6 @@ class Article
         string $description = null
     ): Article
     {
-        //ToDo: Добавить вставку ключевого слова, проверить вызов функции при демонстрационной генерации статьи
         $article = new self();
         if (isset($description)) {
             $article->setDescription($description);

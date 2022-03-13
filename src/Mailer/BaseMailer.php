@@ -2,13 +2,13 @@
 
 namespace App\Mailer;
 
-use App\Entity\User;
 use Closure;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class BaseMailer
 {
@@ -35,11 +35,11 @@ abstract class BaseMailer
     /**
      * @param string $template - путь до шаблона
      * @param string $subject - заголовок письма
-     * @param User $user - пользователь, которому нужно отправить письмо
+     * @param UserInterface $user - пользователь, которому нужно отправить письмо
      * @param Closure|null $callback - дополнительные параметры для расширения объекта TemplatedEmail
      * @throws TransportExceptionInterface - исключение при неудачной отправке письма
      */
-    protected function send(string $template, string $subject, User $user, Closure $callback = null): void
+    protected function send(string $template, string $subject, UserInterface $user, Closure $callback = null): void
     {
         $email = (new TemplatedEmail())
             ->from(new Address($this->params->get('sender.email'), $this->params->get('sender.name'))) // отправитель

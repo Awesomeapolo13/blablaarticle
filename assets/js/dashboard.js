@@ -67,4 +67,67 @@ const jQuery = require('jquery');
         fieldsList.children().length <= 2 ? button.hide() : button.show();
     }
 
+    /**
+     * Скрывает элемент через промежуток времени.
+     * При передаче третьего параметра, элемент скрывается постеменно
+     *
+     * @param element - элемент, который необходимо скрыть
+     * @param timeout - промежуток времени в мс, через который элемент будет скрыт
+     * @param hiddenTime - время за которое элемент полностью исчезнет со страницы
+     */
+    function hideElementAfterTimeout(element, timeout, hiddenTime = 0) {
+        setTimeout(function (element) {
+            element.hide(hiddenTime);
+        }, timeout, element);
+    }
+
+    /**
+     * Обработчик кнопки генерации нового api токена
+     */
+    $('.update-api-token').on('click', function (e) {
+        e.preventDefault();
+        const apiTokenElem = $('.api-token');
+        let apiToken = apiTokenElem.val();
+        let messageBlock = $('.token-expired');
+        // аякс запрос на получение
+        $.ajax({
+            headers: {
+                "Authorization": apiToken
+            },
+            url: '/admin/update_api_token',
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            // В случае успеха, отображает новы  токен, выводит сообщение об успешном изменении токена
+            success: function (response) {
+                apiTokenElem.text(response.token);
+                if (!messageBlock.length) {
+                    const contentCol = $('.cont-block');
+                    contentCol.prepend("<div class='alert token-expired'></div>");
+                    messageBlock = $('.token-expired');
+                }
+                messageBlock.removeClass('alert-warning');
+                messageBlock.addClass('alert-success');
+                messageBlock.text('Токен успешно изменен.');
+                // Убирает сообщение об успехе через 10 секунд
+                hideElementAfterTimeout(messageBlock, 10000, 5000);
+            },
+            // В случае ошибки показывает пользователю сообщени об ошибке
+            error: function () {
+                if (!messageBlock.length) {
+                    const contentCol = $('.cont-block');
+                    contentCol.prepend("<div class='alert token-expired'></div>");
+                    messageBlock = $('.token-expired');
+                }
+                messageBlock.removeClass('alert-warning');
+                messageBlock.addClass('alert-error');
+                messageBlock.text('Ощибка при изменении токена. Попробуйте позднее.');
+                // Убирает сообщение об успехе через 10 секунд
+                hideElementAfterTimeout(messageBlock,10000, 5000);
+            }
+        });
+
+    });
+
 })(jQuery);

@@ -6,11 +6,17 @@ use App\Form\ArticleGenerationFormType;
 use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Контроллер для статей в админском разделе
+ *
+ * @IsGranted("IS_EMAIL_CONFIRMED", message="Для доступа к этой странице подтвердите электронную почту")
+ */
 class ArticleController extends AbstractController
 {
     /**

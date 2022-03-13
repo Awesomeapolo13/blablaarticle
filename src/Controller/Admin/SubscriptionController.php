@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Контроллер для функционала страниц подписок
+ *
+ * @IsGranted("IS_EMAIL_CONFIRMED", message="Для доступа к этой странице подтвердите электронную почту")
+ */
 class SubscriptionController extends AbstractController
 {
     /**
@@ -48,6 +53,7 @@ class SubscriptionController extends AbstractController
      * @param int $id - идентификатор подписки
      * @param EntityManagerInterface $em
      * @param SubscriptionRepository $subscriptionRepository
+     * @param EventDispatcherInterface $dispatcher
      * @return Response
      */
     public function changeSubscription(

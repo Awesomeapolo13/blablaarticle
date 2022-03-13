@@ -3,37 +3,39 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Event\UserRegisteredEvent;
-use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
-use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
 use App\Security\LoginFormAuthenticator;
+use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
     /**
-     * Отображает страницу авторизации пользователя и выводит оишибки авторизации
+     * Отображает страницу авторизации пользователя и выводит ошибки авторизации
      *
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
         // достает текст последней ошибки авторизации
         $error = $authenticationUtils->getLastAuthenticationError();
+        $confirmationError = $request->query->get('confirmationError');
         // достает последний логин
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+            'confirmationError' => $confirmationError,
+        ]);
     }
 
     /**
@@ -42,43 +44,18 @@ class SecurityController extends AbstractController
      * @Route("/register", name="app_register")
      */
     public function register(
-        Request                      $request,
-        UserPasswordEncoderInterface $passwordEncoder,
-        EntityManagerInterface       $em,
-        EventDispatcherInterface     $dispatcher,
-        SubscriptionRepository       $subscriptionRepository
+        Request                  $request,
+        UserDataHandlerInterface $registrationDataHandler
     ): Response
     {
-        // переменная для вывода сообщения об успешной регистрации
-        $success = false;
+        // ToDo: Посмотреть где можно заменить вывод сообщений на $this->addFlash('flash_message', 'Сообщение об успехе')
         $form = $this->createForm(UserRegistrationFormType::class);
-        // обрабатываем запрос
-        $form->handleRequest($request);
+        $user = new User();
+        $user = $registrationDataHandler->handleAndSaveUserData($request, $form, $user);
+        $success = isset($user);
+        // Сообщение об ошибке при подтверждении email
+        $confirmationError = $request->query->get('confirmationError');
 
-        // если форма отправлена и данные ее валидны, начинаем их обработку
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UserRegistrationFormModel $userModel */
-            $userModel = $form->getData();
-            $user = new User();
-            $subscription = $subscriptionRepository->findOneBy(['name' => 'FREE']);
-
-            $user
-                ->setFirstName($userModel->email)
-                ->setEmail($userModel->email)
-                ->setPassword($passwordEncoder->encodePassword(
-                    $user,
-                    $userModel->planePassword
-                ))
-                ->setIsEmailConfirmed(false)
-                ->setExpireAt(new \DateTime('+1 week'))
-                ->setSubscription($subscription)
-            ;
-
-            $em->persist($user);
-            $em->flush();
-            $dispatcher->dispatch(new UserRegisteredEvent($user));
-            $success = true;
-        }
         // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
         // ошибок отдельных полей
         $errors = $form->getErrors(true);
@@ -86,7 +63,8 @@ class SecurityController extends AbstractController
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
             'success' => $success,
-            'errors' => $errors
+            'errors' => $errors,
+            'confirmationError' => $confirmationError,
         ]);
     }
 
@@ -104,38 +82,49 @@ class SecurityController extends AbstractController
      * @param LoginFormAuthenticator $authenticator
      * @param EntityManagerInterface $em
      * @param UserRepository $userRepository
+     * @param LoggerInterface $emailConfirmLogger - логирование в канал confirm_email
      * @return Response|null
-     * @throws \Exception
      */
     public function confirmEmail(
-        Request $request,
-        GuardAuthenticatorHandler    $guard,
-        LoginFormAuthenticator       $authenticator,
-        EntityManagerInterface       $em,
-        UserRepository $userRepository
+        Request                   $request,
+        GuardAuthenticatorHandler $guard,
+        LoginFormAuthenticator    $authenticator,
+        EntityManagerInterface    $em,
+        UserRepository            $userRepository,
+        LoggerInterface           $emailConfirmLogger
     ): ?Response
     {
-        // проверяем корректна ли ссылка
-         if (empty($request->query->get('hash'))) {
-             //ToDo: спросить, что делать, если сгенерирует некорректную ссылку. Быть может стоит при повторной регистрации
-             // генерить новую, если пользователь не подтвердил email?
-             throw new \Exception('Некорректная ссылка для подтверждение email. Обратитесь в службу поддержки.');
-         }
-        $email = json_decode(base64_decode($request->query->get('hash')), true)['email'];
+
+        $confirmationError = 'Некорректная ссылка для подтверждения email. Обратитесь в службу поддержки.';
+        // Проверяем корректна ли ссылка, если нет то редирект на регистрацию и вывод ошибки
+        if (empty($request->query->get('hash'))) {
+            $emailConfirmLogger->error('Некорректная ссылка для подтверждения. Отсутствует параметр hash для подтверждения почты');
+            return $this->redirectToRoute('app_register', ['confirmationError' => $confirmationError]);
+        }
+        $data = json_decode(base64_decode($request->query->get('hash')), true);
+        $email = !empty($data['email']) ? $data['email'] : null;
+        // Проверяем есть ли необходимые для подтверждения email данные, если нет то редирект на регистрацию и вывод ошибки
+        if (!$email) {
+            $emailConfirmLogger->error('Некорректная ссылка для подтверждения. Отсутствует параметр email для подтверждения почты');
+            return $this->redirectToRoute('app_register', ['confirmationError' => $confirmationError]);
+        }
+
         $user = $userRepository->findOneBy(['email' => $email]);
-        // проверяем есть ли такой пользователь
+        // Проверяем есть ли такой пользователь, если нет то редирект на регистрацию и вывод ошибки
         if (!isset($user)) {
-            throw new \Exception('Некорректная ссылка для подтверждение email. Такого пользователя не существует');
+            $emailConfirmLogger->error('Пользователь с email ' . $email . ' не проходил регистрацию.');
+            return $this->redirectToRoute('app_register', ['confirmationError' => $confirmationError]);
         }
-        // если почта подтверждена - редирект на аутентификацию
+        // Если почта подтверждена - редирект на аутентификацию
         if ($user->getIsEmailConfirmed()) {
-            return $this->redirectToRoute('app_login');
+            $emailConfirmLogger->info('Пользователь с email ' . $email . ' уже подтвердил свою почту.');
+            return $this->redirectToRoute('app_login', ['confirmationError' => 'Пользователь с email ' . $email . ' уже подтвердил свою почту.']);
         }
-        // подтверждаем email
+        // Подтверждаем email
         $user->setIsEmailConfirmed(true);
         $em->persist($user);
         $em->flush();
-        // авторизуем пользователя и делаем редирект на страницу указанную в методе onAuthenticationSuccess аутентификатора
+        // Авторизуем пользователя и делаем редирект на страницу указанную в методе onAuthenticationSuccess аутентификатора
         return $guard
             ->authenticateUserAndHandleSuccess(
                 $user,

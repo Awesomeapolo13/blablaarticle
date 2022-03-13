@@ -1,0 +1,45 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">Профиль</h1>
+    <div class="row">
+
+        <div class="col-xl-6 cont-block">
+            {# Сообщение об ошибках или успехе при изменении токеная #}
+            {% if token.expiresAt is defined and token.expiresAt < date('now') %}
+{#                 ToDO: Выделить в отдельный компонент и подключать через include #}
+                <div class="alert alert-warning token-expired" role="alert">
+                    Срок действия Вашего токена истек. Выполните генерацию нового токена для продолжения работы с API
+                </div>
+            {% endif %}
+            <div class="card my-4">
+                <div class="card-body">
+                    {% if token.token is defined %}
+                    <p>Ваш API токен: <span class="api-token">{{ token.token }}</span></p>
+                    <button class="btn btn-outline-primary update-api-token">Создать новый</button>
+                    {% else %}
+                        <div class="alert alert-warning token-expired" role="alert">
+                            Не удалось получить Ваш токен. Разбираемся с этой проблемой.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {# Сообщение об ошибках или успехе при изменении данных пользователя #}
+            {% if success %}
+                {% include 'components/success.html.twig' with {message: 'Профиль успешно изменен. Если Вы изменили электронную почту, подтвердите ее, перейдя по ссылке в электронном письме'} %}
+            {% endif %}
+            {% if isConfirmed %}
+                {% include 'components/success.html.twig' with {message: 'Электронная почта успешно подтверждена'} %}
+            {% endif %}
+            {% if confirmationError %}
+                <div class="alert alert-danger" role="alert">
+                    {{ confirmationError }}
+                </div>
+            {% endif %}
+            {% include 'form/user_form.html.twig' with {
+                form: userForm,
+                buttonName: 'Изменить'
+            } %}
+        </div>
+    </div>
+{% endblock %}
