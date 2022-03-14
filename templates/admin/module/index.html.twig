@@ -1,0 +1,106 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <section>
+
+        <h1 class="mt-4">Ваши модули</h1>
+
+        <div class="alert alert-success" role="alert">
+            Модуль успешно добавлен
+        </div>
+
+        <table class="table table-hover table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Модуль</th>
+                <th scope="col">Контент</th>
+                <th scope="col">Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Название с текстом</td>
+                <td>
+<pre class="code">
+{#&lt;h1&gt;{{ title }}&lt;/h1&gt;#}
+{#&lt;p&gt;{{ paragraph }}&lt;/p&gt;#}
+</pre>
+                </td>
+                <td><a href="#" class="text-danger"><i class="fas fa-trash"></i></a></td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Текст справа</td>
+                <td>
+<pre class="code">
+{#&lt;p class="text-right"&gt;{{ paragraph }}&lt;/p&gt;#}
+</pre>
+                </td>
+                <td><a href="#" class="text-danger"><i class="fas fa-trash"></i></a></td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Текст в две колонки</td>
+                <td>
+<pre class="code">
+{#&lt;div class="row"&gt;#}
+{#  &lt;div class="col-sm-6"&gt;#}
+{#    {{ paragraphs }}#}
+{#  &lt;/div&gt;#}
+{#  &lt;div class="col-sm-6"&gt;#}
+{#    {{ paragraphs }}#}
+{#  &lt;/div&gt;#}
+{#&lt;/div&gt;#}
+</pre>
+                </td>
+                <td><a href="#" class="text-danger"><i class="fas fa-trash"></i></a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav aria-label="...">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Назад</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">2 <span class="sr-only">(текущая)</span></a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Вперед</a>
+                </li>
+            </ul>
+        </nav>
+    </section>
+
+    <hr>
+
+    <section class="py-4">
+
+        <h1 class="mt-4">Добавить модуль</h1>
+
+        <div class="row">
+
+            <div class="col-xl-6">
+                <form>
+                    <div class="form-group">
+                        <label for="articleTitle">Название модуля</label>
+                        <input type="text" id="articleTitle" class="form-control" placeholder="Название статьи" required
+                               autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="articleWord">Код модуля</label>
+                        <textarea id="articleWord" class="form-control" required></textarea>
+                    </div>
+
+                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Добавить</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    </div>
+{% endblock %}
