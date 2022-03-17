@@ -1,0 +1,11 @@
+<tr>
+    <th scope="row">{{ loop.index }}</th>
+    <td>{{ module.name }}</td>
+    <td>
+<pre class="code">
+{{ module.body }}
+</pre>
+    </td>
+{#    ToDO: Вставить ссылку на удаление модуля#}
+    <td><a href="#" class="text-danger"><i class="fas fa-trash"></i></a></td>
+</tr>

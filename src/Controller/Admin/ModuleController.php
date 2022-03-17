@@ -2,9 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Form\ArticleGenerationFormType;
-use App\Form\Model\ArticleFormModel;
-use App\Repository\ArticleRepository;
+use App\Repository\ModuleRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,24 +25,31 @@ class ModuleController extends AbstractController
      *
      * @Route("/admin/module", name="app_admin_module" )
      * @param Request $request
-     * @param ArticleRepository $articleRepository
+     * @param ModuleRepository $moduleRepository
      * @param PaginatorInterface $paginator
      * @return Response
      */
     public function index(
         Request            $request,
-        ArticleRepository  $articleRepository,
+        ModuleRepository  $moduleRepository,
         PaginatorInterface $paginator
     ): Response
     {
-//        $paginatedArticles = $paginator->paginate(
-//            $articleRepository->findAllArticlesQuery(),
-//            $request->query->getInt('page', 1),
-//            10
-//        );
+        /* ToDo: Пока вывожу дефолтные модули. После того как будет готов функционал
+             добавления модулей, поправить на модули пользователя.
+             Вопросы:
+                1) Дефолтные модули должны дополнять те, что пользователь создал функционал?
+                Ну то есть при генерации должны использоваться и те и другие? И каким отдавать предпочтение?
+        */
+
+        $paginatedModules = $paginator->paginate(
+            $moduleRepository->findAllModulesQuery(),
+            $request->query->getInt('page', 1),
+            10
+        );
 
         return $this->render('admin/module/index.html.twig', [
-//            'modules' => $paginatedModules,
+            'modules' => $paginatedModules,
         ]);
     }
 

@@ -8,6 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
+ * Репозиторий подписок
+ *
  * @method Subscription|null find($id, $lockMode = null, $lockVersion = null)
  * @method Subscription|null findOneBy(array $criteria, array $orderBy = null)
  * @method Subscription[]    findAll()
