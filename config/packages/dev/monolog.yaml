@@ -1,5 +1,5 @@
 monolog:
-    channels: ['email_confirm']
+    channels: ['email_confirm', 'module']
     handlers:
         main:
             type: stream
@@ -12,14 +12,12 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%/email_confirm.log"
             level: debug
             channels: ['email_confirm']
-        # uncomment to get logging in your browser
-        # you may have to allow bigger header sizes in your Web server configuration
-        #firephp:
-        #    type: firephp
-        #    level: info
-        #chromephp:
-        #    type: chromephp
-        #    level: info
+        # Логирование ошибок связанных с функционалом модулей
+        module:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%/module.log"
+            level: error
+            channels: ['module']
         console:
             type: console
             process_psr_3_messages: false

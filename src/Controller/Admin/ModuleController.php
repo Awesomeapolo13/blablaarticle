@@ -7,8 +7,10 @@ use App\Form\ModuleFormType;
 use App\Repository\ModuleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,6 +31,7 @@ class ModuleController extends AbstractController
      * всеми пользователями портала.
      *
      * @Route("/admin/module", name="app_admin_module" )
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      * @param Request $request
      * @param ModuleRepository $moduleRepository
      * @param PaginatorInterface $paginator
@@ -37,19 +40,13 @@ class ModuleController extends AbstractController
      * @return Response
      */
     public function index(
-        Request            $request,
-        ModuleRepository  $moduleRepository,
-        PaginatorInterface $paginator,
+        Request                $request,
+        ModuleRepository       $moduleRepository,
+        PaginatorInterface     $paginator,
         EntityManagerInterface $em,
         RoleHierarchyInterface $hierarchy
     ): Response
     {
-        /* ToDo: Пока вывожу дефолтные модули. После того как будет готов функционал
-             добавления модулей, поправить на модули пользователя.
-             Вопросы:
-                1) Дефолтные модули должны дополнять те, что пользователь создал функционал?
-                Ну то есть при генерации должны использоваться и те и другие? И каким отдавать предпочтение?
-        */
         // Получаем пользователя
         $user = $this->getUser();
         // Получаем роли пользователя
@@ -96,5 +93,53 @@ class ModuleController extends AbstractController
             'errors' => $form->getErrors(true),
             'modules' => $paginatedModules,
         ]);
+    }
+
+    /**
+     * Удаляет на модуль по его id
+     *
+     * @Route("admin/module/delete/{id}", name="app_admin_module_delete")
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @param int $id - идентификатор модуля для генерации статей
+     * @param ModuleRepository $moduleRepository
+     * @param LoggerInterface $moduleLogger
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
+    public function delete(
+        int                    $id,
+        ModuleRepository       $moduleRepository,
+        LoggerInterface        $moduleLogger,
+        EntityManagerInterface $em
+    ): Response
+    {
+        $user = $this->getUser();
+        $errorMessage = 'Ошибка при удалении модуля. Попробуйте позднее.';
+        // Если в запросе нет id модуля, то пишем лог и редиректим на страницу с модулями
+        if (empty($id)) {
+            $moduleLogger->error('В запросе не передан идентификатор модуля');
+            $this->addFlash('error', $errorMessage);
+            return $this->redirectToRoute('app_admin_module');
+        }
+
+        $module = $moduleRepository->findOneBy([
+            'id' => $id,
+            'client' => $user,
+        ]);
+        // Если модуль не обнаружен отправляем сообщение об ошибке и редиректим на страницу с модулями
+        if (!isset($module)) {
+            $moduleLogger->error('У пользователя не обнаружен модуль с id=' . $id);
+            $this->addFlash('error', $errorMessage);
+            return $this->redirectToRoute('app_admin_module');
+        }
+
+        $module->setDeletedAt(new \DateTime());
+        $em->persist($module);
+        $em->flush();
+
+        // Сообщение об успешном создании модуля
+        $this->addFlash('success', 'Модуль успешно удален');
+
+        return $this->redirectToRoute('app_admin_module');
     }
 }

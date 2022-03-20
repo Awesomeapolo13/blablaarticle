@@ -24,17 +24,6 @@ class ModuleRepository extends ServiceEntityRepository
     }
 
     /**
-     * Возвращает переданный, либо установленный по умолчанию конструктор запросов
-     *
-     * @param QueryBuilder|null $qb
-     * @return QueryBuilder
-     */
-    private function getOrCreateQueryBuilder(?QueryBuilder $qb): QueryBuilder
-    {
-        return $qb ?? $this->createQueryBuilder('m');
-    }
-
-    /**
      * Ищет дефолтные модули
      *
      * @param QueryBuilder|null $qb
@@ -42,7 +31,7 @@ class ModuleRepository extends ServiceEntityRepository
      */
     public function findAllDefaultModulesQuery(QueryBuilder $qb = null): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder($qb)
+        return $this->notDeleted($qb)
             ->andWhere('m.clientId IS NULL')
             ->orderBy('m.createdAt', 'DESC')
             ;
@@ -57,10 +46,34 @@ class ModuleRepository extends ServiceEntityRepository
      */
     public function findModulesByUserQuery(UserInterface $user, QueryBuilder $qb = null): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder($qb)
+        return $this->notDeleted($qb)
             ->andWhere('m.client = :userId')
             ->setParameter('userId', $user->getId())
             ->orderBy('m.createdAt', 'DESC')
+            ;
+    }
+
+    /**
+     * Возвращает переданный, либо установленный по умолчанию конструктор запросов
+     *
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
+    private function getOrCreateQueryBuilder(?QueryBuilder $qb): QueryBuilder
+    {
+        return $qb ?? $this->createQueryBuilder('m');
+    }
+
+    /**
+     * Возвращает QueryBuilder для не удаленных модулей
+     *
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
+    private function notDeleted(QueryBuilder $qb = null): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder($qb)
+            ->andWhere('m.deletedAt IS NULL')
             ;
     }
 }

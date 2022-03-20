@@ -6,6 +6,5 @@
 {{ module.body }}
 </pre>
     </td>
-{#    ToDO: Вставить ссылку на удаление модуля#}
-    <td><a href="#" class="text-danger"><i class="fas fa-trash"></i></a></td>
+    <td><a href="{{ path('app_admin_module_delete', { 'id': module.id }) }}" class="text-danger"><i class="fas fa-trash"></i></a></td>
 </tr>
