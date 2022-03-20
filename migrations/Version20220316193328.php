@@ -28,7 +28,7 @@ final class Version20220316193328 extends AbstractMigration
                  body TEXT NOT NULL, 
                  created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
                  updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
-                 deleted_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
+                 deleted_at TIMESTAMP(0) WITHOUT TIME ZONE, 
                  PRIMARY KEY(id))'
         );
         $this->addSql('CREATE INDEX IDX_C24262819EB6921 ON module (client_id)');

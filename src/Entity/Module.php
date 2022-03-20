@@ -63,7 +63,6 @@ class Module
 
     /**
      * @var \DateTime
-     * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
     protected $deletedAt;
