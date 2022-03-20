@@ -31,7 +31,7 @@ class ModuleController extends AbstractController
      * всеми пользователями портала.
      *
      * @Route("/admin/module", name="app_admin_module" )
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_PRO_SUBSCRIBER", message="Ваш уровень подписки не позволяет получить доступ к этому функиционалу")
      * @param Request $request
      * @param ModuleRepository $moduleRepository
      * @param PaginatorInterface $paginator
@@ -99,7 +99,7 @@ class ModuleController extends AbstractController
      * Удаляет на модуль по его id
      *
      * @Route("admin/module/delete/{id}", name="app_admin_module_delete")
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_PRO_SUBSCRIBER", message="Ваш уровень подписки не позволяет получить доступ к этому функиционалу")
      * @param int $id - идентификатор модуля для генерации статей
      * @param ModuleRepository $moduleRepository
      * @param LoggerInterface $moduleLogger
