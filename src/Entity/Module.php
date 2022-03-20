@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Сущность модуля для генерации статей
@@ -26,16 +27,22 @@ class Module
     private $id;
 
     /**
+     * Название модуля
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     * Код модуля
+     *
      * @ORM\Column(type="text")
      */
     private $body;
 
     /**
+     * Пользователь - владелец этого модуля
+     *
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="modules")
      */
     private $client;
@@ -90,12 +97,12 @@ class Module
         return $this;
     }
 
-    public function getClient(): ?User
+    public function getClient(): ?UserInterface
     {
         return $this->client;
     }
 
-    public function setClient(?User $client): self
+    public function setClient(?UserInterface $client): self
     {
         $this->client = $client;
 

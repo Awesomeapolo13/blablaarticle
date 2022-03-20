@@ -6,6 +6,7 @@ use App\Entity\Module;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Репозиторий модулей для генерации статей
@@ -34,16 +35,32 @@ class ModuleRepository extends ServiceEntityRepository
     }
 
     /**
-     * Метод получения запроса для получения всех модулей, отсортированных по дате создания
+     * Ищет дефолтные модули
      *
      * @param QueryBuilder|null $qb
      * @return QueryBuilder
      */
-    public function findAllModulesQuery(QueryBuilder $qb = null): QueryBuilder
+    public function findAllDefaultModulesQuery(QueryBuilder $qb = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($qb)
+            ->andWhere('m.clientId IS NULL')
+            ->orderBy('m.createdAt', 'DESC')
+            ;
+    }
+
+    /**
+     * Ищет модули, принадлежащие конкретному пользователю
+     *
+     * @param UserInterface $user - владелец модулей
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
+    public function findModulesByUserQuery(UserInterface $user, QueryBuilder $qb = null): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder($qb)
+            ->andWhere('m.client = :userId')
+            ->setParameter('userId', $user->getId())
             ->orderBy('m.createdAt', 'DESC')
             ;
     }
 }
-

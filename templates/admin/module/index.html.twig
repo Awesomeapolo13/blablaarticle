@@ -5,9 +5,9 @@
 
         <h1 class="mt-4">Ваши модули</h1>
 
-        <div class="alert alert-success" role="alert">
-            Модуль успешно добавлен
-        </div>
+        {% for message in app.flashes('success') %}
+            {% include 'components/success.html.twig' with {message: message} %}
+        {% endfor %}
 
         <table class="table table-hover table-bordered">
             <thead class="thead-light">
@@ -41,21 +41,20 @@
         <div class="row">
 
             <div class="col-xl-6">
-                <form>
-                    <div class="form-group">
-                        <label for="articleTitle">Название модуля</label>
-                        <input type="text" id="articleTitle" class="form-control" placeholder="Название статьи" required
-                               autofocus>
-                    </div>
-                    <div class="form-group">
-                        <label for="articleWord">Код модуля</label>
-                        <textarea id="articleWord" class="form-control" required></textarea>
-                    </div>
-
-                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Добавить</button>
-                </form>
+                {# Выводим ошибки формы #}
+                {% if errors.count %}
+                    {% include 'components/error.html.twig' with {errors: errors} %}
+                {% endif %}
+                {{ form_start(form) }}
+                {{ form_row(form.name, {
+                    errors: null
+                }) }}
+                {{ form_row(form.body,  {
+                    errors: null
+                }) }}
+                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Добавить</button>
+                {{ form_end(form) }}
             </div>
         </div>
     </section>
-    </div>
 {% endblock %}
