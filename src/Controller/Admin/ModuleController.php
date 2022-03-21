@@ -47,12 +47,11 @@ class ModuleController extends AbstractController
         RoleHierarchyInterface $hierarchy
     ): Response
     {
-        // Получаем пользователя
         $user = $this->getUser();
         // Получаем роли пользователя
         $userRoles = $hierarchy->getReachableRoleNames($user->getRoles());
         // Переменная true, если есть роль администратора
-        $isAdmin = in_array("ROLE_ADMIN", $userRoles);
+        $isAdmin = in_array("ROLE_ADMIN", $userRoles, true);
         // Если используется администратором, то выводим только дефолтные модули, если нет, то модули пользователя
         $isAdmin
             ?
@@ -78,7 +77,9 @@ class ModuleController extends AbstractController
                 ->setBody($moduleModel->body)
             ;
             // Добавляем связь с текущим пользователем, если он не администратор
-            $isAdmin ?: $module->setClient($this->getUser());
+            if (!$isAdmin) {
+                $module->setClient($this->getUser());
+            }
             // Сохраняем в БД
             $em->persist($module);
             $em->flush();
@@ -110,11 +111,16 @@ class ModuleController extends AbstractController
         int                    $id,
         ModuleRepository       $moduleRepository,
         LoggerInterface        $moduleLogger,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        RoleHierarchyInterface $hierarchy
     ): Response
     {
         $user = $this->getUser();
         $errorMessage = 'Ошибка при удалении модуля. Попробуйте позднее.';
+        // Получаем роли пользователя
+        $userRoles = $hierarchy->getReachableRoleNames($user->getRoles());
+        // Переменная true, если есть роль администратора
+        $isAdmin = in_array("ROLE_ADMIN", $userRoles, true);
         // Если в запросе нет id модуля, то пишем лог и редиректим на страницу с модулями
         if (empty($id)) {
             $moduleLogger->error('В запросе не передан идентификатор модуля');
@@ -124,7 +130,7 @@ class ModuleController extends AbstractController
 
         $module = $moduleRepository->findOneBy([
             'id' => $id,
-            'client' => $user,
+            'client' => !$isAdmin ? $user : null,
         ]);
         // Если модуль не обнаружен отправляем сообщение об ошибке и редиректим на страницу с модулями
         if (!isset($module)) {
