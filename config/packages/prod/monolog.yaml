@@ -1,5 +1,5 @@
 monolog:
-    channels: ['email_confirm']
+    channels: ['email_confirm', 'module']
     handlers:
         main:
             type: fingers_crossed
@@ -20,5 +20,11 @@ monolog:
         email_confirm:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%/email_confirm.log"
-            level: debug
+            level: error
             channels: [ 'email_confirm' ]
+        # Логирование ошибок связанных с функционалом модулей
+        module:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%/module.log"
+            level: debug
+            channels: ['module']

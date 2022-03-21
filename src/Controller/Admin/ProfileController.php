@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
-use App\Repository\UserRepository;
 use App\Security\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;

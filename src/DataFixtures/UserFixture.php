@@ -27,14 +27,14 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
             $manager,
             'plusSubscriber@mail.ru',
             'Petrusha',
-            ['ROLE_PLUS_SUBSCRIBER']
+            ['ROLE_ADMIN']
         );
 
         $this->createUser(
             $manager,
             'proSubscriber@mail.ru',
             'Nadezhda',
-            ['ROLE_PRO_SUBSCRIBER']
+            ['ROLE_ADMIN']
         );
 
         $this->createMany(User::class, 10, function (User $user) use ($manager) {

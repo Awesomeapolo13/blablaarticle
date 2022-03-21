@@ -4,6 +4,9 @@ namespace App\Form\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Объект DTO для формы демонстрационной генерации статьи
+ */
 class ArticleDemoFormModel
 {
     /**

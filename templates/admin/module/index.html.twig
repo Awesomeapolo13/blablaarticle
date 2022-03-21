@@ -1,0 +1,60 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <section>
+
+        <h1 class="mt-4">Ваши модули</h1>
+
+        {% for message in app.flashes('success') %}
+            {% include 'components/success.html.twig' with {message: message} %}
+        {% endfor %}
+
+        <table class="table table-hover table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Модуль</th>
+                <th scope="col">Контент</th>
+                <th scope="col">Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for module in modules %}
+                {% include 'admin/module/components/module_info.html.twig' with {module: module} %}
+            {% else %}
+                <tr>
+                    <td scope="col" colspan="4" class="text-lg-center">Вы еще не создали свои модули</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {{ knp_pagination_render(modules) }}
+    </section>
+
+    <hr>
+
+    <section class="py-4">
+
+        <h1 class="mt-4">Добавить модуль</h1>
+
+        <div class="row">
+
+            <div class="col-xl-6">
+                {# Выводим ошибки формы #}
+                {% if errors.count %}
+                    {% include 'components/error.html.twig' with {errors: errors} %}
+                {% endif %}
+                {{ form_start(form) }}
+                {{ form_row(form.name, {
+                    errors: null
+                }) }}
+                {{ form_row(form.body,  {
+                    errors: null
+                }) }}
+                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Добавить</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

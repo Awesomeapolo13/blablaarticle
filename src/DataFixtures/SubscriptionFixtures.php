@@ -82,6 +82,10 @@ class SubscriptionFixtures extends BaseFixtures
         ],
     ];
 
+    /**
+     * @param ObjectManager $manager
+     * @return void
+     */
     public function loadData(ObjectManager $manager)
     {
         foreach ($this->defaultSubscription as $key => $defaultSubscription) {

@@ -1,0 +1,10 @@
+<tr>
+    <th scope="row">{{ loop.index }}</th>
+    <td>{{ module.name }}</td>
+    <td>
+<pre class="code">
+{{ module.body }}
+</pre>
+    </td>
+    <td><a href="{{ path('app_admin_module_delete', { 'id': module.id }) }}" class="text-danger"><i class="fas fa-trash"></i></a></td>
+</tr>
