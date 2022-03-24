@@ -4,8 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9023a554ada487f8f45cd3497d1884c2",
+    "content-hash": "3ed29eb6c51b7850c6a2ea6c0594efac",
     "packages": [
+        {
+            "name": "aelog16/article-theme-bundle",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "lib/ArticleThemeBundle",
+                "reference": "3adedbe2d893c80577efe0e778ae3f3c4960ee27"
+            },
+            "require": {
+                "php": "8.0.15"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ArticleContentProvider\\ArticleThemeBundle\\": "src"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Awesomeapolo13",
+                    "email": "aelog16@yandex.ru",
+                    "role": "author"
+                }
+            ],
+            "description": "Bundle that provide themes services for article generation",
+            "transport-options": {
+                "relative": true
+            }
+        },
         {
             "name": "behat/transliterator",
             "version": "v1.3.0",
@@ -8893,7 +8922,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "aelog16/article-theme-bundle": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

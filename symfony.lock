@@ -1,4 +1,7 @@
 {
+    "aelog16/article-theme-bundle": {
+        "version": "dev-master"
+    },
     "behat/transliterator": {
         "version": "v1.3.0"
     },
