@@ -15,3 +15,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # чтобы вызывать глобально из контейнера команду symfony
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+# Установка xdebug
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+# Переносим файл xdebug.ini
+ADD deployment/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+# Создаем пользователя для работы в контейнере
+RUN useradd -d /home/apps apps
