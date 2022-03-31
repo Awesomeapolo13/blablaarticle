@@ -15,7 +15,7 @@
                 "reference": "3adedbe2d893c80577efe0e778ae3f3c4960ee27"
             },
             "require": {
-                "php": "8.0.15"
+                "php": "8.0.*"
             },
             "type": "library",
             "autoload": {

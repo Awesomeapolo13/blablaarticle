@@ -23,5 +23,5 @@ RUN pecl install xdebug \
 # Переносим файл xdebug.ini
 ADD deployment/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-# Создаем пользователя для работы в контейнере
-RUN useradd -d /home/apps apps
+# Создаем пользователя с домашним каталогом и оболочкой bash
+RUN useradd -m -s /bin/bash apps
