@@ -1,9 +1,9 @@
 <?php
 
-namespace ArticleContentProvider\ArticleThemeBundle;
+namespace ArticleThemeProvider\ArticleThemeBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use ArticleContentProvider\ArticleThemeBundle\DependencyInjection\ArticleThemeBundleExtension;
+use ArticleThemeProvider\ArticleThemeBundle\DependencyInjection\ArticleThemeBundleExtension;
 
 /**
  * Бандл для тематик статей

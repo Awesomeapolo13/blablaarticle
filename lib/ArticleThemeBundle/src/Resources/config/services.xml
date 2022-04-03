@@ -5,11 +5,21 @@
         https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <!-- Default configuration for services in *this* file -->
         <defaults autowire="true" autoconfigure="true"/>
-        <service id="article_content_provider.article_theme" class="ArticleContentProvider\ArticleThemeBundle\ArticleThemeBundle" public="true"/>
-        <service id="ArticleContentProvider\ArticleThemeBundle\ArticleThemeBundle" alias="article_content_provider.article_theme" public="false"/>
-
-
+        <!-- Фабрика тематик -->
+        <service id="article_theme_provider.theme_factory" class="ArticleThemeProvider\ArticleThemeBundle\ThemeFactory" public="true">
+            <argument type="tagged_iterator" tag="article_theme_provider.theme_provider" />
+        </service>
+        <service id="ArticleThemeProvider\ArticleThemeBundle\ThemeFactory" alias="article_theme_provider.theme_factory" public="false"/>
+        <!-- Коллекция провайдеров тематик -->
+        <instanceof id="ArticleThemeProvider\ArticleThemeBundle\ThemeProviderInterface" autowire="true">
+            <tag name="article_theme_provider.theme_provider" />
+        </instanceof>
+        <!-- Провайдер базовых тематик -->
+        <service id="article_theme_provider.basic_theme_provider" class="ArticleThemeProvider\ArticleThemeBundle\Provider\BasicThemeProvider" public="false" />
+        <service id="ArticleThemeProvider\ArticleThemeBundle\Provider\BasicThemeProvider" class="article_theme_provider.basic_theme_provider" public="false" />
+        <!-- Провайдер демонстрационных тематик -->
+        <service id="article_theme_provider.demo_theme_provider" class="ArticleThemeProvider\ArticleThemeBundle\Provider\DemoThemeProvider" public="false" />
+        <service id="ArticleThemeProvider\ArticleThemeBundle\Provider\DemoThemeProvider" class="article_theme_provider.demo_theme_provider" public="false" />
     </services>
 </container>
