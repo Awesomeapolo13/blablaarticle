@@ -26,6 +26,11 @@ class ThemeFactory
         $this->allThemeProviders = $allThemeProviders;
     }
 
+    /**
+     * Получает все доступные темы
+     *
+     * @return Theme[]
+     */
     public function getThemes(): array
     {
         $themes = [];
@@ -36,9 +41,14 @@ class ThemeFactory
         return array_unique($themes, SORT_REGULAR);
     }
 
+    /**
+     * Ищет тематику по slug
+     *
+     * @param string $slug - уникальный символьный код тематики
+     * @return Theme|null - возвращает конкретную тематику, если находит ее иначе null
+     */
     public function findThemeBySlug(string $slug): ?Theme
     {
-        /** @var Theme[] $themes */
         $themes = $this->getThemes();
 
         foreach ($themes as $theme) {
