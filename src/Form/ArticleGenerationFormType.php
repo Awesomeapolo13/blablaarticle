@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Form\Model\ArticleFormModel;
+use ArticleThemeProvider\ArticleThemeBundle\Theme;
+use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -20,6 +22,18 @@ use Symfony\Component\Validator\Constraints\Image;
 class ArticleGenerationFormType extends AbstractType
 {
     /**
+     * Фабрика тематик
+     *
+     * @var ThemeFactory
+     */
+    private $themeFactory;
+
+    public function __construct(ThemeFactory $themeFactory)
+    {
+        $this->themeFactory = $themeFactory;
+    }
+
+    /**
      * Строит форму создания статьи
      *
      * @param FormBuilderInterface $builder
@@ -27,16 +41,18 @@ class ArticleGenerationFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // Добавляем тематики для выведения в форме
+        $themes = ['-' => ''];
+        foreach ($this->themeFactory->getThemes() as $theme) {
+            /** @var Theme $theme */
+            if ('demo' !== $theme->getSlug())
+            $themes[$theme->getName()] = $theme->getSlug();
+        }
+
         $builder
             ->add('theme', ChoiceType::class, [
                 'label' => 'Тематика',
-                'choices' => [
-                    '-' => '',
-                    'Демонстрационная' => 'demo',
-                    'Язык программирования PHP' => 'php',
-                    'Домашние животные' => 'pets',
-                    'Смысл жизни' => 'meaning_of_life'
-                ],
+                'choices' => $themes,
             ])
             ->add('title', TextType::class, [
                 'label' => 'Заголовок статьи',

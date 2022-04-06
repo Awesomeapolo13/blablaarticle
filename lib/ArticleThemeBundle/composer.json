@@ -1,0 +1,20 @@
+{
+    "name": "aelog16/article-theme-bundle",
+    "description": "Bundle that provide themes services for article generation",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Awesomeapolo13",
+            "email": "aelog16@yandex.ru",
+            "role": "author"
+        }
+    ],
+    "require": {
+        "php": "8.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ArticleThemeProvider\\ArticleThemeBundle\\": "src"
+        }
+    }
+}

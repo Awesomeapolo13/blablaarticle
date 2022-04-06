@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autowire="true" autoconfigure="true"/>
+        <!-- Фабрика тематик -->
+        <service id="article_theme_provider.theme_factory" class="ArticleThemeProvider\ArticleThemeBundle\ThemeFactory" public="true">
+            <argument type="tagged_iterator" tag="article_theme_provider.theme_provider" />
+        </service>
+        <service id="ArticleThemeProvider\ArticleThemeBundle\ThemeFactory" alias="article_theme_provider.theme_factory" public="false"/>
+        <!-- Коллекция провайдеров тематик -->
+        <instanceof id="ArticleThemeProvider\ArticleThemeBundle\ThemeProviderInterface" autowire="true">
+            <tag name="article_theme_provider.theme_provider" />
+        </instanceof>
+        <!-- Провайдер базовых тематик -->
+        <service id="article_theme_provider.basic_theme_provider" class="ArticleThemeProvider\ArticleThemeBundle\Provider\BasicThemeProvider" public="false" />
+        <service id="ArticleThemeProvider\ArticleThemeBundle\Provider\BasicThemeProvider" class="article_theme_provider.basic_theme_provider" public="false" />
+        <!-- Провайдер демонстрационных тематик -->
+        <service id="article_theme_provider.demo_theme_provider" class="ArticleThemeProvider\ArticleThemeBundle\Provider\DemoThemeProvider" public="false" />
+        <service id="ArticleThemeProvider\ArticleThemeBundle\Provider\DemoThemeProvider" class="article_theme_provider.demo_theme_provider" public="false" />
+    </services>
+</container>

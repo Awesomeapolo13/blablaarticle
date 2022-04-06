@@ -4,15 +4,9 @@
 
 В файле /etc/hosts добавить запись 127.0.0.1 blablaarticle.
 
-Собрать проект командой:
-
+Собрать и запустить проект командой:
 ```shell
-docker-compose build
-```
-
-Запустить проект командой:
-```shell
-docker-compose up -d
+docker-compose up -d --build
 ```
 Установить зависимости проекта:
 
