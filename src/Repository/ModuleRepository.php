@@ -32,7 +32,7 @@ class ModuleRepository extends ServiceEntityRepository
     public function findAllDefaultModulesQuery(QueryBuilder $qb = null): QueryBuilder
     {
         return $this->notDeleted($qb)
-            ->andWhere('m.clientId IS NULL')
+            ->andWhere('m.client IS NULL')
             ->orderBy('m.createdAt', 'DESC')
             ;
     }
@@ -50,6 +50,21 @@ class ModuleRepository extends ServiceEntityRepository
             ->andWhere('m.client = :userId')
             ->setParameter('userId', $user->getId())
             ->orderBy('m.createdAt', 'DESC')
+            ;
+    }
+
+    /**
+     * Получает определенное количество дефолтных модулей
+     *
+     * @param int $limit
+     * @param QueryBuilder|null $qb
+     * @return float|int|mixed|string
+     */
+    public function findDefaultWithLimit(int $limit, QueryBuilder $qb = null)
+    {
+        return $this->findAllDefaultModulesQuery($this->withLimit($limit, $qb))
+            ->getQuery()
+            ->getResult()
             ;
     }
 
@@ -75,5 +90,10 @@ class ModuleRepository extends ServiceEntityRepository
         return $this->getOrCreateQueryBuilder($qb)
             ->andWhere('m.deletedAt IS NULL')
             ;
+    }
+
+    private function withLimit(int $limit, QueryBuilder $qb = null): QueryBuilder
+    {
+        return $qb->setMaxResults($limit);
     }
 }

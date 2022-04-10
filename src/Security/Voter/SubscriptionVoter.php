@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SubscriptionVoter extends Voter
 {
     /**
-     * Определяет применяется ли voter к запрашиваемому правилу
+     * Определяет, применяется ли voter к запрашиваемому правилу
      *
      * @param string $attribute - переданное правило
      * @param $subject - переданная сущность
@@ -41,9 +41,9 @@ class SubscriptionVoter extends Voter
 
         switch ($attribute) {
             case 'IS_PRO_SUBSCRIBER':
-                return $this->isSubscriberType('PRO', $user);
+                return $this->isSubscriberType('PRO', $user) || $this->isAdmin($user);
             case 'IS_PLUS_SUBSCRIBER':
-                return $this->isSubscriberType('PLUS', $user);
+                return $this->isSubscriberType('PLUS', $user) || $this->isAdmin($user);
         }
 
         return false;
@@ -54,12 +54,21 @@ class SubscriptionVoter extends Voter
      *
      * @param string $subscriptionName - имя подписки
      * @param UserInterface $user - пользователь
-     * @return bool|void - возвращает true, если
+     * @return bool - возвращает true, если есть совпадение с переданной подпиской
      */
-    private function isSubscriberType(string $subscriptionName, UserInterface $user)
+    private function isSubscriberType(string $subscriptionName, UserInterface $user): bool
     {
-        if (($user->getSubscription())->getName() === $subscriptionName) {
-            return true;
-        }
+       return ($user->getSubscription())->getName() === $subscriptionName;
+    }
+
+    /**
+     * Проверяет, является ли пользователь администратором
+     *
+     * @param UserInterface $user
+     * @return bool
+     */
+    private function isAdmin(UserInterface $user): bool
+    {
+        return in_array('ROLE_ADMIN' ,$user->getRoles());
     }
 }
