@@ -72,7 +72,6 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
                 $data['paragraph'] = $faker->paragraph(rand(1, 10));
             }
 
-            // ToDO Стоит так же конкатенировать в цикле параграфы
             if (preg_match('/{{(\s)*paragraphs?(\|raw)?(\s)*}}/', $module->getBody())) {
                 foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
                     $data['paragraphs'] .= '<p class="lead mb-0">' .$paragraph. '</p>';
@@ -86,8 +85,6 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
         }
 
         // ToDo Тут надо вставить продвигаемое слово и проверить как это все будет работать
-
-
 
         $articleData = [
             'title' => '<h2 class="card-title text-center mb-4">' . $articleDTO->title . '</h2>',
