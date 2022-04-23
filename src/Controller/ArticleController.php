@@ -57,7 +57,7 @@ class ArticleController extends AbstractController
             $newArticle = $articleGenerator->generateArticle();
             // ToDo: Тематику, и продвигаемые слова пока оставляем в таком виде, будет рефакторинг после разработки
             //  полноценного функционала генерации статей
-            $article = Article::create(
+            $article = Article::create( // ToDo Использовать тут фабричный метод для демогенерации
                 'demo',
                 ['demonstration'],
                 $articleDemoModel->title,
