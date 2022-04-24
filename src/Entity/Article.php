@@ -252,4 +252,28 @@ class Article
                 ->setBody($body)
             ;
     }
+
+    /**
+     * Создает объект статьи для демонстрационной генерации
+     *
+     * @param string $title - заголовок статьи
+     * @param string $body - тело сгенерированной статьи
+     * @param string $promotedWord - продвигаемое слово
+     * @return Article
+     */
+    public static function createDemo(
+        string $title,
+        string $body,
+        string $promotedWord
+    ): Article
+    {
+        return (new self())
+            ->setTheme('demo')
+            ->setKeyWord(['demonstration'])
+            ->setTitle($title)
+            ->setSize(3)
+            ->setPromotedWords(['word' => $promotedWord, 'count' => 1])
+            ->setBody($body)
+            ;
+    }
 }

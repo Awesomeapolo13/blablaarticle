@@ -105,6 +105,7 @@ class ModuleController extends AbstractController
      * @param ModuleRepository $moduleRepository
      * @param LoggerInterface $moduleLogger
      * @param EntityManagerInterface $em
+     * @param RoleHierarchyInterface $hierarchy
      * @return JsonResponse
      */
     public function delete(

@@ -4,8 +4,13 @@ namespace App\ArticleGeneration\Strategy;
 
 use App\ArticleGeneration\ArticleGenerationInterface;
 use App\ArticleGeneration\PromotedWordInserter;
+use App\Entity\Module;
+use App\Repository\ModuleRepository;
 use Faker\Factory;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Стратегия для демонстрационной генерации статьи
@@ -14,33 +19,6 @@ use Twig\Environment;
  */
 class DemoArticleGenerationStrategy implements ArticleGenerationInterface
 {
-    /**
-     * @var string - модуль с одним параграфом
-     */
-    private $addYourWordsModule = '<div class="row">
-                        <div class="p-3">
-                            <h2>{{title}}</h2>
-                            <p class="lead mb-0">{{ paragraph }}</p>
-                        </div>
-                    </div>';
-
-    /**
-     * @var string - модуль с картинкой и несколькими параграфами
-     */
-    private $pasteImagesModule = '<div class="row">
-                        <div class="showcase-text p-3">
-                            <div class="media">
-                                <div class="media-body">
-                                    <h2>{{ title }}</h2>
-                                    {{paragraphs|raw}}
-                                </div>
-                                <img class="ml-3" src="{{ asset("image/bg-showcase-2.jpg") }}" width="518" height="345"
-                                     alt="Демонстрационная картинка">
-                            </div>
-
-                        </div>
-                    </div>';
-
     /**
      * @var PromotedWordInserter - сервис вставки продвигаемых слов
      */
@@ -51,10 +29,20 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
      */
     private $twig;
 
-    public function __construct(PromotedWordInserter $wordInserter, Environment $twig)
+    /**
+     * @var ModuleRepository
+     */
+    private $moduleRepository;
+
+    public function __construct(
+        PromotedWordInserter $wordInserter,
+        Environment          $twig,
+        ModuleRepository     $moduleRepository
+    )
     {
         $this->wordInserter = $wordInserter;
         $this->twig = $twig;
+        $this->moduleRepository = $moduleRepository;
     }
 
     /**
@@ -62,57 +50,51 @@ class DemoArticleGenerationStrategy implements ArticleGenerationInterface
      *
      * @param object $articleDTO
      * @return string - вложенный массив для сохранения с данными новой статьи
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function generate(object $articleDTO): string
     {
         $faker = Factory::create();
+        /** @var Module[] $modules */
+        $modules = $this->moduleRepository->findDefaultWithLimit(3);
 
-        $addWordsParagraph = $this->wordInserter->pasteWordIntoText(
-            $articleDTO->promotedWord,
-            $faker->paragraph()
-        );
-        $putImagesParagraphs = $this->wordInserter->pasteWordIntoParagraphs(
-            $articleDTO->promotedWord,
-            $faker->paragraphs(2)
-        );
-        $useApiParagraph = $this->wordInserter->pasteWordIntoText(
-            $articleDTO->promotedWord,
-            $faker->paragraph(4)
-        );
-        $putImagesParagraphsStr = null;
-        // вставляем параграфы из массива в теги
-        foreach ($putImagesParagraphs as $paragraph) {
-            $putImagesParagraphsStr .= '<p class="lead mb-0">' .$paragraph. '</p>';
+        $articleBody = '';
+        foreach ($modules as $module) {
+            $data = [];
+            if (preg_match('/{{(\s)*title?(\|raw)?(\s)*}}/', $module->getBody())) {
+                $data['title'] = $faker->sentence();
+            }
+
+            // Todo В принципе p почти везде одинаков, значит можно сделать вставку чисто в текст параграфов. Остальное мимо
+            if (preg_match('/{{(\s)*paragraph?(\|raw)?(\s)*}}/', $module->getBody())) {
+                $data['paragraph'] = $faker->paragraph(rand(1, 10));
+            }
+
+            if (preg_match('/{{(\s)*paragraphs?(\|raw)?(\s)*}}/', $module->getBody())) {
+                foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
+                    $data['paragraphs'] .= '<p class="lead mb-0">' .$paragraph. '</p>';
+                }
+            }
+            // ToDo Добавить imagePath после того как простоим файловую систему
+            $articleBody .= $this->twig->render('article/components/article_module.html.twig', [
+                'data' => $data,
+                'module' => $module
+            ]);
         }
 
+        // ToDo Тут надо вставить продвигаемое слово и проверить как это все будет работать
+
         $articleData = [
-            'title' => '<h2 class="card-title text-center mb-4">' .$articleDTO->title. '</h2>',
+            'title' => '<h2 class="card-title text-center mb-4">' . $articleDTO->title . '</h2>',
             'description' => 'Статья сгенерированная для демонстрации функционала генерации статей',
             'theme' => 'demo',
             'size' => 3,
             'promotedWords' => [
                 ['word' => $articleDTO->promotedWord, 'count' => 1],
             ],
-            'body' => [
-                [
-                    'title' => $faker->sentence(3),
-                    'paragraph' => $addWordsParagraph,
-                    'module' => $this->addYourWordsModule,
-                ],
-                [
-                    'title' => $faker->sentence(2),
-                    'paragraphs' => $putImagesParagraphsStr,
-                    'module' => $this->pasteImagesModule,
-                ],
-                [
-                    'title' => $faker->sentence(3),
-                    'paragraph' => $useApiParagraph,
-                    'module' => $this->addYourWordsModule,
-                ],
-            ]
+            'body' => $articleBody,
         ];
 
         return $this->twig->render('article/components/article_demo.html.twig', ['article' => $articleData]);
