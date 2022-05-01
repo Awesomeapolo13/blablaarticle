@@ -8,7 +8,7 @@ namespace App\ArticleGeneration\PromotedWord;
 class PromotedWordInserter implements PasteWordInterface
 {
     /**
-     * Вставляет переданное продвигаемое слово в текст указанное количетсво раз
+     * Вставляет переданное продвигаемое слово в текст указанное количество раз
      *
      * @param string|array $text
      * @param string $word
