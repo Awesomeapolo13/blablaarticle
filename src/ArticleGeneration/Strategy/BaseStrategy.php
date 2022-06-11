@@ -6,6 +6,7 @@ use App\ArticleGeneration\ArticleGenerationInterface;
 use App\ArticleGeneration\PromotedWord\PromotedWordInserter;
 use App\Entity\Module;
 use App\Repository\ModuleRepository;
+use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Faker\Factory;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -28,15 +29,18 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     private Environment $twig;
 
     private ModuleRepository $moduleRepository;
+    private ThemeFactory $themeFactory;
 
     public function __construct(
         PromotedWordInserter $wordInserter,
         Environment          $twig,
-        ModuleRepository     $moduleRepository
+        ModuleRepository     $moduleRepository,
+        ThemeFactory        $themeFactory
     ) {
         $this->wordInserter = $wordInserter;
         $this->twig = $twig;
         $this->moduleRepository = $moduleRepository;
+        $this->themeFactory = $themeFactory;
     }
 
     /**
@@ -58,7 +62,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 $data['title'] = $faker->sentence();
             }
 
-            // Todo В принципе p почти везде одинаков, значит можно сделать вставку чисто в текст параграфов. Остальное мимо
             if (preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $module->getBody())) {
                 $data['paragraph'] = $faker->paragraph(rand(1, 10));
             }
@@ -69,7 +72,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                     $data['paragraphs'] .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
                 }
             }
-            // ToDo Добавить imagePath после того как простоим файловую систему
+            // ToDo Добавить imagePath и keyWord после того как простоим файловую систему
             $articleBody[] = $this->getTwig()->render('article/components/article_module.html.twig', [
                 'data' => $data,
                 'module' => $module
@@ -97,5 +100,10 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     protected function getModuleRepository(): ModuleRepository
     {
         return $this->moduleRepository;
+    }
+
+    protected function getThemeFactory(): ThemeFactory
+    {
+        return $this->themeFactory;
     }
 }

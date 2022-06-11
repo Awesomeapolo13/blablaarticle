@@ -59,9 +59,9 @@ class ArticleFormModel
      * @Assert\Type("integer", message="Минимальное количество модулей для генерации статьи должно быть числом")
      * @Assert\Range(
      *     min=0,
-     *     max=3,
+     *     max=10,
      *     minMessage="Количество модулей для генерации статьи не может быть отрицательной величиной",
-     *     maxMessage="Количество модулей для генерации не может превышать, количество даступных модулей"
+     *     maxMessage="Количество модулей для генерации не может превышать, количество доступных модулей"
      * )
      * @SizeRange(propertyPath="sizeTo")
      * @Assert\Expression(
@@ -84,9 +84,9 @@ class ArticleFormModel
      * @Assert\Type("integer", message="Максимальное количество модулей для генерации статьи должно быть числом")
      * @Assert\Range(
      *     min=0,
-     *     max=3,
+     *     max=10,
      *     minMessage="Количество модулей для генерации статьи не может быть отрицательной величиной",
-     *     maxMessage="Количество модулей для генерации не может превышать, количество даступных модулей"
+     *     maxMessage="Количество модулей для генерации не может превышать, количество дjступных модулей"
      * )
      *
      * @var int
@@ -100,7 +100,7 @@ class ArticleFormModel
      *
      * @IsEmptyBoth(propertyPath="promotedWordCount")
      *
-     * @var string
+     * @var string[]
      */
     public $promotedWords;
 
@@ -111,7 +111,7 @@ class ArticleFormModel
      *
      *
      *
-     * @var int
+     * @var int[]
      */
     public $promotedWordCount;
 
