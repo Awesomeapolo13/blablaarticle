@@ -6,7 +6,7 @@ use ArticleThemeProvider\ArticleThemeBundle\Theme;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeProviderInterface;
 
 /**
- * Провайдер получения обыденных базовыъ тем
+ * Провайдер получения обыденных базовых тем
  */
 class BasicThemeProvider implements ThemeProviderInterface
 {
