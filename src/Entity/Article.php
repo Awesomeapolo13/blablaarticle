@@ -241,19 +241,28 @@ class Article
             }
             $article->setPromotedWords($promotedWords);
         }
-        // Формируем заголовок из slug тематики, если он не задан
+        // Формируем заголовок из slug тематики, если он не задан (ToDo У тематики есть name, надо как то использовать его)
         if (!isset($articleFormModel->title)) {
             $title = explode('_',$articleFormModel->theme);
             // Заголовок должен начинаться с заглавной буквы
             $title[0] = ucfirst($title[0]);
             $articleFormModel->title = implode(' ', $title);
         }
+        // Если определен один из параметров, то выбираем то что определен
+        $size = $articleFormModel->sizeFrom ?? null;
+        if (isset($articleFormModel->sizeTo)) {
+            $size = $articleFormModel->sizeTo;
+        }
+        // Если определены оба, то выбираем рандомное количество модулей между полученными значений
+        if (isset($articleFormModel->sizeFrom) && isset($articleFormModel->sizeTo)) {
+            $size = rand($articleFormModel->sizeFrom, $articleFormModel->sizeTo);
+        }
 
         return $article
                 ->setTheme($articleFormModel->theme)
                 ->setKeyWord($articleFormModel->articleWords)
                 ->setTitle($articleFormModel->title)
-                ->setSize(rand($articleFormModel->sizeFrom, $articleFormModel->sizeTo))
+                ->setSize($size)
             ;
     }
 

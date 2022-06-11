@@ -4,12 +4,13 @@ namespace App\ArticleGeneration\Strategy;
 
 use App\Entity\Article;
 use App\Entity\Module;
+use Exception;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 /**
- *
+ * Стратегия для подписчиков уровня FREE
  */
 class FreeArticleGenerationStrategy extends BaseStrategy
 {
@@ -28,14 +29,19 @@ class FreeArticleGenerationStrategy extends BaseStrategy
         $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
         $theme = $this->getThemeFactory()->findThemeBySlug($article->getTheme());
         if (!$theme) {
-            throw new \Exception('Тематика не найдена', 400);
+            throw new Exception('Тематика не найдена', 400);
         }
         // Заполняем статью контентом ToDO: Нужно передать сюда ключевые слова и их формы
-        $articleBody = $this->fillPlaceholders($modules);
+        $articleBody = $this->fillPlaceholders($modules, $article);
 
         // Вставка текста тематики
         if ($theme->getParagraphs()) {
             foreach ($theme->getParagraphs() as $content) {
+                // Вставляем ключевое слово в текст тематики ToDO Не выводит слово если там keyword без фильтра. Задать вопрос
+                $content = $this->getTwig()->render('article/components/article_module.html.twig', [
+                    'data' => ['keyword' => $article->getKeyWord()],
+                    'module' => ['body' => $content],
+                ]);
                 // Берем рандомный модуль
                 $randModulePos = rand(0, count($articleBody) - 1);
                 // Ищем все параграфы в модуле

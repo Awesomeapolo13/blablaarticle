@@ -4,6 +4,7 @@ namespace App\ArticleGeneration\Strategy;
 
 use App\ArticleGeneration\ArticleGenerationInterface;
 use App\ArticleGeneration\PromotedWord\PromotedWordInserter;
+use App\Entity\Article;
 use App\Entity\Module;
 use App\Repository\ModuleRepository;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
@@ -52,7 +53,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function fillPlaceholders(array $modules): array
+    protected function fillPlaceholders(array $modules, ?object $article = null): array
     {
         $faker = Factory::create();
         $articleBody = [];
@@ -72,7 +73,11 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                     $data['paragraphs'] .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
                 }
             }
-            // ToDo Добавить imagePath и keyWord после того как простоим файловую систему
+
+            /** @var Article $article */
+            $data['keyword'] = isset($article) ? $article->getKeyWord() : [];
+
+            // ToDo Добавить imagePath после того как простоим файловую систему
             $articleBody[] = $this->getTwig()->render('article/components/article_module.html.twig', [
                 'data' => $data,
                 'module' => $module

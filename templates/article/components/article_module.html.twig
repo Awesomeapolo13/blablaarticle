@@ -1,6 +1,7 @@
 {% autoescape %}
     {% include template_from_string(module.body) with {
         title: data.title|default(''),
+        keyword: data.keyword|morph(0),
         paragraph: data.paragraph|default(''),
         paragraphs: data.paragraphs|default(''),
     } %}
