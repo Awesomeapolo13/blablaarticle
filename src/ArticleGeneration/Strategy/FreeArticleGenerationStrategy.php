@@ -42,31 +42,17 @@ class FreeArticleGenerationStrategy extends BaseStrategy
                     'data' => ['keyword' => $article->getKeyWord()],
                     'module' => ['body' => $content],
                 ]);
-                // Берем рандомный модуль
-                $randModulePos = rand(0, count($articleBody) - 1);
-                // Ищем все параграфы в модуле
-                if (
-                    preg_match_all(
-                        '/(?:<p(?:.*)?>)(.+)?(?:<\/p>)/',
-                        $articleBody[$randModulePos],
-                        $matches
-                    )
-                ) {
-                    // Случайный текст в параграфе
-                    $targetText = $matches[1][rand(0, count($matches[1]) - 1)];
-                    // Делим текст абзаца на предложения
-                    $sentencesArr = explode('.', $targetText);
-                    // Рандомно вставляем текст тематики
-                    array_splice($sentencesArr, rand(0, count($sentencesArr) - 2), 0, $content);
-                    // Обрезаем выбранный случайный текст для использования его в preg_replace
-                    $targetText = mb_substr($targetText, 0, 30);
-                    // Осуществляем вставку дополненного текста в модуль
-                    $articleBody[$randModulePos] = preg_replace(
-                        "/($targetText.*?)<\/p>/",
-                        implode('. ', $sentencesArr),
-                        $articleBody[$randModulePos]
-                    );
-                }
+                // Вставка ключевого слова в параграфы тематик
+                $articleBody = $this->getWordInserter()->paste(
+                    $articleBody,
+                    $content,
+                    1,
+                    [
+                        'pattern' => 'p',
+                        'explodeSeparator' => '.',
+                        'implodeSeparator' => '.',
+                    ]
+                );
             }
         }
 
