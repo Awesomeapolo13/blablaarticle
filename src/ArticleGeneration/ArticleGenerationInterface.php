@@ -13,5 +13,5 @@ interface ArticleGenerationInterface
      * @var object - объект с данными для генерации статьи
      * @return mixed
      */
-    public function generate(object $articleDTO);
+    public function generate(object $article);
 }

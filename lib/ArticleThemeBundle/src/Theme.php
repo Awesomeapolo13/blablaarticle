@@ -7,18 +7,9 @@ namespace ArticleThemeProvider\ArticleThemeBundle;
  */
 class Theme
 {
-    /**
-     * @var string
-     */
-    private $slug;
-    /**
-     * @var string
-     */
-    private $name;
-    /**
-     * @var array
-     */
-    private $paragraphs;
+    private string $slug;
+    private string $name;
+    private array $paragraphs;
 
     public function __construct(string $slug, string $name, array $paragraphs)
     {

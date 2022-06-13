@@ -54,17 +54,12 @@ class ArticleController extends AbstractController
                 ->setGenerationStrategy($demoStrategy)
             ;
 
-            $newArticle = $articleGenerator->generateArticle();
             // ToDo: Тематику, и продвигаемые слова пока оставляем в таком виде, будет рефакторинг после разработки
             //  полноценного функционала генерации статей
-            $article = Article::create( // ToDo Использовать тут фабричный метод для демогенерации
-                'demo',
-                ['demonstration'],
+            $article = Article::createDemo( // ToDo Использовать для создания объект модели демогенерации
                 $articleDemoModel->title,
-                3,
-                $newArticle,
-                [['word' => $articleDemoModel->promotedWord, 'count' => 1]],
-                'Статья '
+                $articleGenerator->generateArticle(),
+                $articleDemoModel->promotedWord
             );
             $em->persist($article);
             $em->flush();

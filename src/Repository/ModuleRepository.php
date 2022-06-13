@@ -94,6 +94,7 @@ class ModuleRepository extends ServiceEntityRepository
 
     private function withLimit(int $limit, QueryBuilder $qb = null): QueryBuilder
     {
-        return $qb->setMaxResults($limit);
+        return $this->getOrCreateQueryBuilder($qb)
+            ->setMaxResults($limit);
     }
 }

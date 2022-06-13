@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -216,40 +217,52 @@ class Article
     /**
      * Фабричный метод создания статьи
      *
-     * @param string $theme - тематика
-     * @param array $keyWord - массив ключевого слова и его словоформ
-     * @param string $title - заголовок
-     * @param int $size - размер
-     * @param array $promotedWords - продвигаемое слово
-     * @param string $body - тело статьи
-     * @param string|null $description - краткое описание статьи
+     * Создает объект статьи из объекта DTO формы генерации статьи.
+     * Задает все необходимые свойства кроме body. Его нужно получить во время генерации и задать отдельно.
+     *
+     * @param ArticleFormModel $articleFormModel - DTO формы генерации статьи
      * @return Article
      */
-    public static function create(
-        string $theme,
-        array $keyWord,
-        string $title,
-        int $size,
-        string $body,
-        array $promotedWords = [],
-        string $description = null
-    ): Article
+    public static function create(ArticleFormModel $articleFormModel): Article
     {
         $article = new self();
-        if (isset($description)) {
-            $article->setDescription($description);
+        // сохраняем описание, если оно есть
+        if (isset($articleFormModel->description)) {
+            $article->setDescription($articleFormModel->description);
         }
-
-        if (!empty($promotedWords)) {
+        // Формируем массив продвигаемых слов
+        if (!empty($articleFormModel->promotedWords)) {
+            $promotedWords = [];
+            foreach ($articleFormModel->promotedWords as $key => $promotedWord) {
+                $promotedWords[] = [
+                    'word' => $promotedWord,
+                    'count' => $articleFormModel->promotedWordCount[$key],
+                ];
+            }
             $article->setPromotedWords($promotedWords);
+        }
+        // Формируем заголовок из slug тематики, если он не задан (ToDo У тематики есть name, надо как то использовать его)
+        if (!isset($articleFormModel->title)) {
+            $title = explode('_',$articleFormModel->theme);
+            // Заголовок должен начинаться с заглавной буквы
+            $title[0] = ucfirst($title[0]);
+            $articleFormModel->title = implode(' ', $title);
+        }
+        // Если определен один из параметров, то выбираем то что определен
+        $size = $articleFormModel->sizeFrom ?? null;
+        if (isset($articleFormModel->sizeTo)) {
+            $size = $articleFormModel->sizeTo;
+        }
+        // Если определены оба, то выбираем рандомное количество модулей между полученными значений
+        if (isset($articleFormModel->sizeFrom) && isset($articleFormModel->sizeTo)) {
+            $size = rand($articleFormModel->sizeFrom, $articleFormModel->sizeTo);
         }
 
         return $article
-                ->setTheme($theme)
-                ->setKeyWord($keyWord)
-                ->setTitle($title)
+                ->setTheme($articleFormModel->theme)
+                ->setKeyWord($articleFormModel->articleWords)
+                ->setTitle($articleFormModel->title)
                 ->setSize($size)
-                ->setBody($body)
             ;
     }
 

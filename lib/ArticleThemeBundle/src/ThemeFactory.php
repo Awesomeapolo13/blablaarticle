@@ -17,7 +17,7 @@ class ThemeFactory
      *
      * @var iterable|ThemeProviderInterface[]
      */
-    private $allThemeProviders;
+    private iterable $allThemeProviders;
 
     public function __construct(
         iterable $allThemeProviders
@@ -27,7 +27,7 @@ class ThemeFactory
     }
 
     /**
-     * Получает все доступные темы
+     * Получает все доступные темы через провайдеры
      *
      * @return Theme[]
      */
