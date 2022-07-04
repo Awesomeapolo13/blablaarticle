@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -87,11 +89,6 @@ class Article
     private $body;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $images;
-
-    /**
      * @var \DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -106,6 +103,16 @@ class Article
      * @Assert\DisableAutoMapping()
      */
     protected $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ArticleImage::class, mappedBy="article", orphanRemoval=true)
+     */
+    private $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -202,20 +209,9 @@ class Article
         return $this;
     }
 
-    public function getImages(): ?string
-    {
-        return $this->images;
-    }
-
-    public function setImages(?string $images): self
-    {
-        $this->images = $images;
-
-        return $this;
-    }
-
     /**
      * Фабричный метод создания статьи
+     * ToDo Вынести фабричные методы в отдельный класс
      *
      * Создает объект статьи из объекта DTO формы генерации статьи.
      * Задает все необходимые свойства кроме body. Его нужно получить во время генерации и задать отдельно.
@@ -288,5 +284,35 @@ class Article
             ->setPromotedWords(['word' => $promotedWord, 'count' => 1])
             ->setBody($body)
             ;
+    }
+
+    /**
+     * @return Collection<int, ArticleImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ArticleImage $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(ArticleImage $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -28,8 +28,7 @@ final class Version20220110194725 extends AbstractMigration
                            description TEXT DEFAULT NULL, 
                            size INT NOT NULL, 
                            promoted_words JSON DEFAULT NULL, 
-                           body TEXT NOT NULL, 
-                           images VARCHAR(255) DEFAULT NULL, 
+                           body TEXT NOT NULL,  
                            created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
                            updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, 
                            PRIMARY KEY(id))'
