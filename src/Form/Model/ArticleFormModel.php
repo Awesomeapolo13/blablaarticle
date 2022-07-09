@@ -123,7 +123,7 @@ class ArticleFormModel
      *     maxMessage="Возможна загрузка не более пяти изображений"
      * )
      *
-     * @var
+     * @var array
      */
-    public $images;
+    public array $images;
 }

@@ -1,4 +1,11 @@
 parameters:
+    # Параметры для загрузки изображений
+    #имя директории, для хранения изображений статей
+    article_uploads: 'uploads/articles'
+    #url для обращения к изображениям
+    article_uploads_url: '%env(SITE_URL)%/%article_uploads%'
+    #полный путь до директории хранения изображений статей
+    article_uploads_dir: '%kernel.project_dir%/public/%article_uploads%'
     # имя и email отправителя для рассылки с сайта
     sender.email: '%env(SENDER_EMAIL)%'
     sender.name: '%env(SENDER_NAME)%'

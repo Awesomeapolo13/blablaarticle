@@ -23,10 +23,8 @@ class ArticleGenerationFormType extends AbstractType
 {
     /**
      * Фабрика тематик
-     *
-     * @var ThemeFactory
      */
-    private $themeFactory;
+    private ThemeFactory $themeFactory;
 
     public function __construct(ThemeFactory $themeFactory)
     {
@@ -91,6 +89,18 @@ class ArticleGenerationFormType extends AbstractType
                 'label' => 'Изображения',
                 'required' => false,
                 'multiple' => true,
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '2M',
+                        'maxSizeMessage' => 'Изображение не должно быть размером более 2Мб',
+                        'mimeTypes' => [
+                            'jpeg',
+                            'jpg',
+                            'png',
+                        ],
+                        'mimeTypesMessage' => 'Загружаемые изображения должны иметь расширения jpeg, jpg или png'
+                    ])
+                ],
                 'attr' => [
                     'placeholder' => 'Выбрать файлы',
                     'class' => 'form-control-file',
