@@ -14,7 +14,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Image;
 
 /**
  * Класс формы создания статьи
@@ -89,18 +88,6 @@ class ArticleGenerationFormType extends AbstractType
                 'label' => 'Изображения',
                 'required' => false,
                 'multiple' => true,
-                'constraints' => [
-                    new Image([
-                        'maxSize' => '2M',
-                        'maxSizeMessage' => 'Изображение не должно быть размером более 2Мб',
-                        'mimeTypes' => [
-                            'jpeg',
-                            'jpg',
-                            'png',
-                        ],
-                        'mimeTypesMessage' => 'Загружаемые изображения должны иметь расширения jpeg, jpg или png'
-                    ])
-                ],
                 'attr' => [
                     'placeholder' => 'Выбрать файлы',
                     'class' => 'form-control-file',

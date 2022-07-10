@@ -118,6 +118,18 @@ class ArticleFormModel
     /**
      * Изображения для статьи
      *
+     * @Assert\All({
+     *     @Assert\Image(
+     *          mimeTypes = {"image/jpeg", "image/jpg", "image/png"},
+     *          mimeTypesMessage = "Загружаемые изображения должны иметь расширения jpeg, jpg или png.
+     *                              Прикреплены файлы расширения {{ type }}"
+     *     ),
+     *     @Assert\File(
+     *          maxSize = "2M",
+     *          maxSizeMessage = "Изображение не должно быть размером более 2Мб. Ваш файл имеет размер {{ size }}
+     *                              {{ suffix }}",
+     *     )
+     * })
      * @Assert\Count(
      *     max = 5,
      *     maxMessage="Возможна загрузка не более пяти изображений"
