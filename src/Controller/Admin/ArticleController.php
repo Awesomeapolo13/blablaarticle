@@ -5,12 +5,15 @@ namespace App\Controller\Admin;
 use App\ArticleGeneration\ArticleGenerator;
 use App\ArticleGeneration\Strategy\FreeArticleGenerationStrategy;
 use App\Entity\Article;
+use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleGenerationFormType;
 use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
+use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Flysystem\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,15 +63,20 @@ class ArticleController extends AbstractController
      * @param Request $request
      * @param ArticleGenerator $articleGenerator
      * @param FreeArticleGenerationStrategy $freeStrategy
+     * @param EntityManagerInterface $em
+     * @param ArticleRepository $articleRepository
      * @return Response
      * @throws Exception
+     * @throws FilesystemException
      */
     public function create(
         Request                       $request,
         ArticleGenerator              $articleGenerator,
         FreeArticleGenerationStrategy $freeStrategy,
         EntityManagerInterface        $em,
-        ArticleRepository             $articleRepository
+        ArticleRepository             $articleRepository,
+        FileUploader                  $fileUploader,
+        ArticleFactory                $articleFactory
     ): Response
     {
         // TODo: Выполнить лимитирование генерации статьи на этапе реализации для API
@@ -84,18 +92,23 @@ class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var ArticleFormModel $articleModel */
+            /**
+             * 1) Выполнить вызов аплоадера для сохранения картинок, он вернет имена файлов,
+             *   которые можно будет сохранить в БД и использовать далее для генерации
+             * 2) Реализовать логику использования изображений для генерации статьи по ТЗ внутри стратегии
+             */
             $articleModel = $form->getData();
-            $article = Article::create($articleModel);
-
-            $em->persist(
-                $article
-                    ->setBody(
-                        $articleGenerator
-                            ->setArticleDTO($article)
-                            ->setGenerationStrategy($freeStrategy)
-                            ->generateArticle()
-                    )
-            );
+            // Сохраняем изображения и записываем их имена в свойство ДТО
+            $articleModel->images = $fileUploader->uploadManyFiles($articleModel->images);
+            // Передаем ДТО в фабрику статей для формирования объекта статьи
+            $article = $articleFactory->createFromModel($articleModel);
+            $article->setBody(
+                    $articleGenerator
+                        ->setArticleDTO($article)
+                        ->setGenerationStrategy($freeStrategy)
+                        ->generateArticle()
+                );
+            $em->persist($article);
             $em->flush();
 
             // Сообщение об успешном создании модуля

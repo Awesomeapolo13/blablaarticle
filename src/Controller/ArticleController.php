@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\ArticleGeneration\ArticleGenerator;
 use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
 use App\Entity\Article;
+use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleDemoGenerateFormType;
 use App\Form\Model\ArticleDemoFormModel;
 use App\Repository\ArticleRepository;
@@ -27,11 +28,12 @@ class ArticleController extends AbstractController
      * @throws Exception
      */
     public function index(
-        Request $request,
-        EntityManagerInterface $em,
-        ArticleRepository $articleRepository,
-        ArticleGenerator $articleGenerator,
-        DemoArticleGenerationStrategy $demoStrategy
+        Request                       $request,
+        EntityManagerInterface        $em,
+        ArticleRepository             $articleRepository,
+        ArticleGenerator              $articleGenerator,
+        DemoArticleGenerationStrategy $demoStrategy,
+        ArticleFactory                $articleFactory
     ): Response
     {
         // Id статьи, получаем из куки, если она существует
@@ -54,13 +56,12 @@ class ArticleController extends AbstractController
                 ->setGenerationStrategy($demoStrategy)
             ;
 
-            // ToDo: Тематику, и продвигаемые слова пока оставляем в таком виде, будет рефакторинг после разработки
-            //  полноценного функционала генерации статей
-            $article = Article::createDemo( // ToDo Использовать для создания объект модели демогенерации
-                $articleDemoModel->title,
-                $articleGenerator->generateArticle(),
-                $articleDemoModel->promotedWord
-            );
+            $article = $articleFactory
+                ->createFromModel($articleDemoModel)
+                ->setBody(
+                    $articleGenerator->generateArticle()
+                )
+            ;
             $em->persist($article);
             $em->flush();
             // Записываем в куки id статьи
