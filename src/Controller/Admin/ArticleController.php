@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\ArticleGeneration\ArticleGenerator;
 use App\ArticleGeneration\Strategy\FreeArticleGenerationStrategy;
-use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleGenerationFormType;
 use App\Form\Model\ArticleFormModel;
@@ -65,9 +64,11 @@ class ArticleController extends AbstractController
      * @param FreeArticleGenerationStrategy $freeStrategy
      * @param EntityManagerInterface $em
      * @param ArticleRepository $articleRepository
+     * @param FileUploader $fileUploader
+     * @param ArticleFactory $articleFactory
      * @return Response
-     * @throws Exception
      * @throws FilesystemException
+     * @throws Exception
      */
     public function create(
         Request                       $request,

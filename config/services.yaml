@@ -24,7 +24,7 @@ services:
 
         bind:
             # Имя сервиса берется по названию файловой системы из oneup_flysystem.yaml
-            Legue\Flysystem\Filesystem $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
+            League\Flysystem\FilesystemOperator $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
 
     App\:
         resource: '../src/'
