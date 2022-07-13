@@ -22,6 +22,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+        bind:
+            # Имя сервиса берется по названию файловой системы из oneup_flysystem.yaml
+            Legue\Flysystem\Filesystem $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
+
     App\:
         resource: '../src/'
         exclude:
@@ -80,7 +84,7 @@ services:
 
     # Сервис вставки продвигаемого слова
     app.promoted_word_inserter:
-        class: App\ArticleGeneration\PromotedWordInserter
+        class: App\ArticleGeneration\PromotedWord\PromotedWordInserter
 
     Twig\Extension\StringLoaderExtension:
 

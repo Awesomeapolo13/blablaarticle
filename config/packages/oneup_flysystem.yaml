@@ -1,7 +1,7 @@
 # Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle
 oneup_flysystem:
     adapters:
-        uploads_article_adapter:
+        uploads_articles_adapter:
             local:
                 location: '%article_uploads_dir%'
     filesystems:

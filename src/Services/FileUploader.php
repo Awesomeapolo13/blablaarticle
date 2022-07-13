@@ -13,14 +13,14 @@ use Symfony\Component\String\Slugger\SluggerInterface;
  */
 class FileUploader
 {
-    private FilesystemOperator $filesystem;
+    private FilesystemOperator $articleFileSystem;
     private SluggerInterface $slugger;
 
     public function __construct(
-        FilesystemOperator $filesystem,
+        FilesystemOperator $articleFileSystem,
         SluggerInterface $slugger
     ) {
-        $this->filesystem = $filesystem;
+        $this->articleFileSystem = $articleFileSystem;
         $this->slugger = $slugger;
     }
 
@@ -48,7 +48,7 @@ class FileUploader
         ;
 
         $stream = fopen($file->getPathname(), 'r');
-        $this->filesystem->writeStream($fileName, $stream);
+        $this->articleFileSystem->writeStream($fileName, $stream);
 
         if (is_resource($stream)) {
             fclose($stream);
