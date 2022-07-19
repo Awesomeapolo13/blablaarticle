@@ -46,17 +46,19 @@ abstract class BaseStrategy implements ArticleGenerationInterface
 
     /**
      * Заполняет плейсхолдеры сгенерированным текстом
-     *
+     * ToDO Сделать статью обязательным аргументом. Переопределить метод внутри стратегии для демонстрации
      * @param Module[] $modules
      * @return array - массив тел модулей с заполненными плейсхолдерами
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    protected function fillPlaceholders(array $modules, ?object $article = null): array
+    protected function fillPlaceholders(array $modules, Article $article = null): array
     {
         $faker = Factory::create();
         $articleBody = [];
+        // Массив изображений записываем в переменную, чтобы использовать все переданные изображения минимум один раз
+        $minImagesArr = $article->getImages();
         foreach ($modules as $module) {
             $data = [];
             if (preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $module->getBody())) {
@@ -74,10 +76,19 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 }
             }
 
-            /** @var Article $article */
-            $data['keyword'] = isset($article) ? $article->getKeyWord() : [];
+            if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $module->getBody())) {
+                // Выбираем рандомное изображение
+                $data['imageSrc'] = $article->getImages()[array_rand($article->getImages())];
+                // Если хотя бы одно изображение еще не было использовано единожды, берем его
+                if (!empty($minImagesArr)) {
+                    $key = array_rand($minImagesArr);
+                    $data['imageSrc'] = $minImagesArr[$key];
+                    unset($minImagesArr[$key]);
+                }
+            }
 
-            // ToDo Добавить imagePath после того как простоим файловую систему
+            $data['keyword'] = $article->getKeyWord();
+
             $articleBody[] = $this->getTwig()->render('article/components/article_module.html.twig', [
                 'data' => $data,
                 'module' => $module

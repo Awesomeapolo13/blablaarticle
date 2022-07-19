@@ -51,6 +51,7 @@ class ArticleController extends AbstractController
             /** @var ArticleDemoFormModel $articleDemoModel */
             $articleDemoModel = $form->getData();
             // Задаем данные для генерации статьи в соответствии с демо-стратегией
+            // ToDO Переделать на использование сущности вместо ДТО
             $articleGenerator
                 ->setArticleDTO($articleDemoModel)
                 ->setGenerationStrategy($demoStrategy)
