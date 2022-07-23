@@ -24,9 +24,11 @@ class FreeArticleGenerationStrategy extends BaseStrategy
     public function generate(object $article): string
     {
         /** @var Module[] $modules */
-        // ToDO Вытаскивает три одинаковых модуля. Надо либо сделать случайный выбор модулей, либо сделать
-        //  первые три всегда для демо
-        $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
+        // ToDO Добавить флаг демо для модулей. Вытаскивать модули демо, либо все те что принадлежат пользаку.
+        //   Потом выбирать из них случайное количество в рамках полученных из формы. Либо попробовать организовать
+        //   from to с помощью sql
+//        $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
+        $modules = $this->getModuleRepository()->findModulesByUserResult($this->getUser());
         $theme = $this->getThemeFactory()->findThemeBySlug($article->getTheme());
         if (!$theme) {
             throw new Exception('Тематика не найдена', 400);

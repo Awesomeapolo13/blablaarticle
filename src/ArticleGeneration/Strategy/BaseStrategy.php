@@ -7,8 +7,10 @@ use App\ArticleGeneration\PromotedWord\PromotedWordInserter;
 use App\Entity\Article;
 use App\Entity\Module;
 use App\Repository\ModuleRepository;
+use App\Twig\AppUploadedAsset;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Faker\Factory;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -31,17 +33,21 @@ abstract class BaseStrategy implements ArticleGenerationInterface
 
     private ModuleRepository $moduleRepository;
     private ThemeFactory $themeFactory;
+    private UserInterface $user;
+    private AppUploadedAsset $uploadedAsset;
 
     public function __construct(
         PromotedWordInserter $wordInserter,
         Environment          $twig,
         ModuleRepository     $moduleRepository,
-        ThemeFactory        $themeFactory
+        ThemeFactory         $themeFactory,
+        AppUploadedAsset     $uploadedAsset
     ) {
         $this->wordInserter = $wordInserter;
         $this->twig = $twig;
         $this->moduleRepository = $moduleRepository;
         $this->themeFactory = $themeFactory;
+        $this->uploadedAsset = $uploadedAsset;
     }
 
     /**
@@ -58,41 +64,51 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         $faker = Factory::create();
         $articleBody = [];
         // Массив изображений записываем в переменную, чтобы использовать все переданные изображения минимум один раз
-        $minImagesArr = $article->getImages();
+        $minImagesArr = (clone $article->getImages())->toArray();
+        // перемешаем модули чтобы шли в случайном порядке
+        shuffle($modules);
         foreach ($modules as $module) {
             $data = [];
+            // Заполняем заголовки
             if (preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $module->getBody())) {
                 $data['title'] = $faker->sentence();
             }
-
+            // Заполняем одиночные параграфы
             if (preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $module->getBody())) {
                 $data['paragraph'] = $faker->paragraph(rand(1, 10));
             }
-
+            // Заполняем наборы параграфов
             if (preg_match('/{{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $module->getBody())) {
                 $data['paragraphs'] = '';
                 foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
                     $data['paragraphs'] .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
                 }
             }
-
+            // Заполняем ссылки на изображения
             if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $module->getBody())) {
                 // Выбираем рандомное изображение
-                $data['imageSrc'] = $article->getImages()[array_rand($article->getImages())];
+                $data['imageSrc'] = $article->getImages()[array_rand($article->getImages()->toArray())];
                 // Если хотя бы одно изображение еще не было использовано единожды, берем его
                 if (!empty($minImagesArr)) {
                     $key = array_rand($minImagesArr);
-                    $data['imageSrc'] = $minImagesArr[$key];
+                    $data['imageSrc'] = $this->getUploadedAsset()
+                        ->asset(
+                            'article_uploads_url',
+                            $minImagesArr[$key]
+                        );
                     unset($minImagesArr[$key]);
                 }
             }
 
             $data['keyword'] = $article->getKeyWord();
 
-            $articleBody[] = $this->getTwig()->render('article/components/article_module.html.twig', [
-                'data' => $data,
-                'module' => $module
-            ]);
+            $articleBody[] = $this->getTwig()->render(
+                'article/components/article_module.html.twig',
+                [
+                    'data' => $data,
+                    'module' => $module
+                ]
+            );
         }
 
         return $articleBody;
@@ -121,5 +137,20 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     protected function getThemeFactory(): ThemeFactory
     {
         return $this->themeFactory;
+    }
+
+    public function getUploadedAsset(): AppUploadedAsset
+    {
+        return $this->uploadedAsset;
+    }
+
+    public function getUser(): UserInterface
+    {
+        return $this->user;
+    }
+
+    public function setUser(UserInterface $user): void
+    {
+        $this->user = $user;
     }
 }

@@ -23,7 +23,10 @@ class ArticleImage
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Article::class, inversedBy="images")
+     * @ORM\ManyToOne(
+     *     targetEntity=Article::class,
+     *     inversedBy="images"
+     *     )
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
@@ -55,5 +58,10 @@ class ArticleImage
         $this->article = $article;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 }

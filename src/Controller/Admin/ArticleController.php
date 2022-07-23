@@ -44,6 +44,8 @@ class ArticleController extends AbstractController
         PaginatorInterface $paginator
     ): Response
     {
+        // ToDO: Создать связь между статьей и пользаком. Выводить для пользака только его статьи. Выводить админу
+        //  статьи сгенерированные по умолчанию и его.
         $paginatedArticles = $paginator->paginate(
             $articleRepository->findAllArticlesQuery(),
             $request->query->getInt('page', 1),
@@ -105,6 +107,7 @@ class ArticleController extends AbstractController
             $article = $articleFactory->createFromModel($articleModel);
             $article->setBody(
                     $articleGenerator
+                        ->setUser($this->getUser())
                         ->setArticleDTO($article)
                         ->setGenerationStrategy($freeStrategy)
                         ->generateArticle()

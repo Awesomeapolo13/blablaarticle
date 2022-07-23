@@ -105,7 +105,12 @@ class Article
     protected $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=ArticleImage::class, mappedBy="article", orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity=ArticleImage::class,
+     *     mappedBy="article",
+     *     orphanRemoval=true,
+     *     cascade={"persist", "remove"}
+     *     )
      */
     private $images;
 
