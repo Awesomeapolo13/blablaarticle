@@ -2,8 +2,6 @@
 
 namespace App\ArticleGeneration;
 
-use Symfony\Component\Security\Core\User\UserInterface;
-
 /**
  * Класс контекста для стратегий генерации статей
  */
@@ -20,7 +18,6 @@ class ArticleGenerator
      * @var object
      */
     private $articleDTO;
-    private UserInterface $user;
 
     /**
      * @param object $articleDTO - объект с данными для генерации статьи
@@ -50,21 +47,7 @@ class ArticleGenerator
         if (empty($this->strategy) || empty($this->articleDTO)) {
             throw new \Exception('Для генерации статьи необходимо указать стратегию и данные для генерации');
         }
-        //todo Заменить на получение пользака из объекта статьи
-        $this->strategy->setUser($this->getUser());
 
         return $this->strategy->generate($this->articleDTO);
-    }
-
-    public function getUser(): UserInterface
-    {
-        return $this->user;
-    }
-
-    public function setUser(UserInterface $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 }

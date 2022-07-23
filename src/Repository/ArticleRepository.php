@@ -6,6 +6,7 @@ use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Article|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,9 +21,11 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-    public function findAllArticlesQuery(): QueryBuilder
+    public function findArticlesForUserQuery(UserInterface $user): QueryBuilder
     {
         return $this->createQueryBuilder('a')
+            ->where('a.client = :client')
+            ->setParameter('client', $user)
             ->orderBy('a.createdAt', 'DESC')
         ;
     }

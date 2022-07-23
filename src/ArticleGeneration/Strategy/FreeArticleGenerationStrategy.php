@@ -28,18 +28,18 @@ class FreeArticleGenerationStrategy extends BaseStrategy
         //   Потом выбирать из них случайное количество в рамках полученных из формы. Либо попробовать организовать
         //   from to с помощью sql
 //        $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
-        $modules = $this->getModuleRepository()->findModulesByUserResult($this->getUser());
+        $modules = $this->getModuleRepository()->findModulesByUserResult($article->getClient());
         $theme = $this->getThemeFactory()->findThemeBySlug($article->getTheme());
         if (!$theme) {
             throw new Exception('Тематика не найдена', 400);
         }
-        // Заполняем статью контентом ToDO: Нужно передать сюда ключевые слова и их формы
+        // Заполняем статью контентом
         $articleBody = $this->fillPlaceholders($modules, $article);
 
         // Вставка текста тематики
         if ($theme->getParagraphs()) {
             foreach ($theme->getParagraphs() as $content) {
-                // Вставляем ключевое слово в текст тематики ToDO Не выводит слово если там keyword без фильтра. Задать вопрос
+                // Вставляем ключевое слово в текст тематики
                 $content = $this->getTwig()->render('article/components/article_module.html.twig', [
                     'data' => ['keyword' => $article->getKeyWord()],
                     'module' => ['body' => $content],

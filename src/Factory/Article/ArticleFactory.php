@@ -7,6 +7,7 @@ use App\Entity\ArticleImage;
 use App\Factory\FactoryInterface;
 use App\Form\Model\ArticleDemoFormModel;
 use App\Form\Model\ArticleFormModel;
+use App\Repository\UserRepository;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Exception;
 
@@ -16,10 +17,15 @@ use Exception;
 class ArticleFactory implements FactoryInterface
 {
     private ThemeFactory $themeFactory;
+    private UserRepository $userRepository;
 
-    public function __construct(ThemeFactory $themeFactory)
+    public function __construct(
+        ThemeFactory $themeFactory,
+        UserRepository $userRepository
+    )
     {
         $this->themeFactory = $themeFactory;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -107,6 +113,7 @@ class ArticleFactory implements FactoryInterface
             ->setTitle($articleDemoFormModel->title)
             ->setSize(3)
             ->setPromotedWords(['word' => $articleDemoFormModel->promotedWord, 'count' => 1])
+            ->setClient($this->userRepository->findOneBy(['id' => 1]))
             ;
     }
 }

@@ -114,6 +114,12 @@ class Article
      */
     private $images;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $client;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -240,6 +246,18 @@ class Article
                 $image->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getClient(): User
+    {
+        return $this->client;
+    }
+
+    public function setClient(User $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }

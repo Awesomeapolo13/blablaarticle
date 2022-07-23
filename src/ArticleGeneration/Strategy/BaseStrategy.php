@@ -33,7 +33,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
 
     private ModuleRepository $moduleRepository;
     private ThemeFactory $themeFactory;
-    private UserInterface $user;
     private AppUploadedAsset $uploadedAsset;
 
     public function __construct(
@@ -142,15 +141,5 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     public function getUploadedAsset(): AppUploadedAsset
     {
         return $this->uploadedAsset;
-    }
-
-    public function getUser(): UserInterface
-    {
-        return $this->user;
-    }
-
-    public function setUser(UserInterface $user): void
-    {
-        $this->user = $user;
     }
 }

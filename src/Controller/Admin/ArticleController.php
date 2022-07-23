@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\ArticleGeneration\ArticleGenerator;
 use App\ArticleGeneration\Strategy\FreeArticleGenerationStrategy;
+use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleGenerationFormType;
 use App\Form\Model\ArticleFormModel;
@@ -29,9 +30,6 @@ class ArticleController extends AbstractController
     /**
      * Отображает страницу истории сгенерированных статей
      *
-     * ToDo: после привязки статей к пользователям отображать только статьи,
-     *  сгенерированные конкретным пользователем
-     *
      * @Route("/admin/article", name="app_admin_article" )
      * @param Request $request
      * @param ArticleRepository $articleRepository
@@ -44,10 +42,8 @@ class ArticleController extends AbstractController
         PaginatorInterface $paginator
     ): Response
     {
-        // ToDO: Создать связь между статьей и пользаком. Выводить для пользака только его статьи. Выводить админу
-        //  статьи сгенерированные по умолчанию и его.
         $paginatedArticles = $paginator->paginate(
-            $articleRepository->findAllArticlesQuery(),
+            $articleRepository->findArticlesForUserQuery($this->getUser()),
             $request->query->getInt('page', 1),
             10
         );
@@ -85,6 +81,7 @@ class ArticleController extends AbstractController
         // TODo: Выполнить лимитирование генерации статьи на этапе реализации для API
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
+        /** @var Article $article */
         $article = $request->get('articleId')
             ?
             $articleRepository->findOneBy([
@@ -105,9 +102,10 @@ class ArticleController extends AbstractController
             $articleModel->images = $fileUploader->uploadManyFiles($articleModel->images);
             // Передаем ДТО в фабрику статей для формирования объекта статьи
             $article = $articleFactory->createFromModel($articleModel);
-            $article->setBody(
+            $article
+                ->setClient($this->getUser())
+                ->setBody(
                     $articleGenerator
-                        ->setUser($this->getUser())
                         ->setArticleDTO($article)
                         ->setGenerationStrategy($freeStrategy)
                         ->generateArticle()
