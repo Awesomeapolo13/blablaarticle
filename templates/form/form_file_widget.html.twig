@@ -2,7 +2,7 @@
     <input
             type="file"
             id="{{ id }}"
-            multiple="{{ attr.multiple }}"
+            multiple="{{ attr.multiple|default('') }}"
             class="{{ attr.class }}"
             name="{{ full_name }}"
             placeholder="{{ attr.placeholder }}"

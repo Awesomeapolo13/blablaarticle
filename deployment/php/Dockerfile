@@ -25,3 +25,5 @@ ADD deployment/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Создаем пользователя с домашним каталогом и оболочкой bash
 RUN useradd -m -s /bin/bash apps
+# Даем стандартным пользователям права нашего
+RUN usermod -a -G www-data apps

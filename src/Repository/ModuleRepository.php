@@ -38,7 +38,7 @@ class ModuleRepository extends ServiceEntityRepository
     }
 
     /**
-     * Ищет модули, принадлежащие конкретному пользователю
+     * Ищет модули, принадлежащие конкретному пользователю и возвращает запрос
      *
      * @param UserInterface $user - владелец модулей
      * @param QueryBuilder|null $qb
@@ -51,6 +51,20 @@ class ModuleRepository extends ServiceEntityRepository
             ->setParameter('userId', $user->getId())
             ->orderBy('m.createdAt', 'DESC')
             ;
+    }
+
+    /**
+     * Ищет модули, принадлежащие конкретному пользователю и возвращает их
+     * @param UserInterface $user
+     * @param QueryBuilder|null $qb
+     * @return array
+     */
+    public function findModulesByUserResult(UserInterface $user, QueryBuilder $qb = null): array
+    {
+        return $this->findModulesByUserQuery($user, $qb)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /**

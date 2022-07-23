@@ -24,20 +24,22 @@ class FreeArticleGenerationStrategy extends BaseStrategy
     public function generate(object $article): string
     {
         /** @var Module[] $modules */
-        // ToDO Вытаскивает три одинаковых модуля. Надо либо сделать случайный выбор модулей, либо сделать
-        //  первые три всегда для демо
-        $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
+        // ToDO Добавить флаг демо для модулей. Вытаскивать модули демо, либо все те что принадлежат пользаку.
+        //   Потом выбирать из них случайное количество в рамках полученных из формы. Либо попробовать организовать
+        //   from to с помощью sql
+//        $modules = $this->getModuleRepository()->findDefaultWithLimit($article->getSize());
+        $modules = $this->getModuleRepository()->findModulesByUserResult($article->getClient());
         $theme = $this->getThemeFactory()->findThemeBySlug($article->getTheme());
         if (!$theme) {
             throw new Exception('Тематика не найдена', 400);
         }
-        // Заполняем статью контентом ToDO: Нужно передать сюда ключевые слова и их формы
+        // Заполняем статью контентом
         $articleBody = $this->fillPlaceholders($modules, $article);
 
         // Вставка текста тематики
         if ($theme->getParagraphs()) {
             foreach ($theme->getParagraphs() as $content) {
-                // Вставляем ключевое слово в текст тематики ToDO Не выводит слово если там keyword без фильтра. Задать вопрос
+                // Вставляем ключевое слово в текст тематики
                 $content = $this->getTwig()->render('article/components/article_module.html.twig', [
                     'data' => ['keyword' => $article->getKeyWord()],
                     'module' => ['body' => $content],

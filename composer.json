@@ -36,6 +36,7 @@
         "symfony/form": "5.2.*",
         "symfony/framework-bundle": "5.2.*",
         "symfony/mailer": "5.2.*",
+        "symfony/mime": "5.2.*",
         "symfony/monolog-bundle": "^3.0",
         "symfony/property-access": "5.2.*",
         "symfony/property-info": "5.2.*",
