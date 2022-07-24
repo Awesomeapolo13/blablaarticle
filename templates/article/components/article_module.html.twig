@@ -1,8 +1,9 @@
 {% autoescape %}
     {% include template_from_string(module.body) with {
         title: data.title|default(''),
-        keyword: data.keyword|morph(0),
+        keyword: data.keyword|morph(0)|default(''),
         paragraph: data.paragraph|default(''),
         paragraphs: data.paragraphs|default(''),
+        imageSrc: data.imageSrc|default('')
     } %}
 {% endautoescape %}

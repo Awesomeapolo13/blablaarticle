@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -87,11 +89,6 @@ class Article
     private $body;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $images;
-
-    /**
      * @var \DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
@@ -106,6 +103,27 @@ class Article
      * @Assert\DisableAutoMapping()
      */
     protected $updatedAt;
+
+    /**
+     * @ORM\OneToMany(
+     *     targetEntity=ArticleImage::class,
+     *     mappedBy="article",
+     *     orphanRemoval=true,
+     *     cascade={"persist", "remove"}
+     *     )
+     */
+    private $images;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $client;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -202,91 +220,45 @@ class Article
         return $this;
     }
 
-    public function getImages(): ?string
+    /**
+     * @return Collection<int, ArticleImage>
+     */
+    public function getImages(): Collection
     {
         return $this->images;
     }
 
-    public function setImages(?string $images): self
+    public function addImage(ArticleImage $image): self
     {
-        $this->images = $images;
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setArticle($this);
+        }
 
         return $this;
     }
 
-    /**
-     * Фабричный метод создания статьи
-     *
-     * Создает объект статьи из объекта DTO формы генерации статьи.
-     * Задает все необходимые свойства кроме body. Его нужно получить во время генерации и задать отдельно.
-     *
-     * @param ArticleFormModel $articleFormModel - DTO формы генерации статьи
-     * @return Article
-     */
-    public static function create(ArticleFormModel $articleFormModel): Article
+    public function removeImage(ArticleImage $image): self
     {
-        $article = new self();
-        // сохраняем описание, если оно есть
-        if (isset($articleFormModel->description)) {
-            $article->setDescription($articleFormModel->description);
-        }
-        // Формируем массив продвигаемых слов
-        if (!empty($articleFormModel->promotedWords)) {
-            $promotedWords = [];
-            foreach ($articleFormModel->promotedWords as $key => $promotedWord) {
-                $promotedWords[] = [
-                    'word' => $promotedWord,
-                    'count' => $articleFormModel->promotedWordCount[$key],
-                ];
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
             }
-            $article->setPromotedWords($promotedWords);
-        }
-        // Формируем заголовок из slug тематики, если он не задан (ToDo У тематики есть name, надо как то использовать его)
-        if (!isset($articleFormModel->title)) {
-            $title = explode('_',$articleFormModel->theme);
-            // Заголовок должен начинаться с заглавной буквы
-            $title[0] = ucfirst($title[0]);
-            $articleFormModel->title = implode(' ', $title);
-        }
-        // Если определен один из параметров, то выбираем то что определен
-        $size = $articleFormModel->sizeFrom ?? null;
-        if (isset($articleFormModel->sizeTo)) {
-            $size = $articleFormModel->sizeTo;
-        }
-        // Если определены оба, то выбираем рандомное количество модулей между полученными значений
-        if (isset($articleFormModel->sizeFrom) && isset($articleFormModel->sizeTo)) {
-            $size = rand($articleFormModel->sizeFrom, $articleFormModel->sizeTo);
         }
 
-        return $article
-                ->setTheme($articleFormModel->theme)
-                ->setKeyWord($articleFormModel->articleWords)
-                ->setTitle($articleFormModel->title)
-                ->setSize($size)
-            ;
+        return $this;
     }
 
-    /**
-     * Создает объект статьи для демонстрационной генерации
-     *
-     * @param string $title - заголовок статьи
-     * @param string $body - тело сгенерированной статьи
-     * @param string $promotedWord - продвигаемое слово
-     * @return Article
-     */
-    public static function createDemo(
-        string $title,
-        string $body,
-        string $promotedWord
-    ): Article
+    public function getClient(): User
     {
-        return (new self())
-            ->setTheme('demo')
-            ->setKeyWord(['demonstration'])
-            ->setTitle($title)
-            ->setSize(3)
-            ->setPromotedWords(['word' => $promotedWord, 'count' => 1])
-            ->setBody($body)
-            ;
+        return $this->client;
+    }
+
+    public function setClient(User $client): self
+    {
+        $this->client = $client;
+
+        return $this;
     }
 }

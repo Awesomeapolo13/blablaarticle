@@ -1,4 +1,11 @@
 parameters:
+    # Параметры для загрузки изображений
+    #имя директории, для хранения изображений статей
+    article_uploads: 'uploads/articles'
+    #url для обращения к изображениям
+    article_uploads_url: '%env(SITE_URL)%/%article_uploads%'
+    #полный путь до директории хранения изображений статей
+    article_uploads_dir: '%kernel.project_dir%/public/%article_uploads%'
     # имя и email отправителя для рассылки с сайта
     sender.email: '%env(SENDER_EMAIL)%'
     sender.name: '%env(SENDER_NAME)%'
@@ -14,6 +21,10 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+        bind:
+            # Имя сервиса берется по названию файловой системы из oneup_flysystem.yaml
+            League\Flysystem\FilesystemOperator $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
 
     App\:
         resource: '../src/'
@@ -73,7 +84,7 @@ services:
 
     # Сервис вставки продвигаемого слова
     app.promoted_word_inserter:
-        class: App\ArticleGeneration\PromotedWordInserter
+        class: App\ArticleGeneration\PromotedWord\PromotedWordInserter
 
     Twig\Extension\StringLoaderExtension:
 
