@@ -50,17 +50,10 @@ class ArticleController extends AbstractController
         if (!isset($articleId) && $form->isSubmitted() && $form->isValid()) {
             /** @var ArticleDemoFormModel $articleDemoModel */
             $articleDemoModel = $form->getData();
-            // Задаем данные для генерации статьи в соответствии с демо-стратегией
-            // ToDO Переделать на использование сущности вместо ДТО
-            $articleGenerator
-                ->setArticleDTO($articleDemoModel)
-                ->setGenerationStrategy($demoStrategy)
-            ;
-
-            $article = $articleFactory
-                ->createFromModel($articleDemoModel)
+            $article = $articleFactory->createFromModel($articleDemoModel);
+            $article
                 ->setBody(
-                    $articleGenerator->generateArticle()
+                    $articleGenerator->generateArticle($article)
                 )
             ;
             $em->persist($article);

@@ -26,6 +26,11 @@ services:
             # Имя сервиса берется по названию файловой системы из oneup_flysystem.yaml
             League\Flysystem\FilesystemOperator $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
 
+    # Присваиваем всем стратегиям генерации статьи, реализующим ArticleGenerationInterface, тег app.article_generation_strategy
+    _instanceof:
+        App\ArticleGeneration\ArticleGenerationInterface:
+            tags: ['app.article_generation_strategy']
+
     App\:
         resource: '../src/'
         exclude:
@@ -72,15 +77,17 @@ services:
     # Сервис для отправки сообщений, касающихся подписок
     app.mailer.subscription:
         class: App\Mailer\SubscriptionMailer
+    # Класс контекста, осуществляющий генерацию статьи для пользователя с конкретным типом подписки
+    app.article_generator:
+        class: App\ArticleGeneration\ArticleGenerator
+        arguments:
+            $strategies: !tagged_iterator app.article_generation_strategy
+            $defaulrStrategy: '@app.article_demo_generation'
 
-    # Сервисы генерации статьи
-    app.article_generation_strategy:
-        namespace: App\ArticleGeneration\Strategy\
-        resource: '../src/ArticleGeneration/Strategy'
-        tags: ['apps_article_generation_strategy']
     # Демо-стратегия генерации статьи
     app.article_demo_generation:
         class: App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy
+        tags: ['app.article_generation_strategy']
 
     # Сервис вставки продвигаемого слова
     app.promoted_word_inserter:

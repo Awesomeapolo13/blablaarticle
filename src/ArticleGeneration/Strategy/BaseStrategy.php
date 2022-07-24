@@ -10,7 +10,6 @@ use App\Repository\ModuleRepository;
 use App\Twig\AppUploadedAsset;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Faker\Factory;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -116,7 +115,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     /**
      * Базовый абстрактный метод генерации статьи
      */
-    public abstract function generate(object $articleDTO);
+    public abstract function generate(Article $article): string;
 
     protected function getTwig(): Environment
     {

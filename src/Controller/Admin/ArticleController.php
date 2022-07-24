@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\Strategy\FreeArticleGenerationStrategy;
+use App\ArticleGeneration\Strategy\FreeGenerationStrategy;
 use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleGenerationFormType;
@@ -59,7 +59,7 @@ class ArticleController extends AbstractController
      * @Route("/admin/article/create", name="app_admin_article_create")
      * @param Request $request
      * @param ArticleGenerator $articleGenerator
-     * @param FreeArticleGenerationStrategy $freeStrategy
+     * @param FreeGenerationStrategy $freeStrategy
      * @param EntityManagerInterface $em
      * @param ArticleRepository $articleRepository
      * @param FileUploader $fileUploader
@@ -71,7 +71,7 @@ class ArticleController extends AbstractController
     public function create(
         Request                       $request,
         ArticleGenerator              $articleGenerator,
-        FreeArticleGenerationStrategy $freeStrategy,
+        FreeGenerationStrategy        $freeStrategy,
         EntityManagerInterface        $em,
         ArticleRepository             $articleRepository,
         FileUploader                  $fileUploader,
@@ -110,12 +110,8 @@ class ArticleController extends AbstractController
             // Передаем ДТО в фабрику статей для формирования объекта статьи
             $article = $articleFactory->createFromModel($articleModel);
             $article
-                ->setClient($this->getUser())
                 ->setBody(
-                    $articleGenerator
-                        ->setArticleDTO($article)
-                        ->setGenerationStrategy($freeStrategy)
-                        ->generateArticle()
+                    $articleGenerator->generateArticle($article)
                 );
             $em->persist($article);
             $em->flush();

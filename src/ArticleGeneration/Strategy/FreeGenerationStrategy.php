@@ -10,9 +10,9 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 /**
- * Стратегия для подписчиков уровня FREE
+ * Генерация статьи для пользователя с подпиской FREE
  */
-class FreeArticleGenerationStrategy extends BaseStrategy
+class FreeGenerationStrategy extends BaseStrategy
 {
     /**
      * @param Article $article

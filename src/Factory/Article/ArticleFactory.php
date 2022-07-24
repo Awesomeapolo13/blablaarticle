@@ -31,7 +31,7 @@ class ArticleFactory implements FactoryInterface
     /**
      * @throws Exception
      */
-    public function createFromModel(object $model): object
+    public function createFromModel(object $model): Article
     {
         switch ($model) {
             case $model instanceof ArticleFormModel:

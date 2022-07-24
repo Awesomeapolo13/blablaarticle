@@ -6,10 +6,9 @@ use App\Entity\Module;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
 /**
- * Стратегия для демонстрационной генерации статьи
+ * Генерация статьи для демонстрации
  *
  * ToDo: доработать генерацию, после того как будет реализован функционал тематик, модулей и прочее
  */
