@@ -78,7 +78,14 @@ class ArticleController extends AbstractController
         ArticleFactory                $articleFactory
     ): Response
     {
-        // TODo: Выполнить лимитирование генерации статьи на этапе реализации для API
+        /*
+        TODo:
+            1) Создать классы стартегий для каждого типа подписки
+            2) Реализовать выбор конкретной стратегии в зависимости от уровня подписки пользователя
+            3) Для удобства тестирования реализовать имперсонализацию
+            4) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
+            5) Сделать adapter для генерации стаей посредством API
+        */
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
         /** @var Article $article */
@@ -130,9 +137,6 @@ class ArticleController extends AbstractController
     /**
      * Отображает страницу конкретной статьи
      *
-     * ToDo: после привязки статей к пользователям отображать только статьи,
-     *  сгенерированные конкретным пользователем
-     *
      * @Route("/admin/article/{id}", name="app_admin_article_show")
      * @param int $id - идентификатор статьи
      * @param ArticleRepository $articleRepository
@@ -140,7 +144,11 @@ class ArticleController extends AbstractController
      */
     public function show(int $id, ArticleRepository $articleRepository): Response
     {
-        $article = $articleRepository->findOneBy(['id' => $id]);
+        $article = $articleRepository->findOneBy([
+            'id' => $id,
+            'client' => $this->getUser()
+
+        ]);
 
         return $this->render('admin/article/show.html.twig', [
             'article' => $article
