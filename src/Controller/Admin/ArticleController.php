@@ -59,19 +59,16 @@ class ArticleController extends AbstractController
      * @Route("/admin/article/create", name="app_admin_article_create")
      * @param Request $request
      * @param ArticleGenerator $articleGenerator
-     * @param FreeGenerationStrategy $freeStrategy
      * @param EntityManagerInterface $em
      * @param ArticleRepository $articleRepository
      * @param FileUploader $fileUploader
      * @param ArticleFactory $articleFactory
      * @return Response
      * @throws FilesystemException
-     * @throws Exception
      */
     public function create(
         Request                       $request,
         ArticleGenerator              $articleGenerator,
-        FreeGenerationStrategy        $freeStrategy,
         EntityManagerInterface        $em,
         ArticleRepository             $articleRepository,
         FileUploader                  $fileUploader,
@@ -81,10 +78,9 @@ class ArticleController extends AbstractController
         /*
         TODo:
             1) Создать классы стартегий для каждого типа подписки
-            2) Реализовать выбор конкретной стратегии в зависимости от уровня подписки пользователя
-            3) Для удобства тестирования реализовать имперсонализацию
-            4) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
-            5) Сделать adapter для генерации стаей посредством API
+            2) Для удобства тестирования реализовать имперсонализацию
+            3) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
+            4) Сделать adapter для генерации стаей посредством API
         */
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
