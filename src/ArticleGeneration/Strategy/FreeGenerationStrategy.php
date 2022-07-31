@@ -34,11 +34,21 @@ class FreeGenerationStrategy extends BaseStrategy
         // Вставка продвигаемых слов
         $articleBody = $this->addPromotedWords($article, $articleBody);
 
-        return $this->getTwig()->render('article/components/article_demo.html.twig', [
+        return $this->getTwig()->render('article/components/article_body.html.twig', [
             'article' => [
                 'title' => '<h2 class="card-title text-center mb-4">' . $article->getTitle() . '</h2>',
                 'body' => $articleBody,
             ]
         ]);
+    }
+
+    /**
+     * Для этой стратегии возможна генерация с применением только базовой формы ключевого слова
+     * @param array $keyWords
+     * @return array
+     */
+    protected function resolveKeyWord(array $keyWords): array
+    {
+        return [$keyWords[0]];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\ArticleGeneration;
 
-use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
 use App\ArticleGeneration\Strategy\FreeGenerationStrategy;
 use App\ArticleGeneration\Strategy\PlusGenerationStrategy;
 use App\ArticleGeneration\Strategy\ProGenerationStrategy;
@@ -30,28 +29,6 @@ class ArticleGenerator
     {
         $this->strategies = $strategies;
         $this->defaultStrategy = $defaultStrategy;
-    }
-
-    /**
-     * @param Article $article - объект статьи с данными для генерации
-     * @return ArticleGenerator
-     */
-    public function setArticle(Article $article): ArticleGenerator
-    {
-        $this->article = $article;
-
-        return $this;
-    }
-
-    /**
-     * @param ArticleGenerationInterface $strategy
-     * @return ArticleGenerator
-     */
-    public function setGenerationStrategy(ArticleGenerationInterface $strategy): ArticleGenerator
-    {
-        $this->strategy = $strategy;
-
-        return $this;
     }
 
 

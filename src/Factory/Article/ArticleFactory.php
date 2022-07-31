@@ -16,6 +16,15 @@ use Exception;
  */
 class ArticleFactory implements FactoryInterface
 {
+    /**
+     * Количество продвигаемых слов для демонстрационной генерации статьи
+     */
+    private const PROMO_WORD_COUNT = 1;
+    /**
+     * Количество модулей для демонстрационной генерации статьи
+     */
+    private const DEMO_MODULES_COUNT = 3;
+
     private ThemeFactory $themeFactory;
     private UserRepository $userRepository;
 
@@ -111,8 +120,11 @@ class ArticleFactory implements FactoryInterface
             ->setTheme('demo')
             ->setKeyWord(['demonstration'])
             ->setTitle($articleDemoFormModel->title)
-            ->setSize(3)
-            ->setPromotedWords(['word' => $articleDemoFormModel->promotedWord, 'count' => 1])
+            ->setSize(self::DEMO_MODULES_COUNT)
+            ->setPromotedWords([
+                'word' => $articleDemoFormModel->promotedWord,
+                'count' => self::PROMO_WORD_COUNT
+            ])
             ->setClient($this->userRepository->findOneBy(['id' => 1]))
             ;
     }

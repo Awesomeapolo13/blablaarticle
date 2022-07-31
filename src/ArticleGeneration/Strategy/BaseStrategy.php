@@ -105,7 +105,9 @@ abstract class BaseStrategy implements ArticleGenerationInterface
             );
             // ToDO Нужна проверка на наличие других форм ключевого слова. Если таковые есть то их надо исключить
             //  на этапе формирования формы.
-            $data['keyword'] = $article->getKeyWord();
+            $data['keyword'] = $this->resolveKeyWord(
+                $article->getKeyWord()
+            );
 
             $articleBody[] = $this->getTwig()->render(
                 'article/components/article_module.html.twig',
@@ -203,6 +205,16 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     }
 
     /**
+     * По умолчанию возвращаем массив ключевых слов
+     * @param array $keyWords
+     * @return array
+     */
+    protected function resolveKeyWord(array $keyWords): array
+    {
+        return $keyWords;
+    }
+
+    /**
      * Дополняет тело статьи контентом, полученным из Тематик
      *
      * @param Article $article
@@ -252,7 +264,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     }
 
     /**
-     * Дополняет тело статьи продвигаемыми статьями
+     * Дополняет тело статьи продвигаемыми словами
      *
      * @param Article $article
      * @param array $articleBody - сформированный массив для построения статьи.

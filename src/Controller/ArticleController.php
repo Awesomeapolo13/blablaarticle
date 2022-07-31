@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
-use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleDemoGenerateFormType;
 use App\Form\Model\ArticleDemoFormModel;
@@ -32,7 +30,6 @@ class ArticleController extends AbstractController
         EntityManagerInterface        $em,
         ArticleRepository             $articleRepository,
         ArticleGenerator              $articleGenerator,
-        DemoArticleGenerationStrategy $demoStrategy,
         ArticleFactory                $articleFactory
     ): Response
     {

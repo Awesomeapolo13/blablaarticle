@@ -86,7 +86,7 @@ services:
 
     # Демо-стратегия генерации статьи
     app.article_demo_generation:
-        class: App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy
+        class: App\ArticleGeneration\Strategy\DemoGenerationStrategy
         tags: ['app.article_generation_strategy']
 
     # Сервис вставки продвигаемого слова
