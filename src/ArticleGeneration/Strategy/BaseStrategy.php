@@ -11,6 +11,7 @@ use App\Twig\AppUploadedAsset;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Exception;
 use Faker\Factory;
+use Faker\Generator;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -71,7 +72,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
 
     /**
      * Заполняет плейсхолдеры сгенерированным текстом
-     * ToDO Сделать статью обязательным аргументом. Переопределить метод внутри стратегии для демонстрации
      * @param Module[] $modules
      * @return array - массив тел модулей с заполненными плейсхолдерами
      * @throws LoaderError
@@ -92,36 +92,19 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         foreach ($modules as $module) {
             $data = [];
             // Заполняем заголовки
-            if (preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $module->getBody())) {
-                $data['title'] = $faker->sentence();
-            }
+            $data['title'] = $this->generateTitle($module->getBody(), $faker);
             // Заполняем одиночные параграфы
-            if (preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $module->getBody())) {
-                $data['paragraph'] = $faker->paragraph(rand(1, 10));
-            }
+            $data['paragraph'] = $this->generateParagraph($module->getBody(), $faker);
             // Заполняем наборы параграфов
-            if (preg_match('/{{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $module->getBody())) {
-                $data['paragraphs'] = '';
-                foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
-                    $data['paragraphs'] .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
-                }
-            }
+            $data['paragraphs'] = $this->generateParagraphs($module->getBody(), $faker);
             // Заполняем ссылки на изображения
-            if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $module->getBody())) {
-                // Выбираем рандомное изображение
-                $data['imageSrc'] = $article->getImages()[array_rand($article->getImages()->toArray())];
-                // Если хотя бы одно изображение еще не было использовано единожды, берем его
-                if (!empty($minImagesArr)) {
-                    $key = array_rand($minImagesArr);
-                    $data['imageSrc'] = $this->getUploadedAsset()
-                        ->asset(
-                            'article_uploads_url',
-                            $minImagesArr[$key]
-                        );
-                    unset($minImagesArr[$key]);
-                }
-            }
-            // ToDO Нужна проверка на наличие других форм ключевого слова. Если таковые есть то их надо исключить.
+            $data['imageSrc'] = $this->generateImgPath(
+                $module->getBody(),
+                $article->getImages()->toArray(),
+                $minImagesArr
+            );
+            // ToDO Нужна проверка на наличие других форм ключевого слова. Если таковые есть то их надо исключить
+            //  на этапе формирования формы.
             $data['keyword'] = $article->getKeyWord();
 
             $articleBody[] = $this->getTwig()->render(
@@ -134,6 +117,89 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         }
 
         return $articleBody;
+    }
+
+    /**
+     * Генерирует текст для плейсхолдера title
+     *
+     * @param string $targetText - текст для осуществления поиска
+     * @param Generator $faker - генератор текста для заполнения
+     * @return string - текст заголовка для последующей вставки в модуль
+     */
+    protected function generateTitle(string $targetText, Generator $faker): string
+    {
+        return preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $targetText)
+        ?
+            $faker->sentence()
+            :
+            '';
+    }
+
+    /**
+     * Генерирует текст для плейсхолдера paragrahp
+     *
+     * @param string $targetText - текст для осуществления поиска
+     * @param Generator $faker - генератор текста для заполнения
+     * @return string - текст параграфа для последующей вставки в модуль
+     */
+    protected function generateParagraph(string $targetText, Generator $faker): string
+    {
+        return preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $targetText)
+            ?
+            $faker->paragraph(rand(1, 10))
+            :
+            '';
+    }
+
+    /**
+     * Генерирует текст для плейсхолдера paragrahps
+     *
+     * @param string $targetText - текст для осуществления поиска
+     * @param Generator $faker - генератор текста для заполнения
+     * @return string - текст параграфов для последующей вставки в модуль
+     */
+    protected function generateParagraphs(string $targetText, Generator $faker): string
+    {
+        $paragraphs = '';
+        if (preg_match('/{{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
+            foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
+                $paragraphs .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
+            }
+        }
+
+        return $paragraphs;
+    }
+
+    /**
+     * Заполняет путь к изображению для статьи
+     *
+     * @param string $targetText - текст для осуществления поиска
+     * @param array $imgArr - массив всех изображений
+     * @param array $minImagesArr - массив изображений, которые обязательно надо вставить хотя бы один раз
+     * @return string
+     */
+    protected function generateImgPath(
+        string $targetText,
+        array $imgArr,
+        array &$minImagesArr
+    ):string {
+        $imageSrc = '';
+        if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText)) {
+            // Выбираем рандомное изображение
+            $imageSrc = $imgArr[array_rand($imgArr)];
+            // Если хотя бы одно изображение еще не было использовано единожды, берем его
+            if (!empty($minImagesArr)) {
+                $key = array_rand($minImagesArr);
+                $imageSrc = $this->getUploadedAsset()
+                    ->asset(
+                        'article_uploads_url',
+                        $minImagesArr[$key]
+                    );
+                unset($minImagesArr[$key]);
+            }
+        }
+
+        return $imageSrc;
     }
 
     /**
