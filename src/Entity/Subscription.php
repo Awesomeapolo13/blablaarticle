@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SubscriptionRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -44,18 +45,30 @@ class Subscription
     private $users;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
     protected $updatedAt;
+
+    /**
+     * Время в минутах, на которое блокируется генерация статьи для определенного типа подписки
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $blockTime;
+
+    /**
+     * Количество статей, которые можно сгенерировать после истечения $blockTime
+     * @ORM\Column(type="integer", length=11, nullable=true)
+     */
+    private $blockCount;
 
     public function __construct()
     {
@@ -129,6 +142,30 @@ class Subscription
                 $user->setSubscription(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBlockTime(): ?string
+    {
+        return $this->blockTime;
+    }
+
+    public function setBlockTime(?string $blockTime): self
+    {
+        $this->blockTime = $blockTime;
+
+        return $this;
+    }
+
+    public function getBlockCount(): ?int
+    {
+        return $this->blockCount;
+    }
+
+    public function setBlockCount(?int $blockCount): self
+    {
+        $this->blockCount = $blockCount;
 
         return $this;
     }

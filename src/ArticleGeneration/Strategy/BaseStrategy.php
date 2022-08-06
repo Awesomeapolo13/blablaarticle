@@ -73,9 +73,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     protected function prepareArticleBody(Article $article): array
     {
         /** @var Module[] $modules */
-        // ToDO Добавить флаг демо для модулей. Вытаскивать модули демо, либо все те что принадлежат пользаку.
-        //   Потом выбирать из них случайное количество в рамках полученных из формы. Либо попробовать организовать
-        //   from to с помощью sql
         $modules = $this->getModules($article);
         // Заполняем статью контентом
         $articleBody = $this->fillPlaceholders($modules, $article);
