@@ -32,7 +32,7 @@ class ModuleRepository extends ServiceEntityRepository
     public function findAllDefaultModulesQuery(QueryBuilder $qb = null): QueryBuilder
     {
         return $this->notDeleted($qb)
-            ->andWhere('m.client IS NULL')
+            ->andWhere('m.client IS NULL OR m.isDefault = true')
             ->orderBy('m.createdAt', 'DESC')
             ;
     }
