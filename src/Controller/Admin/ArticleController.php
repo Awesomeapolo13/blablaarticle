@@ -77,10 +77,9 @@ class ArticleController extends AbstractController
     {
         /*
         TODo:
-            1) Создать классы стартегий для каждого типа подписки
-            2) Для удобства тестирования реализовать имперсонализацию
-            3) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
-            4) Сделать adapter для генерации стаей посредством API
+            1) Для удобства тестирования реализовать имперсонализацию
+            2) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
+            3) Сделать adapter для генерации стаей посредством API
         */
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
@@ -95,11 +94,6 @@ class ArticleController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var ArticleFormModel $articleModel */
-            /**
-             * 1) Выполнить вызов аплоадера для сохранения картинок, он вернет имена файлов,
-             *   которые можно будет сохранить в БД и использовать далее для генерации
-             * 2) Реализовать логику использования изображений для генерации статьи по ТЗ внутри стратегии
-             */
             $articleModel = $form->getData();
             // Сохраняем изображения и записываем их имена в свойство ДТО
             $articleModel->images = $fileUploader->uploadManyFiles($articleModel->images);
@@ -112,6 +106,10 @@ class ArticleController extends AbstractController
             $em->persist($article);
             $em->flush();
 
+            /**
+             * Сделать проверку на ограничение подпиской
+             */
+
             // Сообщение об успешном создании модуля
             $this->addFlash('success', 'Статья успешно сгенерирована');
             return $this->redirectToRoute('app_admin_article_create', [
@@ -123,6 +121,7 @@ class ArticleController extends AbstractController
             'articleForm' => $form->createView(),
             'errors' => $form->getErrors(true), // ошибки в форме
             'article' => $article,
+            'isGenerationBlocked' => false,
         ]);
     }
 
