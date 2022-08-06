@@ -82,7 +82,7 @@ services:
         class: App\ArticleGeneration\ArticleGenerator
         arguments:
             $strategies: !tagged_iterator app.article_generation_strategy
-            $defaulrStrategy: '@app.article_demo_generation'
+            $defaultStrategy: '@app.article_demo_generation'
 
     # Демо-стратегия генерации статьи
     app.article_demo_generation:
