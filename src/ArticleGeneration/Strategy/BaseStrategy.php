@@ -51,9 +51,60 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     }
 
     /**
-     * Базовый абстрактный метод генерации статьи
+     * Базовая генерация статьи
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public abstract function generate(Article $article): string;
+    public function generate(Article $article): string
+    {
+        $articleBody = $this->prepareArticleBody($article);
+
+        return $this->renderArticleBody($article->getTitle(), $articleBody);
+    }
+
+    /**
+     * Метод формирования данных для тела статьи.
+     * Может быть переопределен для конкретной стратегии
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function prepareArticleBody(Article $article): array
+    {
+        /** @var Module[] $modules */
+        // ToDO Добавить флаг демо для модулей. Вытаскивать модули демо, либо все те что принадлежат пользаку.
+        //   Потом выбирать из них случайное количество в рамках полученных из формы. Либо попробовать организовать
+        //   from to с помощью sql
+        $modules = $this->getModules($article);
+        // Заполняем статью контентом
+        $articleBody = $this->fillPlaceholders($modules, $article);
+        // Заполняем статью контентом тематик
+        $articleBody = $this->addThemeContent($article, $articleBody);
+        // Вставка продвигаемых слов
+        $articleBody = $this->addPromotedWords($article, $articleBody);
+
+        return $articleBody;
+    }
+
+    /**
+     * Формирует статью из переданного заголовка и тела
+     * @param string $title - заголовок статьи
+     * @param array $articleBody - массив заполненных модулей для статьи
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function renderArticleBody(string $title, array $articleBody): string
+    {
+        return $this->getTwig()->render('article/components/article_body.html.twig', [
+            'article' => [
+                'title' => '<h2 class="card-title text-center mb-4">' . $title . '</h2>',
+                'body' => $articleBody,
+            ]
+        ]);
+    }
 
     /**
      * Возвращает модули участвующие в процессе генерации статьи
@@ -103,8 +154,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 $article->getImages()->toArray(),
                 $minImagesArr
             );
-            // ToDO Нужна проверка на наличие других форм ключевого слова. Если таковые есть то их надо исключить
-            //  на этапе формирования формы.
+
             $data['keyword'] = $this->resolveKeyWord(
                 $article->getKeyWord()
             );

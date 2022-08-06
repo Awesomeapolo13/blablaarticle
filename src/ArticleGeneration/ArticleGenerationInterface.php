@@ -10,7 +10,7 @@ use App\Entity\Article;
 interface ArticleGenerationInterface
 {
     /**
-     * Генерирует статью из переданных данных
+     * Генерирует тело статьи из переданных данных
      *
      * @var Article - объект с данными для генерации статьи
      * @return mixed

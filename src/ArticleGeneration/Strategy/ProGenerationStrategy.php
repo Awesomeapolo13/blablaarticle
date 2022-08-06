@@ -9,21 +9,8 @@ use App\Entity\Article;
  */
 class ProGenerationStrategy extends BaseStrategy
 {
-
     /**
-     * @inheritDoc
-     */
-    public function generate(Article $article): string
-    {
-        // TODO: Implement generate() method.
-    }
-
-    /**
-     * Возвращает модули участвующие в процессе генерации статьи
-     * По умолчанию возвращает дефолтные модули. Может быть переопределен в других стратегиях
-     *
-     * @param Article $article
-     * @return array
+     * Переопределяем метод получения модулей на получение для конкретного пользователя
      */
     protected function getModules(Article $article): array
     {

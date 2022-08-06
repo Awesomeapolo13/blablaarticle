@@ -14,15 +14,13 @@ use Twig\Error\SyntaxError;
 class DemoGenerationStrategy extends BaseStrategy
 {
     /**
-     * Генерирует демонстрационную статьи
-     *
-     * @param Article $article
-     * @return string
+     * Метод формирования данных для тела статьи.
+     * Переопределен для демонстрационной генерации
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function generate(Article $article): string
+    protected function prepareArticleBody(Article $article): array
     {
         /** @var Module[] $modules */
         $modules = $this->getModules($article);
@@ -31,11 +29,6 @@ class DemoGenerationStrategy extends BaseStrategy
         // Вставка продвигаемых слов
         $articleBody = $this->addPromotedWords($article, $articleBody);
 
-        return $this->getTwig()->render('article/components/article_body.html.twig', [
-            'article' => [
-                'title' => '<h2 class="card-title text-center mb-4">' . $article->getTitle() . '</h2>',
-                'body' => $articleBody,
-            ]
-        ]);
+        return $articleBody;
     }
 }
