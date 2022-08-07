@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,10 +25,42 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function findArticlesForUserQuery(UserInterface $user): QueryBuilder
     {
-        return $this->createQueryBuilder('a')
+        return $this->getOrCreateQueryBuilder()
             ->where('a.client = :client')
             ->setParameter('client', $user)
             ->orderBy('a.createdAt', 'DESC')
         ;
+    }
+
+    /**
+     * Возвращает количество статей сгенерированное за промежуток времени
+     * @var DateTime $dateTimeFrom - промежуток времени с которого начинаем поиск (должен быть меньше чем $dateTimeTo)
+     * @var DateTime $dateTimeTo - промежуток времени до которого проводим поиск (должен быть больше чем $dateTimeFrom)
+     * @throws NonUniqueResultException
+     */
+    public function articlesCountForInterval(DateTime $dateTimeFrom, DateTime $dateTimeTo): int
+    {
+        $articlesCount =  $this->getOrCreateQueryBuilder()
+            ->select('COUNT(a) as articlesCount')
+            ->where('a.createdAt >= :dateTimeFrom')
+            ->setParameter(':dateTimeFrom', $dateTimeFrom)
+            ->andWhere('a.createdAt <= :dateTimeTo')
+            ->setParameter(':dateTimeTo', $dateTimeTo)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return $articlesCount ? $articlesCount['articlesCount'] : 0;
+    }
+
+    /**
+     * Возвращает переданный, либо установленный по умолчанию конструктор запросов
+     *
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
+    private function getOrCreateQueryBuilder(?QueryBuilder $qb = null): QueryBuilder
+    {
+        return $qb ?? $this->createQueryBuilder('a');
     }
 }

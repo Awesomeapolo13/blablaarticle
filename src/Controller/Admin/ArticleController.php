@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\Strategy\FreeGenerationStrategy;
+use App\ArticleGeneration\GenerationBlocker;
 use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleGenerationFormType;
@@ -57,32 +57,30 @@ class ArticleController extends AbstractController
      * Отображает страницу генерации статьи и обрабатывает форму генерации
      *
      * @Route("/admin/article/create", name="app_admin_article_create")
-     * @param Request $request
-     * @param ArticleGenerator $articleGenerator
-     * @param EntityManagerInterface $em
-     * @param ArticleRepository $articleRepository
-     * @param FileUploader $fileUploader
-     * @param ArticleFactory $articleFactory
-     * @return Response
      * @throws FilesystemException
+     * @throws Exception
      */
     public function create(
-        Request                       $request,
-        ArticleGenerator              $articleGenerator,
-        EntityManagerInterface        $em,
-        ArticleRepository             $articleRepository,
-        FileUploader                  $fileUploader,
-        ArticleFactory                $articleFactory
+        Request                $request,
+        ArticleGenerator       $articleGenerator,
+        EntityManagerInterface $em,
+        ArticleRepository      $articleRepository,
+        FileUploader           $fileUploader,
+        ArticleFactory         $articleFactory,
+        GenerationBlocker      $blocker
     ): Response
     {
         /*
         TODo:
             1) Для удобства тестирования реализовать имперсонализацию
-            2) Выполнить лимитирование генерации статьи в соответсии с уровнем подписки пользователя
+            2) Сделать копирование данных из сгенерированной статьи в новую форму
             3) Сделать adapter для генерации стаей посредством API
         */
+        $user = $this->getUser();
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
+        // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
         /** @var Article $article */
         $article = $request->get('articleId')
             ?
@@ -92,7 +90,7 @@ class ArticleController extends AbstractController
             :
             false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && !$isBlocked) {
             /** @var ArticleFormModel $articleModel */
             $articleModel = $form->getData();
             // Сохраняем изображения и записываем их имена в свойство ДТО
@@ -100,6 +98,7 @@ class ArticleController extends AbstractController
             // Передаем ДТО в фабрику статей для формирования объекта статьи
             $article = $articleFactory->createFromModel($articleModel);
             $article
+                ->setClient($user)
                 ->setBody(
                     $articleGenerator->generateArticle($article)
                 );
@@ -122,6 +121,7 @@ class ArticleController extends AbstractController
             'errors' => $form->getErrors(true), // ошибки в форме
             'article' => $article,
             'isGenerationBlocked' => false,
+            'isBlocked' => $isBlocked,
         ]);
     }
 

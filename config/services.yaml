@@ -78,8 +78,7 @@ services:
     app.mailer.subscription:
         class: App\Mailer\SubscriptionMailer
     # Класс контекста, осуществляющий генерацию статьи для пользователя с конкретным типом подписки
-    app.article_generator:
-        class: App\ArticleGeneration\ArticleGenerator
+    App\ArticleGeneration\ArticleGenerator:
         arguments:
             $strategies: !tagged_iterator app.article_generation_strategy
             $defaultStrategy: '@app.article_demo_generation'
