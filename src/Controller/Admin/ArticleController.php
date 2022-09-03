@@ -2,15 +2,12 @@
 
 namespace App\Controller\Admin;
 
-use App\ArticleGeneration\ArticleGenerator;
 use App\ArticleGeneration\GenerationBlocker;
 use App\Entity\Article;
-use App\Factory\Article\ArticleFactory;
+use App\Factory\Article\ArticleFormModelFactory;
 use App\Form\ArticleGenerationFormType;
-use App\Form\Model\ArticleFormModel;
+use App\Handler\ArticleSaveHandler;
 use App\Repository\ArticleRepository;
-use App\Services\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\FilesystemException;
@@ -40,8 +37,7 @@ class ArticleController extends AbstractController
         Request            $request,
         ArticleRepository  $articleRepository,
         PaginatorInterface $paginator
-    ): Response
-    {
+    ): Response {
         $paginatedArticles = $paginator->paginate(
             $articleRepository->findArticlesForUserQuery($this->getUser()),
             $request->query->getInt('page', 1),
@@ -62,14 +58,10 @@ class ArticleController extends AbstractController
      */
     public function create(
         Request                $request,
-        ArticleGenerator       $articleGenerator,
-        EntityManagerInterface $em,
         ArticleRepository      $articleRepository,
-        FileUploader           $fileUploader,
-        ArticleFactory         $articleFactory,
-        GenerationBlocker      $blocker
-    ): Response
-    {
+        GenerationBlocker      $blocker,
+        ArticleSaveHandler      $saveHandler
+    ): Response {
         /*
         TODo:
             1) Для удобства тестирования реализовать имперсонализацию
@@ -77,43 +69,67 @@ class ArticleController extends AbstractController
             3) Сделать adapter для генерации стаей посредством API
         */
         $user = $this->getUser();
-        $form = $this->createForm(ArticleGenerationFormType::class);
-        $form->handleRequest($request);
-        // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
-        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
         /** @var Article $article */
-        $article = $request->get('articleId')
+        $articleGenerated = $request->get('articleId')
             ?
             $articleRepository->findOneBy([
                 'id' => $request->get('articleId'),
             ])
             :
             false;
+        $form = $this->createForm(ArticleGenerationFormType::class);
+        $form->handleRequest($request);
+        // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $article = $saveHandler->handleAndSave($form, $user, $isBlocked);
 
-        if ($form->isSubmitted() && $form->isValid() && !$isBlocked) {
-            /** @var ArticleFormModel $articleModel */
-            $articleModel = $form->getData();
-            // Сохраняем изображения и записываем их имена в свойство ДТО
-            $articleModel->images = $fileUploader->uploadManyFiles($articleModel->images);
-            // Передаем ДТО в фабрику статей для формирования объекта статьи
-            $article = $articleFactory->createFromModel($articleModel);
-            $article
-                ->setClient($user)
-                ->setBody(
-                    $articleGenerator->generateArticle($article)
-                );
-            $em->persist($article);
-            $em->flush();
-
-            /**
-             * Сделать проверку на ограничение подпиской
-             */
-
+        if ($article) {
             // Сообщение об успешном создании модуля
             $this->addFlash('success', 'Статья успешно сгенерирована');
             return $this->redirectToRoute('app_admin_article_create', [
                 'articleId' => $article->getId(),
                 ]);
+        }
+
+        return $this->render('admin/article/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'errors' => $form->getErrors(true), // ошибки в форме
+            'article' => $articleGenerated,
+            'isGenerationBlocked' => false,
+            'isBlocked' => $isBlocked,
+        ]);
+    }
+
+    /**
+     * Повторяет генерацию статью на основе уже сделанной
+     *
+     * @Route("/admin/article/{id}/repeat", name="app_admin_article_repeat")
+     * @throws FilesystemException
+     * @throws Exception
+     */
+    public function repeat(
+        Article                 $article,
+        Request                 $request,
+        GenerationBlocker       $blocker,
+        ArticleFormModelFactory $formModelFactory,
+        ArticleSaveHandler      $saveHandler
+    ): Response {
+        $user = $this->getUser();
+        $form = $this->createForm(
+            ArticleGenerationFormType::class,
+            $formModelFactory->createFromModel($article)
+        );
+        $form->handleRequest($request);
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+
+        $article = $saveHandler->handleAndSave($form, $user, $isBlocked);
+
+        if ($article) {
+            // Сообщение об успешном создании модуля
+            $this->addFlash('success', 'Статья успешно сгенерирована');
+            return $this->redirectToRoute('app_admin_article_create', [
+                'articleId' => $article->getId(),
+            ]);
         }
 
         return $this->render('admin/article/create.html.twig', [
@@ -135,14 +151,12 @@ class ArticleController extends AbstractController
      */
     public function show(int $id, ArticleRepository $articleRepository): Response
     {
-        $article = $articleRepository->findOneBy([
-            'id' => $id,
-            'client' => $this->getUser()
-
-        ]);
-
         return $this->render('admin/article/show.html.twig', [
-            'article' => $article
+            'article' => $articleRepository->findOneBy([
+                'id' => $id,
+                'client' => $this->getUser()
+
+            ])
         ]);
     }
 }

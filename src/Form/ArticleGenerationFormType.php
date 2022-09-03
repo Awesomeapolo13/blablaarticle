@@ -38,12 +38,31 @@ class ArticleGenerationFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // Добавляем тематики для выведения в форме
+        /** @var ArticleFormModel $article */
+        $article = $options['data'] ?? null;
+        // Тематики
         $themes = ['-' => ''];
+        // Ключевые слова
+        $keywords = [];
+        // Продвигаемые слова и их количество
+        $promotedWords = [];
+        $promotedWordsCount = [];
+        // Добавляем тематики для выведения в форме
         foreach ($this->themeFactory->getThemes() as $theme) {
             /** @var Theme $theme */
             if ('demo' !== $theme->getSlug())
-            $themes[$theme->getName()] = $theme->getSlug();
+                $themes[$theme->getName()] = $theme->getSlug();
+        }
+        // Определяем ключевые слова и сеттим из если есть
+        for ($i = 0; $i <= 6; $i++) {
+            $keywords[] = ($article->articleWords)[$i] ?? '';
+        }
+        // Определяем продвигаемые слова и их количество, если они заданы
+        if (!empty($article->promotedWords) && !empty($article->promotedWordCount)) {
+            foreach ($article->promotedWords as $key => $word) {
+                $promotedWords[] = $word;
+                $promotedWordsCount[$key] = ($article->promotedWordCount)[$key];
+            }
         }
 
         $builder
@@ -94,11 +113,11 @@ class ArticleGenerationFormType extends AbstractType
                 ],
             ])
             ->add('articleWords', CollectionType::class, [
-                'data' => ['', '', '', '', '', '', '',],
+                'data' => $keywords,
                 'entry_type' => TextType::class,
             ])
             ->add('promotedWords', CollectionType::class, [
-                'data' => [''],
+                'data' => $promotedWords ?: [''],
                 'entry_type' => TextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -111,7 +130,7 @@ class ArticleGenerationFormType extends AbstractType
                 ],
             ])
             ->add('promotedWordCount', CollectionType::class, [
-                'data' => [0],
+                'data' => $promotedWordsCount === [] ? [0] : $promotedWordsCount,
                 'entry_type' => IntegerType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
