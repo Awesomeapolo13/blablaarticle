@@ -138,4 +138,27 @@ class ArticleFormModel
      * @var array
      */
     public array $images;
+
+    /**
+     * Ссылки на изображения для статьи
+     * @Assert\All(
+     *     @Assert\Type(
+     *     "string",
+     *     message="Ссылки на изображения должны быть строкой"
+     *     ),
+     *     @Assert\Url(
+     *     message="Url {{ value }} не валиден. Разрешены протоколы http, https, ftp",
+     *     protocols={"http", "https", "ftp"}
+     *     )
+     * )
+     *
+     *
+     * @Assert\Count(
+     *     max = 5,
+     *     maxMessage="Возможна загрузка не более пяти изображений"
+     * )
+     *
+     * @var array
+     */
+    public array $imageUrls;
 }

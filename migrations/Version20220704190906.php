@@ -24,7 +24,7 @@ final class Version20220704190906 extends AbstractMigration
             'CREATE TABLE article_image (
                  id INT NOT NULL, 
                  article_id INT NOT NULL, 
-                 name VARCHAR(255) NOT NULL, 
+                 name VARCHAR(255) DEFAULT NULL, 
                  PRIMARY KEY(id))'
         );
         $this->addSql('CREATE INDEX IDX_B28A764E7294869C ON article_image (article_id)');

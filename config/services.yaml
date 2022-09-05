@@ -6,6 +6,8 @@ parameters:
     article_uploads_url: '%env(SITE_URL)%/%article_uploads%'
     #полный путь до директории хранения изображений статей
     article_uploads_dir: '%kernel.project_dir%/public/%article_uploads%'
+    #Путь до директории хранения изображений, если имеем дело с url картинки
+    article_uploads_img_url: ''
     # имя и email отправителя для рассылки с сайта
     sender.email: '%env(SENDER_EMAIL)%'
     sender.name: '%env(SENDER_NAME)%'

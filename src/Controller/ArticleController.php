@@ -32,8 +32,7 @@ class ArticleController extends AbstractController
         ArticleGenerator       $articleGenerator,
         ArticleFactory         $articleFactory,
         GenerationBlocker      $blocker
-    ): Response
-    {
+    ): Response {
         // Id статьи, получаем из куки, если она существует
         $articleId = $request->cookies->get('articleId');
         // Если задана кука с идентификатором статьи, то находим ее

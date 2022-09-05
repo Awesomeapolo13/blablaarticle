@@ -8,14 +8,17 @@ use App\Factory\Article\ArticleFormModelFactory;
 use App\Form\ArticleGenerationFormType;
 use App\Handler\ArticleSaveHandler;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Контроллер для статей в админском разделе
@@ -67,6 +70,7 @@ class ArticleController extends AbstractController
             1) Для удобства тестирования реализовать имперсонализацию
             2) Сделать копирование данных из сгенерированной статьи в новую форму
             3) Сделать adapter для генерации стаей посредством API
+            4) Почему то выбирает дефолтные модули несмотря на уровень подписки. Возможно выбирается некорректная стратегия
         */
         $user = $this->getUser();
         /** @var Article $article */
@@ -81,7 +85,7 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
         // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
         $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
-        $article = $saveHandler->handleAndSave($form, $user, $isBlocked);
+        $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
         if ($article) {
             // Сообщение об успешном создании модуля
@@ -122,7 +126,7 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
         $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
 
-        $article = $saveHandler->handleAndSave($form, $user, $isBlocked);
+        $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
         if ($article) {
             // Сообщение об успешном создании модуля
@@ -158,5 +162,50 @@ class ArticleController extends AbstractController
 
             ])
         ]);
+    }
+
+    /**
+     * Создает статью по api
+     *
+     * @Route("/api/v1/admin/article/create/", name="app_admin_api_article_create")
+     * @param Request $request
+     * @param GenerationBlocker $blocker
+     * @param ValidatorInterface $validator
+     * @param ArticleFormModelFactory $formModelFactory
+     * @param ArticleSaveHandler $saveHandler
+     * @return JsonResponse
+     * @throws NonUniqueResultException
+     * @throws Exception
+     */
+    public function apiCreate(
+        Request                 $request,
+        GenerationBlocker       $blocker,
+        ValidatorInterface      $validator,
+        ArticleFormModelFactory $formModelFactory,
+        ArticleSaveHandler      $saveHandler
+    ): JsonResponse {
+        $response = [];
+        $code = 400;
+        $user = $this->getUser();
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $response['errors'][] = 'Превышен лимит создания статей, чтобы снять лимит улучшите подписку';
+        if (!$isBlocked) {
+            $model = $formModelFactory->createFromModel($request);
+            $errors = $validator->validate($model);
+            $response['errors'] = count($errors) > 0 ? $errors : null;
+            $response = $response['errors'] ?? $saveHandler->saveArticle($model, $user);
+            $code = 200;
+        }
+
+        return $this->json(
+            $response,
+            $code,
+            [],
+            [
+                'groups' => [
+                    'api',
+                ]
+            ]
+        );
     }
 }

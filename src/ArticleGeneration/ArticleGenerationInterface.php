@@ -12,7 +12,7 @@ interface ArticleGenerationInterface
     /**
      * Генерирует тело статьи из переданных данных
      *
-     * @var Article - объект с данными для генерации статьи
+     * @var Article $article - объект с данными для генерации статьи
      * @return mixed
      */
     public function generate(Article $article): string;

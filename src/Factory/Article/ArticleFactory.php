@@ -95,7 +95,15 @@ class ArticleFactory implements FactoryInterface
         if (!empty($articleFormModel->images)) {
             foreach ($articleFormModel->images as $image) {
                 $article->addImage(
-                    (new ArticleImage())->setName($image)
+                        (new ArticleImage())->setName($image)
+                );
+            }
+        }
+        // Если сохраняем с API то заполняем поле url
+        if (!empty($articleFormModel->imageUrls)) {
+            foreach ($articleFormModel->imageUrls as $imgUrl) {
+                $article->addImage(
+                    (new ArticleImage())->setUrl($imgUrl)
                 );
             }
         }

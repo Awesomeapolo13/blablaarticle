@@ -231,17 +231,29 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         string $targetText,
         array $imgArr,
         array &$minImagesArr
-    ):string {
+    ): string {
         $imageSrc = '';
         if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText)) {
             // Выбираем рандомное изображение
-            $imageSrc = $imgArr[array_rand($imgArr)];
+            $image = $imgArr[array_rand($imgArr)];
+            // Если image является url, то вставляем его без пути к папке
+            $config = filter_var($image, FILTER_VALIDATE_URL) === false
+                ?
+                'article_uploads_url'
+                :
+                'article_uploads_img_url';
+            // Достаиваем путь до изображения путем из конфига
+            $imageSrc = $this->getUploadedAsset()
+                    ->asset(
+                        $config,
+                        $image
+                    );
             // Если хотя бы одно изображение еще не было использовано единожды, берем его
             if (!empty($minImagesArr)) {
                 $key = array_rand($minImagesArr);
                 $imageSrc = $this->getUploadedAsset()
                     ->asset(
-                        'article_uploads_url',
+                        $config,
                         $minImagesArr[$key]
                     );
                 unset($minImagesArr[$key]);

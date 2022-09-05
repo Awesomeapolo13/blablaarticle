@@ -28,8 +28,7 @@ class ArticleSaveHandler
         ArticleFactory         $articleFactory,
         ArticleGenerator       $articleGenerator,
         EntityManagerInterface $em
-    )
-    {
+    ) {
         $this->fileUploader = $fileUploader;
         $this->articleFactory = $articleFactory;
         $this->articleGenerator = $articleGenerator;
@@ -45,31 +44,45 @@ class ArticleSaveHandler
      * @throws FilesystemException
      * @throws Exception
      */
-    public function handleAndSave(
+    public function saveFromForm(
         FormInterface $form,
         UserInterface $user,
-        bool $isBlocked
+        bool          $isBlocked
     ): ?Article {
         if ($form->isSubmitted() && $form->isValid() && !$isBlocked) {
             /** @var ArticleFormModel $articleModel */
             $articleModel = $form->getData();
-            // Сохраняем изображения и записываем их имена в свойство ДТО
             $articleModel->images = $this->fileUploader->uploadManyFiles($articleModel->images);
-            // Передаем ДТО в фабрику статей для формирования объекта статьи
-            $article = $this->articleFactory
-                ->createFromModel($articleModel);
-            $article
-                ->setClient($user)
-                ->setBody(
-                    $this->articleGenerator
-                        ->generateArticle($article)
-                );
-            $this->em->persist($article);
-            $this->em->flush();
 
-            return $article;
+            return $this->saveArticle($articleModel, $user);
         }
 
         return null;
+    }
+
+    /**
+     * Сохраняет статью полученную из модели
+     * @param ArticleFormModel $model
+     * @param UserInterface $user
+     * @return Article
+     * @throws Exception
+     */
+    public function saveArticle(
+        ArticleFormModel $model,
+        UserInterface    $user
+    ): Article {
+        // Передаем ДТО в фабрику статей для формирования объекта статьи
+        $article = $this->articleFactory
+            ->createFromModel($model);
+        $article
+            ->setClient($user)
+            ->setBody(
+                $this->articleGenerator
+                    ->generateArticle($article)
+            );
+        $this->em->persist($article);
+        $this->em->flush();
+
+        return $article;
     }
 }

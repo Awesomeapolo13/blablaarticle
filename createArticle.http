@@ -1,0 +1,28 @@
+POST http://blablaarticle:8080/api/v1/admin/article/create/
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer cc99b8a0b1b205c36270e0d84fe4531b177eb375
+
+{
+  "theme": "common_whether",
+  "keyword": {
+       "0": "EXAMPLE",
+       "1": "EXAMPLE",
+       "2": "EXAMPLE",
+       "3": "EXAMPLE",
+       "4": "EXAMPLE",
+       "5": "EXAAAAAMPLE",
+       "6": "EXAMPLES"
+   },
+   "title": "Тестовая статья",
+   "description": "Тестировем по АПИ",
+   "sizeFrom": 4,
+   "sizeTo": 6,
+   "promotedWords": [
+       {
+           "word": "EXAMPLE",
+           "count": 1
+       }
+   ],
+   "images": ["https://via.placeholder.com/250x250"]
+}

@@ -31,6 +31,11 @@ class ArticleImage
      */
     private $article;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $url;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,8 +65,20 @@ class ArticleImage
         return $this;
     }
 
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
     public function __toString(): string
     {
-        return $this->getName();
+        return $this->getName() ?? $this->getUrl();
     }
 }

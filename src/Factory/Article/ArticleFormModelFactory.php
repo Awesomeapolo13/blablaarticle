@@ -6,6 +6,7 @@ use App\Entity\Article;
 use App\Factory\FactoryInterface;
 use App\Form\Model\ArticleFormModel;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Фабрика генерации статей
@@ -17,10 +18,22 @@ class ArticleFormModelFactory implements FactoryInterface
      */
     public function createFromModel(object $model): ArticleFormModel
     {
-        if (!($model instanceof Article)) {
-            throw new Exception('Get bad Article for form type!');
+        switch ($model) {
+            case $model instanceof Article:
+                return $this->createFromArticle($model);
+            case $model instanceof Request:
+                return $this->createFromRequest($model);
+            default:
+                throw new Exception('Get bad object form model type!');
         }
+    }
 
+    /**
+     * Получает ДТО для полноценной генерации статьи
+     * @throws Exception
+     */
+    public function createFromArticle(object $model): ArticleFormModel
+    {
         $formModel = new ArticleFormModel();
         $formModel->theme = $model->getTheme();
         $formModel->title = $model->getTitle();
@@ -37,6 +50,35 @@ class ArticleFormModelFactory implements FactoryInterface
             $formModel->images[] = $image;
         }
 
+
+        return $formModel;
+    }
+
+    /**
+     * Получает ДТО из рекввеста.
+     * Используется для гененрации статьи посредством API
+     */
+    public function createFromRequest(object $model): ArticleFormModel
+    {
+        /** @var Request $model */
+        $data = $model->toArray();
+        $formModel = new ArticleFormModel();
+
+        $formModel->theme = $data['theme'] ?? null;
+        $formModel->description = $data['theme'] ?? null;
+        $formModel->title = $data['title'] ?? null;
+        $formModel->sizeTo = $data['sizeTo'] ?? null;
+        $formModel->sizeFrom = $data['sizeFrom'] ?? null;
+        foreach ($data['promotedWords'] as $promotedWord) {
+            $formModel->promotedWords[] = $promotedWord['word'];
+            $formModel->promotedWordCount[] = $promotedWord['count'];
+        }
+        foreach ($data['keyword'] as $morph) {
+            $formModel->articleWords[] = $morph ?? null;
+        }
+        foreach ($data['images'] as $image) {
+            $formModel->imageUrls[] = $image;
+        }
 
         return $formModel;
     }
