@@ -32,7 +32,7 @@ class ModuleRepository extends ServiceEntityRepository
     public function findAllDefaultModulesQuery(QueryBuilder $qb = null): QueryBuilder
     {
         return $this->notDeleted($qb)
-            ->andWhere('m.client IS NULL')
+            ->andWhere('m.client IS NULL OR m.isDefault = true')
             ->orderBy('m.createdAt', 'DESC')
             ;
     }
@@ -55,13 +55,18 @@ class ModuleRepository extends ServiceEntityRepository
 
     /**
      * Ищет модули, принадлежащие конкретному пользователю и возвращает их
+     * @param int $limit
      * @param UserInterface $user
      * @param QueryBuilder|null $qb
      * @return array
      */
-    public function findModulesByUserResult(UserInterface $user, QueryBuilder $qb = null): array
-    {
+    public function findByUserWithLimit(
+        int $limit,
+        UserInterface $user,
+        QueryBuilder $qb = null
+    ): array {
         return $this->findModulesByUserQuery($user, $qb)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult()
         ;
@@ -74,7 +79,7 @@ class ModuleRepository extends ServiceEntityRepository
      * @param QueryBuilder|null $qb
      * @return float|int|mixed|string
      */
-    public function findDefaultWithLimit(int $limit, QueryBuilder $qb = null)
+    public function findDefaultWithLimit(int $limit, QueryBuilder $qb = null): mixed
     {
         return $this->findAllDefaultModulesQuery($this->withLimit($limit, $qb))
             ->getQuery()
@@ -106,6 +111,12 @@ class ModuleRepository extends ServiceEntityRepository
             ;
     }
 
+    /**
+     * Возвращает QueryBuilder для запросов с лимитом на количество записей в БД
+     * @param int $limit
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
     private function withLimit(int $limit, QueryBuilder $qb = null): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder($qb)

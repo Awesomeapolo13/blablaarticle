@@ -2,23 +2,23 @@
 
 namespace App\Controller\Admin;
 
-use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\Strategy\FreeArticleGenerationStrategy;
+use App\ArticleGeneration\GenerationBlocker;
 use App\Entity\Article;
-use App\Factory\Article\ArticleFactory;
+use App\Factory\Article\ArticleFormModelFactory;
 use App\Form\ArticleGenerationFormType;
-use App\Form\Model\ArticleFormModel;
+use App\Handler\ArticleSaveHandler;
 use App\Repository\ArticleRepository;
-use App\Services\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Контроллер для статей в админском разделе
@@ -40,8 +40,7 @@ class ArticleController extends AbstractController
         Request            $request,
         ArticleRepository  $articleRepository,
         PaginatorInterface $paginator
-    ): Response
-    {
+    ): Response {
         $paginatedArticles = $paginator->paginate(
             $articleRepository->findArticlesForUserQuery($this->getUser()),
             $request->query->getInt('page', 1),
@@ -57,62 +56,38 @@ class ArticleController extends AbstractController
      * Отображает страницу генерации статьи и обрабатывает форму генерации
      *
      * @Route("/admin/article/create", name="app_admin_article_create")
-     * @param Request $request
-     * @param ArticleGenerator $articleGenerator
-     * @param FreeArticleGenerationStrategy $freeStrategy
-     * @param EntityManagerInterface $em
-     * @param ArticleRepository $articleRepository
-     * @param FileUploader $fileUploader
-     * @param ArticleFactory $articleFactory
-     * @return Response
      * @throws FilesystemException
      * @throws Exception
      */
     public function create(
-        Request                       $request,
-        ArticleGenerator              $articleGenerator,
-        FreeArticleGenerationStrategy $freeStrategy,
-        EntityManagerInterface        $em,
-        ArticleRepository             $articleRepository,
-        FileUploader                  $fileUploader,
-        ArticleFactory                $articleFactory
-    ): Response
-    {
-        // TODo: Выполнить лимитирование генерации статьи на этапе реализации для API
-        $form = $this->createForm(ArticleGenerationFormType::class);
-        $form->handleRequest($request);
+        Request                $request,
+        ArticleRepository      $articleRepository,
+        GenerationBlocker      $blocker,
+        ArticleSaveHandler      $saveHandler
+    ): Response {
+        /*
+        TODo:
+            1) Для удобства тестирования реализовать имперсонализацию
+            2) Сделать копирование данных из сгенерированной статьи в новую форму
+            3) Сделать adapter для генерации стаей посредством API
+            4) Почему то выбирает дефолтные модули несмотря на уровень подписки. Возможно выбирается некорректная стратегия
+        */
+        $user = $this->getUser();
         /** @var Article $article */
-        $article = $request->get('articleId')
+        $articleGenerated = $request->get('articleId')
             ?
             $articleRepository->findOneBy([
                 'id' => $request->get('articleId'),
             ])
             :
             false;
+        $form = $this->createForm(ArticleGenerationFormType::class);
+        $form->handleRequest($request);
+        // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var ArticleFormModel $articleModel */
-            /**
-             * 1) Выполнить вызов аплоадера для сохранения картинок, он вернет имена файлов,
-             *   которые можно будет сохранить в БД и использовать далее для генерации
-             * 2) Реализовать логику использования изображений для генерации статьи по ТЗ внутри стратегии
-             */
-            $articleModel = $form->getData();
-            // Сохраняем изображения и записываем их имена в свойство ДТО
-            $articleModel->images = $fileUploader->uploadManyFiles($articleModel->images);
-            // Передаем ДТО в фабрику статей для формирования объекта статьи
-            $article = $articleFactory->createFromModel($articleModel);
-            $article
-                ->setClient($this->getUser())
-                ->setBody(
-                    $articleGenerator
-                        ->setArticleDTO($article)
-                        ->setGenerationStrategy($freeStrategy)
-                        ->generateArticle()
-                );
-            $em->persist($article);
-            $em->flush();
-
+        if ($article) {
             // Сообщение об успешном создании модуля
             $this->addFlash('success', 'Статья успешно сгенерирована');
             return $this->redirectToRoute('app_admin_article_create', [
@@ -123,15 +98,55 @@ class ArticleController extends AbstractController
         return $this->render('admin/article/create.html.twig', [
             'articleForm' => $form->createView(),
             'errors' => $form->getErrors(true), // ошибки в форме
+            'article' => $articleGenerated,
+            'isGenerationBlocked' => false,
+            'isBlocked' => $isBlocked,
+        ]);
+    }
+
+    /**
+     * Повторяет генерацию статью на основе уже сделанной
+     *
+     * @Route("/admin/article/{id}/repeat", name="app_admin_article_repeat")
+     * @throws FilesystemException
+     * @throws Exception
+     */
+    public function repeat(
+        Article                 $article,
+        Request                 $request,
+        GenerationBlocker       $blocker,
+        ArticleFormModelFactory $formModelFactory,
+        ArticleSaveHandler      $saveHandler
+    ): Response {
+        $user = $this->getUser();
+        $form = $this->createForm(
+            ArticleGenerationFormType::class,
+            $formModelFactory->createFromModel($article)
+        );
+        $form->handleRequest($request);
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+
+        $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
+
+        if ($article) {
+            // Сообщение об успешном создании модуля
+            $this->addFlash('success', 'Статья успешно сгенерирована');
+            return $this->redirectToRoute('app_admin_article_create', [
+                'articleId' => $article->getId(),
+            ]);
+        }
+
+        return $this->render('admin/article/create.html.twig', [
+            'articleForm' => $form->createView(),
+            'errors' => $form->getErrors(true), // ошибки в форме
             'article' => $article,
+            'isGenerationBlocked' => false,
+            'isBlocked' => $isBlocked,
         ]);
     }
 
     /**
      * Отображает страницу конкретной статьи
-     *
-     * ToDo: после привязки статей к пользователям отображать только статьи,
-     *  сгенерированные конкретным пользователем
      *
      * @Route("/admin/article/{id}", name="app_admin_article_show")
      * @param int $id - идентификатор статьи
@@ -140,10 +155,57 @@ class ArticleController extends AbstractController
      */
     public function show(int $id, ArticleRepository $articleRepository): Response
     {
-        $article = $articleRepository->findOneBy(['id' => $id]);
-
         return $this->render('admin/article/show.html.twig', [
-            'article' => $article
+            'article' => $articleRepository->findOneBy([
+                'id' => $id,
+                'client' => $this->getUser()
+
+            ])
         ]);
+    }
+
+    /**
+     * Создает статью по api
+     *
+     * @Route("/api/v1/admin/article/create/", name="app_admin_api_article_create")
+     * @param Request $request
+     * @param GenerationBlocker $blocker
+     * @param ValidatorInterface $validator
+     * @param ArticleFormModelFactory $formModelFactory
+     * @param ArticleSaveHandler $saveHandler
+     * @return JsonResponse
+     * @throws NonUniqueResultException
+     * @throws Exception
+     */
+    public function apiCreate(
+        Request                 $request,
+        GenerationBlocker       $blocker,
+        ValidatorInterface      $validator,
+        ArticleFormModelFactory $formModelFactory,
+        ArticleSaveHandler      $saveHandler
+    ): JsonResponse {
+        $response = [];
+        $code = 400;
+        $user = $this->getUser();
+        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $response['errors'][] = 'Превышен лимит создания статей, чтобы снять лимит улучшите подписку';
+        if (!$isBlocked) {
+            $model = $formModelFactory->createFromModel($request);
+            $errors = $validator->validate($model);
+            $response['errors'] = count($errors) > 0 ? $errors : null;
+            $response = $response['errors'] ?? $saveHandler->saveArticle($model, $user);
+            $code = 200;
+        }
+
+        return $this->json(
+            $response,
+            $code,
+            [],
+            [
+                'groups' => [
+                    'api',
+                ]
+            ]
+        );
     }
 }

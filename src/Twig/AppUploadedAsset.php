@@ -24,8 +24,16 @@ class AppUploadedAsset implements RuntimeExtensionInterface
         $this->packages = $packages;
     }
 
+    /**
+     * Возвращает строку пути к файлу
+     *
+     * @param string $config - основной путь до директории хранения файла, взятый из конфига
+     * @param string|null $path - имя файла или оставшийся до него путь из директории
+     * @return string
+     */
     public function asset(string $config, ?string $path): string
     {
-        return $this->packages->getUrl($this->parameterBag->get($config) . '/' . $path);
+        $prefix = $config === 'article_uploads_img_url' ? '' : $this->parameterBag->get($config) . '/';
+        return $this->packages->getUrl($prefix . $path);
     }
 }

@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
 use Faker\Generator;
 
@@ -89,7 +90,7 @@ abstract class BaseFixtures extends Fixture
      *
      * @param $className
      * @return object
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getRandomReference($className): object
     {
@@ -107,7 +108,7 @@ abstract class BaseFixtures extends Fixture
         }
         // если referencesIndex пустой, то исключение
         if (empty($this->referencesIndex[$className])) {
-            throw new \Exception('Не найдены ссылки на класс ' . $className);
+            throw new Exception('Не найдены ссылки на класс ' . $className);
         }
 
         return $this->getReference($this->faker->randomElement($this->referencesIndex[$className]));

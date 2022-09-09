@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ModuleRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -48,24 +49,29 @@ class Module
     private $client;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
     protected $updatedAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @ORM\Column(type="datetime")
      */
     protected $deletedAt;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isDefault;
 
     public function getId(): ?int
     {
@@ -104,6 +110,18 @@ class Module
     public function setClient(?UserInterface $client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getIsDefault(): ?bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(?bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
 
         return $this;
     }

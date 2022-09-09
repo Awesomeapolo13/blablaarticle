@@ -2,6 +2,13 @@
 
 namespace App\ArticleGeneration;
 
+use App\ArticleGeneration\Strategy\FreeGenerationStrategy;
+use App\ArticleGeneration\Strategy\PlusGenerationStrategy;
+use App\ArticleGeneration\Strategy\ProGenerationStrategy;
+use App\Entity\Article;
+use App\Entity\User;
+use Exception;
+
 /**
  * Класс контекста для стратегий генерации статей
  */
@@ -9,45 +16,53 @@ class ArticleGenerator
 {
     /**
      * Стратегия генерации статьи
-     *
-     * @var ArticleGenerationInterface
      */
-    private $strategy;
-
+    private ArticleGenerationInterface $defaultStrategy;
     /**
-     * @var object
+     * @var ArticleGenerationInterface[] - коллекция стратегий для генерации статей
      */
-    private $articleDTO;
+    private iterable $strategies;
 
-    /**
-     * @param object $articleDTO - объект с данными для генерации статьи
-     * @return ArticleGenerator
-     */
-    public function setArticleDTO(object $articleDTO): ArticleGenerator
+    public function __construct(
+        iterable                   $strategies,
+        ArticleGenerationInterface $defaultStrategy
+    )
     {
-        $this->articleDTO = $articleDTO;
-
-        return $this;
-    }
-
-    /**
-     * @param ArticleGenerationInterface $strategy
-     * @return ArticleGenerator
-     */
-    public function setGenerationStrategy(ArticleGenerationInterface $strategy): ArticleGenerator
-    {
-        $this->strategy = $strategy;
-
-        return $this;
+        $this->strategies = $strategies;
+        $this->defaultStrategy = $defaultStrategy;
     }
 
 
-    public function generateArticle()
+    /**
+     * @throws Exception
+     */
+    public function generateArticle(Article $article): string
     {
-        if (empty($this->strategy) || empty($this->articleDTO)) {
-            throw new \Exception('Для генерации статьи необходимо указать стратегию и данные для генерации');
+        $strategy = $this->defineStrategy($article->getClient());
+        if (empty($strategy)) {
+            throw new Exception('Для генерации статьи необходимо указать стратегию и данные для генерации');
         }
 
-        return $this->strategy->generate($this->articleDTO);
+        return $strategy->generate($article);
+    }
+
+    /**
+     * Определяет стратегию для генерации статей в зависимости от уровня подписки пользователя
+     */
+    protected function defineStrategy(?User $user): ArticleGenerationInterface
+    {
+        $userSubscription = $user?->getSubscription()->getName();
+
+        foreach ($this->strategies as $strategy) {
+            if (
+                $userSubscription === 'PRO' && $strategy instanceof ProGenerationStrategy ||
+                $userSubscription === 'PLUS' && $strategy instanceof PlusGenerationStrategy ||
+                $userSubscription === 'FREE' && $strategy instanceof FreeGenerationStrategy
+            ) {
+                return $strategy;
+            }
+        }
+        // У статей генерируемых для демонстрации нет пользователя.
+        return $this->defaultStrategy;
     }
 }

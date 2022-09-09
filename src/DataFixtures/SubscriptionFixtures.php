@@ -34,7 +34,9 @@ class SubscriptionFixtures extends BaseFixtures
                     'isEnabled' => false,
                     'description' => 'Свои модули',
                 ],
-            ]
+            ],
+            'blockTime' => '60',
+            'blockCount' => 2,
         ],
         [
             'name' => 'PLUS',
@@ -56,7 +58,9 @@ class SubscriptionFixtures extends BaseFixtures
                     'isEnabled' => false,
                     'description' => 'Свои модули',
                 ],
-            ]
+            ],
+            'blockTime' => '60',
+            'blockCount' => 2,
         ],
         [
             'name' => 'PRO',
@@ -78,7 +82,9 @@ class SubscriptionFixtures extends BaseFixtures
                     'isEnabled' => true,
                     'description' => 'Свои модули',
                 ],
-            ]
+            ],
+            'blockTime' => null,
+            'blockCount' => null,
         ],
     ];
 
@@ -94,6 +100,8 @@ class SubscriptionFixtures extends BaseFixtures
                     ->setName($defaultSubscription['name'])
                     ->setPrice($defaultSubscription['price'])
                     ->setOpportunities($defaultSubscription['opportunities'])
+                    ->setBlockTime($defaultSubscription['blockTime'])
+                    ->setBlockCount($defaultSubscription['blockCount'])
                 ;
             });
 

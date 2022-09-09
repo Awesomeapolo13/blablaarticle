@@ -3,15 +3,13 @@
 namespace App\Controller;
 
 use App\ArticleGeneration\ArticleGenerator;
-use App\ArticleGeneration\Strategy\DemoArticleGenerationStrategy;
-use App\Entity\Article;
+use App\ArticleGeneration\GenerationBlocker;
 use App\Factory\Article\ArticleFactory;
 use App\Form\ArticleDemoGenerateFormType;
 use App\Form\Model\ArticleDemoFormModel;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,14 +26,13 @@ class ArticleController extends AbstractController
      * @throws Exception
      */
     public function index(
-        Request                       $request,
-        EntityManagerInterface        $em,
-        ArticleRepository             $articleRepository,
-        ArticleGenerator              $articleGenerator,
-        DemoArticleGenerationStrategy $demoStrategy,
-        ArticleFactory                $articleFactory
-    ): Response
-    {
+        Request                $request,
+        EntityManagerInterface $em,
+        ArticleRepository      $articleRepository,
+        ArticleGenerator       $articleGenerator,
+        ArticleFactory         $articleFactory,
+        GenerationBlocker      $blocker
+    ): Response {
         // Id статьи, получаем из куки, если она существует
         $articleId = $request->cookies->get('articleId');
         // Если задана кука с идентификатором статьи, то находим ее
@@ -50,25 +47,17 @@ class ArticleController extends AbstractController
         if (!isset($articleId) && $form->isSubmitted() && $form->isValid()) {
             /** @var ArticleDemoFormModel $articleDemoModel */
             $articleDemoModel = $form->getData();
-            // Задаем данные для генерации статьи в соответствии с демо-стратегией
-            // ToDO Переделать на использование сущности вместо ДТО
-            $articleGenerator
-                ->setArticleDTO($articleDemoModel)
-                ->setGenerationStrategy($demoStrategy)
-            ;
-
-            $article = $articleFactory
-                ->createFromModel($articleDemoModel)
+            $article = $articleFactory->createFromModel($articleDemoModel);
+            $article
                 ->setBody(
-                    $articleGenerator->generateArticle()
+                    $articleGenerator->generateArticle($article)
                 )
             ;
             $em->persist($article);
             $em->flush();
             // Записываем в куки id статьи
             $articleId = $article->getId();
-            $cookie = new Cookie('articleId', $articleId, 2147483647, '/');
-            $response->headers->setCookie($cookie);
+            $response = $blocker->blockDemo($response, $articleId);
         }
 
         return $this->render('article/index.html.twig',

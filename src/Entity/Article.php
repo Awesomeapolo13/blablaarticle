@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Form\Model\ArticleFormModel;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -50,6 +50,7 @@ class Article
      *
      * @ORM\Column(type="string", length=60)
      * @Assert\NotBlank(message="Введите заголовок")
+     * @Groups("api")
      */
     private $title;
 
@@ -58,6 +59,7 @@ class Article
      *
      * @ORM\Column(type="text", nullable=true)
      * @Assert\LessThanOrEqual(255)
+     * @Groups("api")
      */
     private $description;
 
@@ -85,6 +87,7 @@ class Article
      *
      * @ORM\Column(type="text")
      * @Assert\NotBlank(message="Отсутствует результат генерации статьи")
+     * @Groups("api")
      */
     private $body;
 

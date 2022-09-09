@@ -13,9 +13,9 @@ class ModuleFixtures extends BaseFixtures
     /**
      * Дефолтные модули, используемые приложением по умолчанию
      *
-     * @var \string[][]
+     * @var string[][]
      */
-    private $defaultModules = [
+    private array $defaultModules = [
         [
             'name' => 'Медиа блок - картинка и параграфы',
             'body' => '<div class="media">
@@ -92,6 +92,7 @@ class ModuleFixtures extends BaseFixtures
                 $module
                     ->setName($defaultModule['name'])
                     ->setBody($defaultModule['body'])
+                    ->setIsDefault(true)
                 ;
             });
 

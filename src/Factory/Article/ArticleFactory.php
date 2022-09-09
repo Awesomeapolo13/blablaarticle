@@ -16,6 +16,15 @@ use Exception;
  */
 class ArticleFactory implements FactoryInterface
 {
+    /**
+     * Количество продвигаемых слов для демонстрационной генерации статьи
+     */
+    private const PROMO_WORD_COUNT = 1;
+    /**
+     * Количество модулей для демонстрационной генерации статьи
+     */
+    private const DEMO_MODULES_COUNT = 3;
+
     private ThemeFactory $themeFactory;
     private UserRepository $userRepository;
 
@@ -31,7 +40,7 @@ class ArticleFactory implements FactoryInterface
     /**
      * @throws Exception
      */
-    public function createFromModel(object $model): object
+    public function createFromModel(object $model): Article
     {
         switch ($model) {
             case $model instanceof ArticleFormModel:
@@ -86,7 +95,15 @@ class ArticleFactory implements FactoryInterface
         if (!empty($articleFormModel->images)) {
             foreach ($articleFormModel->images as $image) {
                 $article->addImage(
-                    (new ArticleImage())->setName($image)
+                        (new ArticleImage())->setName($image)
+                );
+            }
+        }
+        // Если сохраняем с API то заполняем поле url
+        if (!empty($articleFormModel->imageUrls)) {
+            foreach ($articleFormModel->imageUrls as $imgUrl) {
+                $article->addImage(
+                    (new ArticleImage())->setUrl($imgUrl)
                 );
             }
         }
@@ -111,8 +128,11 @@ class ArticleFactory implements FactoryInterface
             ->setTheme('demo')
             ->setKeyWord(['demonstration'])
             ->setTitle($articleDemoFormModel->title)
-            ->setSize(3)
-            ->setPromotedWords(['word' => $articleDemoFormModel->promotedWord, 'count' => 1])
+            ->setSize(self::DEMO_MODULES_COUNT)
+            ->setPromotedWords([
+                'word' => $articleDemoFormModel->promotedWord,
+                'count' => self::PROMO_WORD_COUNT
+            ])
             ->setClient($this->userRepository->findOneBy(['id' => 1]))
             ;
     }
