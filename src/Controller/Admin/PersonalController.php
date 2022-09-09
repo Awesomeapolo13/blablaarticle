@@ -15,6 +15,15 @@ class PersonalController extends AbstractController
      */
     public function index(): Response
     {
-        return $this->render('admin/index.html.twig');
+        return $this->render(
+            'admin/personal/index.html.twig',
+            [
+                'message' => 'Подписка истекает через 2 дня',
+                'title' => 'Test title',
+                'text' => 'Test text',
+                'hrefName' => 'Test hrefName',
+                'hrefPath' => 'app_admin_personal',
+            ]
+        );
     }
 }

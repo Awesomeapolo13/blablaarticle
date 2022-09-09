@@ -1,0 +1,16 @@
+<div class="card">
+    <div class="card-body">
+        {% if title is defined %}
+            {% include 'admin/personal/components/card_title.html.twig' with { title: title } %}
+        {% endif %}
+        {% if text is defined %}
+            {% include 'admin/personal/components/card_text.html.twig' with { text: text } %}
+        {% endif %}
+        {% if hrefName is defined %}
+            {% include 'admin/personal/components/card_href.html.twig' with {
+                hrefName: hrefName,
+                hrefPath: hrefPath
+            } %}
+        {% endif %}
+    </div>
+</div>

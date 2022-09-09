@@ -65,13 +65,6 @@ class ArticleController extends AbstractController
         GenerationBlocker      $blocker,
         ArticleSaveHandler      $saveHandler
     ): Response {
-        /*
-        TODo:
-            1) Для удобства тестирования реализовать имперсонализацию
-            2) Сделать копирование данных из сгенерированной статьи в новую форму
-            3) Сделать adapter для генерации стаей посредством API
-            4) Почему то выбирает дефолтные модули несмотря на уровень подписки. Возможно выбирается некорректная стратегия
-        */
         $user = $this->getUser();
         /** @var Article $article */
         $articleGenerated = $request->get('articleId')

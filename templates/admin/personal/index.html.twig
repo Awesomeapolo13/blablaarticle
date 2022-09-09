@@ -1,0 +1,50 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">Рабочий стол</h1>
+    <div class="row">
+        <div class="col-xl-8 border-right">
+            {% include 'components/warning.html.twig' with {message: message} %}
+            <div class="card-columns dashboard">
+                {% include 'admin/personal/components/info_card.html.twig' with {
+                    title: title,
+                    text: text,
+                    hrefName: hrefName,
+                    hrefPath: hrefPath
+                } %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">13</h5>
+                        <p class="card-text">Всего статей создано.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">8</h5>
+                        <p class="card-text">Создано в этом месяце.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">PLUS</h5>
+                        <p class="card-text">Ваш уровень подписки.</p>
+                        <a href="#" class="btn btn-primary">Улучшить</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Создать статью</h5>
+                        <a href="#" class="btn btn-primary">Создать</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Почему квадрат не круглый?</h5>
+                        <p class="card-text">При генерации контента <b>круг</b> статьи, вы можете наполнить его нужными словами <b>круг</b> для вашего бизнеса. Столько <b>круг</b> сколько <b>круг</b> нужно. Хоть все ими <b>круг</b> <b>круг</b> <b>круг</b> заполоните!.</p>
+                        <a href="#" class="btn btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
