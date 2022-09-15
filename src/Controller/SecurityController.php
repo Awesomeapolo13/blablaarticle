@@ -92,8 +92,7 @@ class SecurityController extends AbstractController
         EntityManagerInterface    $em,
         UserRepository            $userRepository,
         LoggerInterface           $emailConfirmLogger
-    ): ?Response
-    {
+    ): ?Response {
 
         $confirmationError = 'Некорректная ссылка для подтверждения email. Обратитесь в службу поддержки.';
         // Проверяем корректна ли ссылка, если нет то редирект на регистрацию и вывод ошибки

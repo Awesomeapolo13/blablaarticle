@@ -23,13 +23,17 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    /**
+     * Возвращает запрос для получения статей по пользователю
+     */
     public function findArticlesForUserQuery(UserInterface $user): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder()
-            ->where('a.client = :client')
-            ->setParameter('client', $user)
+        return $this->forUser(
+            $this->getOrCreateQueryBuilder(),
+            $user
+        )
             ->orderBy('a.createdAt', 'DESC')
-        ;
+            ;
     }
 
     /**
@@ -54,13 +58,83 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
+     * Возвращает количество сгенерированных пользователем статей
+     * @throws NonUniqueResultException
+     */
+    public function getCount(UserInterface $user): int
+    {
+        $count = $this->forUser(
+            $this->forCount(),
+            $user
+        )
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return array_shift($count);
+    }
+
+    /**
+     * Возвращает количество сгенерированных пользователем статей за последний месяц
+     * @throws NonUniqueResultException
+     */
+    public function getLastMonthCount(UserInterface $user): int
+    {
+        $count = $this->forUser(
+            $this->forPeriod(
+                $this->forCount(),
+                new DateTime('first day of this month'),
+                new DateTime()
+            ),
+            $user
+        )
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return array_shift($count);
+    }
+
+    /**
      * Возвращает переданный, либо установленный по умолчанию конструктор запросов
-     *
-     * @param QueryBuilder|null $qb
-     * @return QueryBuilder
      */
     private function getOrCreateQueryBuilder(?QueryBuilder $qb = null): QueryBuilder
     {
         return $qb ?? $this->createQueryBuilder('a');
+    }
+
+    /**
+     * Добавляет условие по пользователю
+     */
+    private function forUser(QueryBuilder $qb, UserInterface $user): QueryBuilder
+    {
+        return $qb
+            ->andWhere('a.client = :client')
+            ->setParameter('client', $user)
+            ;
+    }
+
+    /**
+     * Добавляет условия по временным рамкам
+     */
+    private function forPeriod(
+        QueryBuilder $qb,
+        DateTime     $from,
+        DateTime     $to
+    ): QueryBuilder {
+        return $qb
+            ->andWhere('a.createdAt >= :from AND a.createdAt <= :to')
+            ->setParameter('from', $from->format('c'))
+            ->setParameter('to', $to->format('c'))
+            ;
+    }
+
+    /**
+     * Возвращает исходный запрос для получения количества
+     */
+    private function forCount(): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder()
+            ->select('COUNT(a)');
     }
 }

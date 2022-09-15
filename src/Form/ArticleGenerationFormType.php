@@ -54,6 +54,7 @@ class ArticleGenerationFormType extends AbstractType
                 $themes[$theme->getName()] = $theme->getSlug();
         }
         // Определяем ключевые слова и сеттим из если есть
+        // ToDo дизейблить поля ввода других ключевых слов, если их нельзя использовать по подписке
         for ($i = 0; $i <= 6; $i++) {
             $keywords[] = ($article->articleWords)[$i] ?? '';
         }
