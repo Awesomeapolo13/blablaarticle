@@ -12,6 +12,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ArticleFormModel
 {
     /**
+     * Идентификатор статьи
+     * Используется, если генерим статью на основе уже ранее созданной
+     * @var int|null
+     */
+    public ?int $id = null;
+
+    /**
      * Тематика
      *
      * @Assert\NotBlank(message="Укажите тематику статьи")

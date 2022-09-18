@@ -35,6 +35,7 @@ class ArticleFormModelFactory implements FactoryInterface
     public function createFromArticle(object $model): ArticleFormModel
     {
         $formModel = new ArticleFormModel();
+        $formModel->id = $model->getId() ?? null;
         $formModel->theme = $model->getTheme();
         $formModel->title = $model->getTitle();
         $formModel->description = $model->getDescription();

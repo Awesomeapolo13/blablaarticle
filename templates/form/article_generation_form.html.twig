@@ -18,6 +18,9 @@
         {# Тематика статьи #}
         {{ form_row(articleForm.theme) }}
 
+        {# скрытое поле для идентификатора #}
+        {{ form_row(articleForm.id) }}
+
         {# Заголовок #}
         <div class="form-label-group">
             {{ form_widget(articleForm.title) }}
