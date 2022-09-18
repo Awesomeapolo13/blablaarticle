@@ -3,7 +3,7 @@
         title: data.title|default(''),
         keyword: data.keyword|morph(0)|default(''),
         paragraph: data.paragraph|default(''),
-        paragraphs: data.paragraphs|default(''),
+        paragraphs: data.paragraphs|default('')|raw,
         imageSrc: data.imageSrc|default('')
     } %}
 {% endautoescape %}

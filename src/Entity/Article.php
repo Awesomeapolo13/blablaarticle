@@ -201,7 +201,7 @@ class Article
 
     public function getPromotedWords(): array
     {
-        return array_unique($this->promotedWords);
+        return $this->promotedWords;
     }
 
     public function setPromotedWords(array $promotedWords): self

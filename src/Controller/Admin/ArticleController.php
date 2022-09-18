@@ -120,7 +120,7 @@ class ArticleController extends AbstractController
             $formModelFactory->createFromModel($article)
         );
         $form->handleRequest($request);
-        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $isBlocked = $blocker->isBlockBySubscription($user);
 
         $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
@@ -138,6 +138,9 @@ class ArticleController extends AbstractController
             'article' => $article,
             'isGenerationBlocked' => false,
             'isBlocked' => $isBlocked,
+            'isMorphsAllowed' => $user
+                    ->getSubscription()
+                    ->getName() !== 'FREE',
         ]);
     }
 

@@ -155,13 +155,16 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 $article->getKeyWord()
             );
 
-            $articleBody[] = $this->getTwig()->render(
-                'article/components/article_module.html.twig',
-                [
-                    'data' => $data,
-                    'module' => $module
-                ]
-            );
+            // ToDo Почему то для paragraphs всегда отображает разметку
+            $articleBody[] = $this
+                ->getTwig()
+                ->render(
+                    'article/components/article_module.html.twig',
+                    [
+                        'data' => $data,
+                        'module' => $module
+                    ]
+                );
         }
 
         return $articleBody;
@@ -176,7 +179,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateTitle(string $targetText, Generator $faker): string
     {
-        return preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $targetText)
+        return preg_match('/\{\{(\s)*?title?(\|raw)?(\s)*?}}/', $targetText)
         ?
             $faker->sentence()
             :
@@ -192,7 +195,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateParagraph(string $targetText, Generator $faker): string
     {
-        return preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $targetText)
+        return preg_match('/\{\{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $targetText)
             ?
             $faker->paragraph(rand(1, 10))
             :
@@ -208,8 +211,9 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateParagraphs(string $targetText, Generator $faker): string
     {
+        // ToDo Выводит параграфы вместе с разметкой
         $paragraphs = '';
-        if (preg_match('/{{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
+        if (preg_match('/\{\{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
             foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
                 $paragraphs .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
             }
@@ -232,7 +236,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         array &$minImagesArr
     ): string {
         $imageSrc = '';
-        if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText) && !empty($imgArr)) {
+        if (preg_match('/\{\{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText) && !empty($imgArr)) {
             // Выбираем рандомное изображение
             $image = $imgArr[array_rand($imgArr)];
             // Если image является url, то вставляем его без пути к папке
