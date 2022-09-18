@@ -130,8 +130,10 @@ class ArticleFactory implements FactoryInterface
             ->setTitle($articleDemoFormModel->title)
             ->setSize(self::DEMO_MODULES_COUNT)
             ->setPromotedWords([
-                'word' => $articleDemoFormModel->promotedWord,
-                'count' => self::PROMO_WORD_COUNT
+                [
+                    'word' => $articleDemoFormModel->promotedWord,
+                    'count' => self::PROMO_WORD_COUNT
+                ]
             ])
             ->setClient($this->userRepository->findOneBy(['id' => 1]))
             ;

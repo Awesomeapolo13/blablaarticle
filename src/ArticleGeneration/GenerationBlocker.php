@@ -2,7 +2,6 @@
 
 namespace App\ArticleGeneration;
 
-use App\Entity\Subscription;
 use App\Entity\User;
 use App\Repository\ArticleRepository;
 use DateTime;
