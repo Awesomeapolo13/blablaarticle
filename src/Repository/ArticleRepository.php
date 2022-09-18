@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -42,17 +43,22 @@ class ArticleRepository extends ServiceEntityRepository
      * @var DateTime $dateTimeTo - промежуток времени до которого проводим поиск (должен быть больше чем $dateTimeFrom)
      * @throws NonUniqueResultException
      */
-    public function articlesCountForInterval(DateTime $dateTimeFrom, DateTime $dateTimeTo): int
-    {
-        $articlesCount =  $this->getOrCreateQueryBuilder()
-            ->select('COUNT(a) as articlesCount')
-            ->where('a.createdAt >= :dateTimeFrom')
-            ->setParameter(':dateTimeFrom', $dateTimeFrom)
-            ->andWhere('a.createdAt <= :dateTimeTo')
-            ->setParameter(':dateTimeTo', $dateTimeTo)
+    public function articlesCountForInterval(
+        User $user,
+        DateTime $dateTimeFrom,
+        DateTime $dateTimeTo
+    ): int {
+        $articlesCount = $this->forUser(
+            $this->getOrCreateQueryBuilder()
+                ->select('COUNT(a) as articlesCount')
+                ->where('a.createdAt >= :dateTimeFrom')
+                ->setParameter(':dateTimeFrom', $dateTimeFrom->format('c'))
+                ->andWhere('a.createdAt <= :dateTimeTo')
+                ->setParameter(':dateTimeTo', $dateTimeTo->format('c')),
+            $user
+        )
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
 
         return $articlesCount ? $articlesCount['articlesCount'] : 0;
     }
@@ -106,8 +112,10 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * Добавляет условие по пользователю
      */
-    private function forUser(QueryBuilder $qb, UserInterface $user): QueryBuilder
-    {
+    private function forUser(
+        QueryBuilder $qb,
+        UserInterface $user
+    ): QueryBuilder {
         return $qb
             ->andWhere('a.client = :client')
             ->setParameter('client', $user)

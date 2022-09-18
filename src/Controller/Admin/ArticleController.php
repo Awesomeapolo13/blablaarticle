@@ -77,7 +77,7 @@ class ArticleController extends AbstractController
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
         // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
-        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $isBlocked = $blocker->isBlockBySubscription($user);
         $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
         if ($article) {
@@ -94,6 +94,9 @@ class ArticleController extends AbstractController
             'article' => $articleGenerated,
             'isGenerationBlocked' => false,
             'isBlocked' => $isBlocked,
+            'isMorphsAllowed' => $user
+                    ->getSubscription()
+                    ->getName() !== 'FREE',
         ]);
     }
 

@@ -11,17 +11,15 @@
                 <div class="card card-signin my-5">
                     <div class="card-body">
                         <h5 class="card-title text-center">Регистрация</h5>
-                        {# Выводим сообщение об успешной решистрации #}
+                        {# Выводим сообщение об успешной регистрации #}
                         {% if confirmationError %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ confirmationError }}
-                            </div>
+                            {% include 'components/error.html.twig' with {errors: [confirmationError]} %}
                         {% endif %}
-                        {% if success %}
-                        {% include 'components/success.html.twig' with {
-                            message: 'Для завершения регистрации подтвердите ваш email'
-                        } %}
-                        {% else %}
+                        {% include 'components/success_flashes.html.twig' %}
+                        {% for message in app.flashes('success') %}
+                            {% include 'components/success.html.twig' with {message: message} %}
+                        {% endfor %}
+                        {% if not success %}
                             {% include 'form/user_form.html.twig' with {
                                 form: registrationForm,
                                 formClass: 'form-signin',

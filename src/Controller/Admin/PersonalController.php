@@ -26,6 +26,7 @@ class PersonalController extends AbstractController
     ): Response {
         $user = $this->getUser();
         $expires = Carbon::parse($user->getExpireAt());
+        // ToDO Почему то не сохраняется кеш
         $blocksCached = $adapter->get('app_personal_blocks', function (ItemInterface $item) use ($articleRepository, $user) {
             $item->expiresAfter(24 * 3600);
             $last = $articleRepository->findOneBy(

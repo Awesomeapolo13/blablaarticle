@@ -41,11 +41,15 @@
                     >
                         Профиль
                     </a>
-                    <a
-                            href="{{ path('app_admin_module') }}"
-                            class="list-group-item list-group-item-action
-                            {{ (app.request.attributes.get('_route') == 'app_admin_module') ? 'active' : 'bg-light' }}">Модули
-                        генератора</a>
+                    {% if is_granted('IS_PRO_SUBSCRIBER') %}
+                        <a
+                                href="{{ path('app_admin_module') }}"
+                                class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_module') ? 'active' : 'bg-light' }}"
+                        >
+                            Модули генератора
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         {% endblock %}

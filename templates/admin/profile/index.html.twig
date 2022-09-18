@@ -7,10 +7,10 @@
         <div class="col-xl-6 cont-block">
             {# Сообщение об ошибках или успехе при изменении токеная #}
             {% if token.expiresAt is defined and token.expiresAt < date('now') %}
-{#                 ToDO: Выделить в отдельный компонент и подключать через include #}
-                <div class="alert alert-warning token-expired" role="alert">
-                    Срок действия Вашего токена истек. Выполните генерацию нового токена для продолжения работы с API
-                </div>
+                {% include 'components/warning.html.twig' with {
+                    message: expiredMessage,
+                    classAdditional: 'token-expired'
+                } %}
             {% endif %}
             <div class="card my-4">
                 <div class="card-body">

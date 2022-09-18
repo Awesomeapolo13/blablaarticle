@@ -57,7 +57,9 @@ class ProfileController extends AbstractController
             'success' => $success,
             'isConfirmed' => $isConfirmed,
             'confirmationError' => $confirmationError,
-            'token' => $token
+            'token' => $token,
+            'expiredMessage' => 'Срок действия Вашего токена истек.'
+                . ' Выполните генерацию нового токена для продолжения работы с API',
         ]);
     }
 

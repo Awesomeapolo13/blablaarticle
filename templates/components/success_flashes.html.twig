@@ -1,0 +1,3 @@
+{% for message in app.flashes('success') %}
+    {% include 'components/success.html.twig' with {message: message} %}
+{% endfor %}
