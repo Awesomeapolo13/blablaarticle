@@ -65,6 +65,7 @@
             <div class="row">
                 <div class="col-lg-12 mx-auto">
                     {% if article is not null %}
+                        <h2 class="card-title text-center mb-4">{{ article.title }}</h2>
                         {{ article.body|raw }}
                     {% else %}
                         <h2 class="card-title text-center mb-4">Тестовая статья</h2>

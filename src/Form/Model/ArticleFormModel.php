@@ -66,7 +66,7 @@ class ArticleFormModel
      *
      * @var int|null
      */
-    public ?int $sizeFrom;
+    public ?int $sizeFrom = null;
 
     /**
      * Конец диапазона модулей
@@ -75,7 +75,7 @@ class ArticleFormModel
      *
      * @var int|null
      */
-    public ?int $sizeTo;
+    public ?int $sizeTo = null;
 
     /**
      * Продвигаемое слово

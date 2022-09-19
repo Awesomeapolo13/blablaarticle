@@ -97,7 +97,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     {
         return $this->getTwig()->render('article/components/article_body.html.twig', [
             'article' => [
-                'title' => '<h2 class="card-title text-center mb-4">' . $title . '</h2>',
                 'body' => $articleBody,
             ]
         ]);
@@ -155,7 +154,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 $article->getKeyWord()
             );
 
-            // ToDo Почему то для paragraphs всегда отображает разметку
             $articleBody[] = $this
                 ->getTwig()
                 ->render(
@@ -211,7 +209,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateParagraphs(string $targetText, Generator $faker): string
     {
-        // ToDo Выводит параграфы вместе с разметкой
         $paragraphs = '';
         if (preg_match('/\{\{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
             foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
@@ -235,7 +232,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         array $imgArr,
         array &$minImagesArr
     ): string {
-        $imageSrc = '';
+        $imageSrc = 'https://via.placeholder.com/250x250';
         if (preg_match('/\{\{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText) && !empty($imgArr)) {
             // Выбираем рандомное изображение
             $image = $imgArr[array_rand($imgArr)];
