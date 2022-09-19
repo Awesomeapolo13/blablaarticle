@@ -40,69 +40,71 @@
                 <p class="card-title">Ключевое слово</p>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.0, {
-                        attr: {placeholder: 'Ключевое слово'}
+                        attr: {
+                            placeholder: 'крупа'
+                        }
                     }) }}
-                    {{ form_label(articleForm.articleWords.0, 'Ключевое слово') }}
+                    {{ form_label(articleForm.articleWords.0, 'крупа') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.1, {
                         required: false,
                         attr: {
-                            placeholder: 'Родительный падеж',
+                            placeholder: 'крупы',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.1, 'Родительный падеж') }}
+                    {{ form_label(articleForm.articleWords.1, 'крупы') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.2, {
                         required: false,
                         attr: {
-                            placeholder: 'Дательный падеж',
+                            placeholder: 'крупе',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.2, 'Дательный падеж') }}
+                    {{ form_label(articleForm.articleWords.2, 'крупе') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.3, {
                         required: false,
                         attr: {
-                            placeholder: 'Винительный падеж',
+                            placeholder: 'крупа',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.3, 'Винительный падеж') }}
+                    {{ form_label(articleForm.articleWords.3, 'крупа') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.4, {
                         required: false,
                         attr: {
-                            placeholder: 'Творительный падеж',
+                            placeholder: 'крупой',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.4, 'Творительный падеж') }}
+                    {{ form_label(articleForm.articleWords.4, 'крупой') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.5, {
                         required: false,
                         attr: {
-                            placeholder: 'Предложный падеж',
+                            placeholder: 'крупе',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.5, 'Предложный падеж') }}
+                    {{ form_label(articleForm.articleWords.5, 'крупе') }}
                 </div>
                 <div class="form-label-group">
                     {{ form_widget(articleForm.articleWords.6, {
                         required: false,
                         attr: {
-                            placeholder: 'Множественное число',
+                            placeholder: 'крупы',
                             disabled: not isMorphsAllowed
                         }
                     }) }}
-                    {{ form_label(articleForm.articleWords.6, 'Множественное число') }}
+                    {{ form_label(articleForm.articleWords.6, 'крупы') }}
                 </div>
             </div>
         </div>
