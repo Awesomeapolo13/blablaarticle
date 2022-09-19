@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -22,11 +24,10 @@ class PersonalController extends AbstractController
      */
     public function index(
         ArticleRepository $articleRepository,
-        ArrayAdapter      $adapter
+        AdapterInterface $adapter
     ): Response {
         $user = $this->getUser();
         $expires = Carbon::parse($user->getExpireAt());
-        // ToDO Почему то не сохраняется кеш
         $blocksCached = $adapter->get('app_personal_blocks', function (ItemInterface $item) use ($articleRepository, $user) {
             $item->expiresAfter(24 * 3600);
             $last = $articleRepository->findOneBy(

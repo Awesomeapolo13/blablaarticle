@@ -56,20 +56,6 @@ services:
         bind:
             $changeUserDataHandler: '@app.change_user_data_handler'
 
-    App\Controller\Admin\PersonalController:
-        bind:
-            $adapter: '@cache.adapter.array'
-
-
-    cache.adapter.array:
-        class: Symfony\Component\Cache\Adapter\ArrayAdapter
-        bind:
-            $defaultLifetime: 0
-            $storeSerialized: true
-            $maxLifetime: 0
-            $maxItems: 0
-
-
     # Сервисы email рассылок
     app.mailer:
         namespace: App\Mailer\
