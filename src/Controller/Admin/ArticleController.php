@@ -65,13 +65,6 @@ class ArticleController extends AbstractController
         GenerationBlocker      $blocker,
         ArticleSaveHandler      $saveHandler
     ): Response {
-        /*
-        TODo:
-            1) Для удобства тестирования реализовать имперсонализацию
-            2) Сделать копирование данных из сгенерированной статьи в новую форму
-            3) Сделать adapter для генерации стаей посредством API
-            4) Почему то выбирает дефолтные модули несмотря на уровень подписки. Возможно выбирается некорректная стратегия
-        */
         $user = $this->getUser();
         /** @var Article $article */
         $articleGenerated = $request->get('articleId')
@@ -84,7 +77,7 @@ class ArticleController extends AbstractController
         $form = $this->createForm(ArticleGenerationFormType::class);
         $form->handleRequest($request);
         // Проверяем необходима ли блокировка генерации статей, согласно уровню подписки пользователя
-        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $isBlocked = $blocker->isBlockBySubscription($user);
         $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
         if ($article) {
@@ -101,6 +94,9 @@ class ArticleController extends AbstractController
             'article' => $articleGenerated,
             'isGenerationBlocked' => false,
             'isBlocked' => $isBlocked,
+            'isMorphsAllowed' => $user
+                    ->getSubscription()
+                    ->getName() !== 'FREE',
         ]);
     }
 
@@ -124,7 +120,7 @@ class ArticleController extends AbstractController
             $formModelFactory->createFromModel($article)
         );
         $form->handleRequest($request);
-        $isBlocked = $blocker->isBlockBySubscription($user->getSubscription());
+        $isBlocked = $blocker->isBlockBySubscription($user);
 
         $article = $saveHandler->saveFromForm($form, $user, $isBlocked);
 
@@ -142,6 +138,9 @@ class ArticleController extends AbstractController
             'article' => $article,
             'isGenerationBlocked' => false,
             'isBlocked' => $isBlocked,
+            'isMorphsAllowed' => $user
+                    ->getSubscription()
+                    ->getName() !== 'FREE',
         ]);
     }
 

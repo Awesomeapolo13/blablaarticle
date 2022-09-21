@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -71,14 +72,14 @@ class User implements UserInterface
     private $expireAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
@@ -228,18 +229,18 @@ class User implements UserInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getExpireAt(): \DateTime
+    public function getExpireAt(): DateTime
     {
         return $this->expireAt;
     }
 
     /**
-     * @param \DateTime $expireAt
+     * @param DateTime $expireAt
      * @return $this
      */
-    public function setExpireAt(\DateTime $expireAt): User
+    public function setExpireAt(DateTime $expireAt): User
     {
         $this->expireAt = $expireAt;
 
@@ -263,7 +264,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Module[]
+     * @return Collection
      */
     public function getModules(): Collection
     {

@@ -6,7 +6,13 @@
             <div class="bg-light border-right" id="sidebar-wrapper">
                 <div class="sidebar-heading">BlaBlaArticle</div>
                 <div class="list-group list-group-flush">
-                    <a href="dashboard.html" class="list-group-item list-group-item-action bg-light">Рабочий стол</a>
+                    <a
+                            href="{{ path('app_admin_personal') }}"
+                            class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_personal') ? 'active' : 'bg-light' }}"
+                    >
+                        Рабочий стол
+                    </a>
                     <a
                             href="{{ path('app_admin_article_create') }}"
                             class="list-group-item list-group-item-action
@@ -35,11 +41,15 @@
                     >
                         Профиль
                     </a>
-                    <a
-                            href="{{ path('app_admin_module') }}"
-                            class="list-group-item list-group-item-action
-                            {{ (app.request.attributes.get('_route') == 'app_admin_module') ? 'active' : 'bg-light' }}">Модули
-                        генератора</a>
+                    {% if is_granted('IS_PRO_SUBSCRIBER') %}
+                        <a
+                                href="{{ path('app_admin_module') }}"
+                                class="list-group-item list-group-item-action
+                            {{ (app.request.attributes.get('_route') == 'app_admin_module') ? 'active' : 'bg-light' }}"
+                        >
+                            Модули генератора
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         {% endblock %}

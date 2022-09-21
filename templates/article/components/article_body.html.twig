@@ -1,4 +1,3 @@
-{{ article.title|raw }}
 {% for content in article.body %}
     {% autoescape %}
         {% include template_from_string(content) %}

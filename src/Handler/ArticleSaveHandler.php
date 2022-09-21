@@ -6,10 +6,12 @@ use App\ArticleGeneration\ArticleGenerator;
 use App\Entity\Article;
 use App\Factory\Article\ArticleFactory;
 use App\Form\Model\ArticleFormModel;
+use App\Repository\ArticleRepository;
 use App\Services\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use League\Flysystem\FilesystemException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,17 +24,23 @@ class ArticleSaveHandler
     private ArticleFactory $articleFactory;
     private ArticleGenerator $articleGenerator;
     private EntityManagerInterface $em;
+    private ArticleRepository $articleRepository;
+    private ParameterBagInterface $parameterBag;
 
     public function __construct(
         FileUploader           $fileUploader,
         ArticleFactory         $articleFactory,
         ArticleGenerator       $articleGenerator,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ArticleRepository      $articleRepository,
+        ParameterBagInterface  $parameterBag
     ) {
         $this->fileUploader = $fileUploader;
         $this->articleFactory = $articleFactory;
         $this->articleGenerator = $articleGenerator;
         $this->em = $em;
+        $this->articleRepository = $articleRepository;
+        $this->parameterBag = $parameterBag;
     }
 
     /**
@@ -52,7 +60,23 @@ class ArticleSaveHandler
         if ($form->isSubmitted() && $form->isValid() && !$isBlocked) {
             /** @var ArticleFormModel $articleModel */
             $articleModel = $form->getData();
-            $articleModel->images = $this->fileUploader->uploadManyFiles($articleModel->images);
+            $articleId = $articleModel->id;
+            $article = null;
+            if (isset($articleId)) {
+                $article = $this->articleRepository->findOneBy(['id' => $articleId]);
+            }
+            $articleModel->images = isset($article)
+                ?
+                $this
+                    ->fileUploader
+                    ->copyManyForArticles(
+                        $article->getImages()->toArray(),
+                        $this->parameterBag->get('article_uploads_dir')
+                    )
+                :
+                $this
+                    ->fileUploader
+                    ->uploadManyFiles($articleModel->images);
 
             return $this->saveArticle($articleModel, $user);
         }

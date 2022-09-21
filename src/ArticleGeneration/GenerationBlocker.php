@@ -2,7 +2,7 @@
 
 namespace App\ArticleGeneration;
 
-use App\Entity\Subscription;
+use App\Entity\User;
 use App\Repository\ArticleRepository;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
@@ -37,14 +37,10 @@ class GenerationBlocker
      * @return bool - вернут true, если генерация заблокирована, false - если нет
      * @throws NonUniqueResultException
      */
-    public function isBlockBySubscription(Subscription $subscription): bool
-    {
-        /**
-         * 1) Достать ограничения по подписке из пользователя
-         * 2) Получить количество статей указанное сгенерированное за последние $blockTime минут
-         * 3) Сравнить количество с $blockCount
-         * 4) Если меньше то вернуть false, если больше то true
-         */
+    public function isBlockBySubscription(
+        User $user
+    ): bool {
+        $subscription = $user->getSubscription();
         $blockCount = $subscription->getBlockCount();
         $blockInterval = $subscription->getBlockTime();
         // Если ограничения не заданы подпиской, то блокировать не нужно
@@ -56,6 +52,12 @@ class GenerationBlocker
         $dateTimeFrom = (clone $dateTimeTo)
             ->modify('-' . $subscription->getBlockTime() . ' minutes');
 
-        return $this->articleRepository->articlesCountForInterval($dateTimeFrom, $dateTimeTo) >= $blockCount;
+        return $this
+                ->articleRepository
+                ->articlesCountForInterval(
+                    $user,
+                    $dateTimeFrom,
+                    $dateTimeTo
+                ) >= $blockCount;
     }
 }

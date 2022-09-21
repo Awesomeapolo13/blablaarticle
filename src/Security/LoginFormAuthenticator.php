@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -30,10 +31,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public const LOGIN_ROUTE = 'app_login';
 
-    private $entityManager;
-    private $urlGenerator;
-    private $csrfTokenManager;
-    private $passwordEncoder;
+    private EntityManagerInterface $entityManager;
+    private UrlGeneratorInterface $urlGenerator;
+    private CsrfTokenManagerInterface $csrfTokenManager;
+    private UserPasswordEncoderInterface $passwordEncoder;
 
     public function __construct(
         EntityManagerInterface       $entityManager,
@@ -50,12 +51,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Возвращает true если выполняется запрос на аутентификацию
-     *
      * Если текущий route текущего запроса равен LOGIN_ROUTE и метод запроса POST,
      * то это запрос на аутентификацию
-     *
-     * @param Request $request
-     * @return bool
      */
     public function supports(Request $request): bool
     {
@@ -65,9 +62,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Возвращает все данные необходимые для авторизации и записывает пользователя в сессию
-     *
-     * @param Request $request
-     * @return array
      */
     public function getCredentials(Request $request): array
     {
@@ -85,15 +79,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
-     * Получает пользователя
-     *
      * Получает объект пользователя по email и проверяет на корректность csrf-token
-     *
-     * @param mixed $credentials
-     * @param UserProviderInterface $userProvider
-     * @return User|mixed|object|UserInterface|null
      */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser(mixed $credentials, UserProviderInterface $userProvider): mixed
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
@@ -115,12 +103,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Проверяет корректность пароля
-     *
-     * @param mixed $credentials
-     * @param UserInterface $user
-     * @return bool
      */
-    public function checkCredentials($credentials, UserInterface $user): bool
+    public function checkCredentials(mixed $credentials, UserInterface $user): bool
     {
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
@@ -135,30 +119,30 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     /**
      * Выполняет код в случае успешной аутентификации
-     *
      * В данном случае делает редирект на главную страницу
      *
      * @param Request $request
      * @param TokenInterface $token
      * @param string $providerKey
      * @return RedirectResponse
-     * @throws \Exception
+     * @throws Exception
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
-    {
+    public function onAuthenticationSuccess(
+        Request $request,
+        TokenInterface $token,
+        string $providerKey
+    ): RedirectResponse {
             return new RedirectResponse(
                 $this->getTargetPath($request->getSession(), $providerKey)
                     ?:
-                    $this->urlGenerator->generate('app_admin_profile')
+                    $this->urlGenerator->generate('app_admin_personal')
             );
     }
 
     /**
      * Помогает отправить пользователя на страницу авторизации, если возникает ошибка авторизации
-     *
-     * @return string
      */
-    protected function getLoginUrl()
+    protected function getLoginUrl(): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }

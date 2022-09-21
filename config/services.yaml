@@ -27,6 +27,7 @@ services:
         bind:
             # Имя сервиса берется по названию файловой системы из oneup_flysystem.yaml
             League\Flysystem\FilesystemOperator $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
+#            Symfony\Component\Cache\Adapter\ArrayAdapter $adapter: '@cache.adapter.array'
 
     # Присваиваем всем стратегиям генерации статьи, реализующим ArticleGenerationInterface, тег app.article_generation_strategy
     _instanceof:
@@ -54,7 +55,6 @@ services:
         tags: [ 'controller.service_arguments' ]
         bind:
             $changeUserDataHandler: '@app.change_user_data_handler'
-
 
     # Сервисы email рассылок
     app.mailer:

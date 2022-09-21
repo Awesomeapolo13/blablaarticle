@@ -46,13 +46,15 @@ class SecurityController extends AbstractController
     public function register(
         Request                  $request,
         UserDataHandlerInterface $registrationDataHandler
-    ): Response
-    {
-        // ToDo: Посмотреть где можно заменить вывод сообщений на $this->addFlash('flash_message', 'Сообщение об успехе')
+    ): Response {
         $form = $this->createForm(UserRegistrationFormType::class);
         $user = new User();
         $user = $registrationDataHandler->handleAndSaveUserData($request, $form, $user);
         $success = isset($user);
+        if ($success) {
+            $this->addFlash('success', 'Для завершения регистрации подтвердите ваш email');
+        }
+
         // Сообщение об ошибке при подтверждении email
         $confirmationError = $request->query->get('confirmationError');
 
@@ -92,8 +94,7 @@ class SecurityController extends AbstractController
         EntityManagerInterface    $em,
         UserRepository            $userRepository,
         LoggerInterface           $emailConfirmLogger
-    ): ?Response
-    {
+    ): ?Response {
 
         $confirmationError = 'Некорректная ссылка для подтверждения email. Обратитесь в службу поддержки.';
         // Проверяем корректна ли ссылка, если нет то редирект на регистрацию и вывод ошибки

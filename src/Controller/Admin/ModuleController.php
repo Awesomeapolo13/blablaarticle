@@ -45,8 +45,7 @@ class ModuleController extends AbstractController
         PaginatorInterface     $paginator,
         EntityManagerInterface $em,
         RoleHierarchyInterface $hierarchy
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
         // Получаем роли пользователя
         $userRoles = $hierarchy->getReachableRoleNames($user->getRoles());
@@ -114,8 +113,7 @@ class ModuleController extends AbstractController
         LoggerInterface        $moduleLogger,
         EntityManagerInterface $em,
         RoleHierarchyInterface $hierarchy
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
         $errorMessage = 'Ошибка при удалении модуля. Попробуйте позднее.';
         // Получаем роли пользователя

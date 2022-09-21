@@ -97,7 +97,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     {
         return $this->getTwig()->render('article/components/article_body.html.twig', [
             'article' => [
-                'title' => '<h2 class="card-title text-center mb-4">' . $title . '</h2>',
                 'body' => $articleBody,
             ]
         ]);
@@ -133,7 +132,6 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     ): array {
         $faker = Factory::create();
         // Массив изображений записываем в переменную, чтобы использовать все переданные изображения минимум один раз
-        // ToDo Проверить как будет работать если не загружать изображения
         $minImagesArr = (clone $article->getImages())->toArray();
         // перемешаем модули чтобы шли в случайном порядке
         shuffle($modules);
@@ -156,13 +154,15 @@ abstract class BaseStrategy implements ArticleGenerationInterface
                 $article->getKeyWord()
             );
 
-            $articleBody[] = $this->getTwig()->render(
-                'article/components/article_module.html.twig',
-                [
-                    'data' => $data,
-                    'module' => $module
-                ]
-            );
+            $articleBody[] = $this
+                ->getTwig()
+                ->render(
+                    'article/components/article_module.html.twig',
+                    [
+                        'data' => $data,
+                        'module' => $module
+                    ]
+                );
         }
 
         return $articleBody;
@@ -177,7 +177,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateTitle(string $targetText, Generator $faker): string
     {
-        return preg_match('/{{(\s)*?title?(\|raw)?(\s)*?}}/', $targetText)
+        return preg_match('/\{\{(\s)*?title?(\|raw)?(\s)*?}}/', $targetText)
         ?
             $faker->sentence()
             :
@@ -193,7 +193,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
      */
     protected function generateParagraph(string $targetText, Generator $faker): string
     {
-        return preg_match('/{{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $targetText)
+        return preg_match('/\{\{(\s)*?paragraph?(\|raw)?(\s)*?}}/', $targetText)
             ?
             $faker->paragraph(rand(1, 10))
             :
@@ -210,7 +210,7 @@ abstract class BaseStrategy implements ArticleGenerationInterface
     protected function generateParagraphs(string $targetText, Generator $faker): string
     {
         $paragraphs = '';
-        if (preg_match('/{{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
+        if (preg_match('/\{\{(\s)*?paragraphs?(\|raw)?(\s)*?}}/', $targetText)) {
             foreach ($faker->paragraphs(rand(2, 7)) as $paragraph) {
                 $paragraphs .= PHP_EOL . '<p class="lead mb-0">' . $paragraph . '</p>';
             }
@@ -232,8 +232,8 @@ abstract class BaseStrategy implements ArticleGenerationInterface
         array $imgArr,
         array &$minImagesArr
     ): string {
-        $imageSrc = '';
-        if (preg_match('/{{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText)) {
+        $imageSrc = 'https://via.placeholder.com/250x250';
+        if (preg_match('/\{\{(\s)*?imageSrc?(\|raw)?(\s)*?}}/', $targetText) && !empty($imgArr)) {
             // Выбираем рандомное изображение
             $image = $imgArr[array_rand($imgArr)];
             // Если image является url, то вставляем его без пути к папке

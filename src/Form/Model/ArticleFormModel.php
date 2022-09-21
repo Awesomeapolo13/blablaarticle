@@ -12,20 +12,25 @@ use Symfony\Component\Validator\Constraints as Assert;
 class ArticleFormModel
 {
     /**
+     * Идентификатор статьи
+     * Используется, если генерим статью на основе уже ранее созданной
+     * @var int|null
+     */
+    public ?int $id = null;
+
+    /**
      * Тематика
      *
      * @Assert\NotBlank(message="Укажите тематику статьи")
      * @var string
      */
-    public $theme;
+    public string $theme;
 
     /**
      * Заголовок статьи
-     *
-     * ToDo: Написать сервис формирующий заголовок из темы, если он не заполнен
-     * @var string
+     * @var string|null
      */
-    public $title;
+    public ?string $title;
 
     /**
      * Ключевое слово
@@ -34,9 +39,9 @@ class ArticleFormModel
      * Остальные словоформы указываются по желанию
      *
      * @Assert\NotBlank(message="Введите ключевое слово")
-     * @var array
+     * @var string[]
      */
-    public $articleWords;
+    public array $articleWords;
 
     /**
      * Краткое описание статьи
@@ -45,53 +50,32 @@ class ArticleFormModel
      *     min=0,
      *     max=255,
      *     maxMessage="Описание должно быть кратким и не превышать 255 символов")
-     * @var string
+     * @var string|null
      */
-    public $description;
+    public ?string $description;
 
     /**
      * Начало диапазона модулей
      *
-     * ToDO: После добавления функционала модулей, добавить валидацию по максимальному размеру статьи не больше
-     *  количества дефолтный модулей. Пока указать не больше 3-х. Возможно стоит добавить help текст у поля формы
-     *    или указывать максимальное количество в поле ввода заранее.
-     *
      * @Assert\Type("integer", message="Минимальное количество модулей для генерации статьи должно быть числом")
-     * @Assert\Range(
-     *     min=0,
-     *     max=10,
-     *     minMessage="Количество модулей для генерации статьи не может быть отрицательной величиной",
-     *     maxMessage="Количество модулей для генерации не может превышать, количество доступных модулей"
-     * )
      * @SizeRange(propertyPath="sizeTo")
      * @Assert\Expression(
      *     "this.sizeTo || this.sizeFrom",
      *     message="Необходимо заполнить хотя бы одно значение из диапазона размеров статьи"
      * )
      *
-     *
-     * @var int
+     * @var int|null
      */
-    public $sizeFrom;
+    public ?int $sizeFrom = null;
 
     /**
      * Конец диапазона модулей
      *
-     * ToDO: После добавления функционала модулей, добавить валидацию по максимальному размеру статьи не больше
-     *  количества дефолтный модулей. Пока указать не больше 3-х. Возможно стоит добавить help текст у поля формы.
-     *  Заменить две проверки на Range с минимальным и максимальным значением 0-3
-     *
      * @Assert\Type("integer", message="Максимальное количество модулей для генерации статьи должно быть числом")
-     * @Assert\Range(
-     *     min=0,
-     *     max=10,
-     *     minMessage="Количество модулей для генерации статьи не может быть отрицательной величиной",
-     *     maxMessage="Количество модулей для генерации не может превышать, количество дjступных модулей"
-     * )
      *
-     * @var int
+     * @var int|null
      */
-    public $sizeTo;
+    public ?int $sizeTo = null;
 
     /**
      * Продвигаемое слово
@@ -99,21 +83,29 @@ class ArticleFormModel
      * Продвигаемых слов может быть сколько угодно.
      *
      * @IsEmptyBoth(propertyPath="promotedWordCount")
+     * @Assert\All(
+     *     @Assert\Type(
+     *         "string",
+     *         message="Продвигаемое слово должно быть строкой"
+     *     )
+     * )
      *
      * @var string[]
      */
-    public $promotedWords;
+    public ?array $promotedWords;
 
     /**
      * Количество повторений продвигаемого слова
      *
-     * ToDo: Проверять что передан массив из чисел. Если есть строка, то ошибка
-     *
-     *
-     *
+     * @Assert\All(
+     *     @Assert\Type(
+     *         "integer",
+     *         message="Количество продвигаемого слова должно быть числом"
+     *     )
+     * )
      * @var int[]
      */
-    public $promotedWordCount;
+    public ?array $promotedWordCount;
 
     /**
      * Изображения для статьи
@@ -151,8 +143,6 @@ class ArticleFormModel
      *     protocols={"http", "https", "ftp"}
      *     )
      * )
-     *
-     *
      * @Assert\Count(
      *     max = 5,
      *     maxMessage="Возможна загрузка не более пяти изображений"

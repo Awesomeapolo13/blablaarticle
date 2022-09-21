@@ -1,0 +1,25 @@
+{% extends 'base_admin_content.html.twig' %}
+
+{% block content %}
+    <h1 class="mt-4">Рабочий стол</h1>
+    <div class="row">
+        <div class="col-xl-8 border-right">
+            {% if isExpiredSoon %}
+                {% include 'components/warning.html.twig' with {message: message} %}
+            {% endif %}
+            <div class="card-columns dashboard">
+                {% for block in blocks %}
+                    {% include 'admin/personal/components/info_card.html.twig' with {
+                        title: block.title ?? null,
+                        text: block.text ?? null,
+                        hrefName: block.hrefName ?? null,
+                        hrefPath: block.hrefPath ?? null,
+                        hrefParameters: block.hrefParameters ?? []
+                    } %}
+                {% else %}
+                    {% include 'components/error.html.twig' with {message: 'Не удалось получить данные рабочего стола'} %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

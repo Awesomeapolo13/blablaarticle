@@ -21,7 +21,7 @@ class ModuleFixtures extends BaseFixtures
             'body' => '<div class="media">
     <img class="mr-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
     <div class="media-body">
-        {{ paragraphs }}
+        {{ paragraphs|raw }}
     </div>
 </div>',
         ],
@@ -29,7 +29,7 @@ class ModuleFixtures extends BaseFixtures
             'name' => 'Медиа слева - параграфы потом картинка',
             'body' => '<div class="media">
     <div class="media-body">
-        {{ paragraphs }}
+        {{ paragraphs|raw }}
     </div>
     <img class="ml-3" src="https://via.placeholder.com/250x250" width="250" height="250" alt="">
 </div>',
@@ -70,10 +70,10 @@ class ModuleFixtures extends BaseFixtures
             'name' => 'Текст в две колонки',
             'body' => '<div class="row">
     <div class="col-sm-6">
-        {{ paragraphs }}      
+        {{ paragraphs|raw }}      
     </div>
     <div class="col-sm-6">
-        {{ paragraphs }}
+        {{ paragraphs|raw }}
     </div>
 </div>',
         ],
