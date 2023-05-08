@@ -1,29 +1,40 @@
-FROM php:8.0-fpm
+FROM php:8.1.0-fpm-alpine
 
-RUN apt-get update && apt-get install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip libpq-dev \
-        && docker-php-ext-install intl opcache pdo pdo_pgsql pgsql \
-        && pecl install apcu \
-        && docker-php-ext-enable apcu \
-        && docker-php-ext-configure zip \
-        && docker-php-ext-install zip
+# Install packages
+# --no-cache - for the fast packeges installation
+RUN apk add --no-cache curl git build-base zlib-dev oniguruma-dev autoconf bash
 
+# Если аргумент INSTALL_XDEBUG будет равен true, тоустанавливаем xdebug (теперь можно исп. этот файл и для прод. деплоя)
+ARG INSTALL_XDEBUG=false
+# Подтягиваем зависимости для xdebug и включаем расширение xdebug в php.ini
+RUN if [ ${INSTALL_XDEBUG} = true ];  \
+    then \
+      pecl install xdebug && docker-php-ext-enable xdebug; \
+    fi;
+# Пробрасываем xdebug.ini в контейнер php
+COPY ./deployment/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+# Postgres
+RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql
+
+## Configure non-root user
+ARG PUID=1000
+ARG PGID=1000
+RUN apk --no-cache add shadow && \
+    groupmod -o -g ${PGID} www-data && \
+    usermod -o -u ${PUID} -g www-data www-data
+
+# Source project
+RUN mkdir /var/www/blablaarticle
+RUN chown www-data:www-data /var/www/blablaarticle
+COPY --chown=www-data:www-data ./ /var/www/blablaarticle
 WORKDIR /var/www/blablaarticle
 
-# установка composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+USER www-data
 
-# чтобы вызывать глобально из контейнера команду symfony
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+# Composer instalation
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Установка xdebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+CMD php-fpm
 
-# Переносим файл xdebug.ini
-ADD deployment/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
-# Создаем пользователя с домашним каталогом и оболочкой bash
-RUN useradd -m -s /bin/bash apps
-# Даем стандартным пользователям права нашего
-RUN usermod -a -G www-data apps
+EXPOSE 9000

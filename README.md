@@ -6,44 +6,41 @@
 
 Собрать и запустить проект командой:
 ```shell
-docker-compose up -d --build
+make dc_build
+make dc_up
 ```
+
 Установить зависимости проекта:
 
 ```shell
-docker-compose run --rm php-8.0 composer install
+make composer_install
 ```
 
 Произвести установку зависимостей yarn командой:
 ```shell
-docker-compose run --rm node yarn install
+make yarn_install
 ```
 
 Сделать сборку скриптов и стилей проекта. Для этого можно использовать одну из ниже указанных команд:
 ```shell
-docker-compose run --rm node yarn dev
+make yarn_dev
 ```
 либо
 ```shell
-docker-compose run --rm node yarn watch
-```
-
-Создать базу данных:
-```shell
-docker-compose run --rm php-8.0 php bin/console doctrine:database:create
+make yarn_watch
 ```
 
 Загрузить миграции:
 ```shell
-docker-compose run --rm php-8.0 php bin/console doctrine:migrations:migrate
+make migration_run
 ```
 
 Загрузить фикстуры:
 ```shell
-docker-compose run --rm php-8.0 php bin/console doctrine:fixtures:load
+make fixtures_load
 ```
 
-Затем перейти на blablaarticle:8080
+Затем перейти на localhost:888
 
 ## Регистрация ##
 
