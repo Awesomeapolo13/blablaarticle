@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "18a2dda9fd2d5535c2d653dde7e34454",
+    "content-hash": "8bec1ab426cf9eb81dae3f3bb9ba4187",
     "packages": [
         {
             "name": "aelog16/article-theme-bundle",
@@ -12,10 +12,10 @@
             "dist": {
                 "type": "path",
                 "url": "lib/ArticleThemeBundle",
-                "reference": "62c33b603be654a1ff39876c0ffe33c47d3aa4ca"
+                "reference": "5e38b5b9c496357f1b983701af48ff1cf0ceb1e1"
             },
             "require": {
-                "php": "8.0.*"
+                "php": "8.1.*"
             },
             "type": "library",
             "autoload": {
@@ -10868,7 +10868,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
