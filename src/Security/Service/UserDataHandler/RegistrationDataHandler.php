@@ -2,11 +2,11 @@
 
 namespace App\Security\Service\UserDataHandler;
 
-use App\Entity\ApiToken;
 use App\Event\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Repository\SubscriptionRepository;
 use App\Security\Service\UserDataHandlerInterface;
+use App\Users\Domain\Entity\ApiToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;

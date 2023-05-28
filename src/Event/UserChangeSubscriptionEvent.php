@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Entity\User;
+use App\Users\Domain\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**

@@ -2,9 +2,9 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\ApiToken;
 use App\Entity\Subscription;
-use App\Entity\User;
+use App\Users\Domain\Entity\ApiToken;
+use App\Users\Domain\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;

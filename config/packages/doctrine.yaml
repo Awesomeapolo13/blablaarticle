@@ -13,3 +13,17 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+
+            Users:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Users/Domain/Entity'
+                prefix: 'App\Users\Domain\Entity'
+                alias: User
+
+            ApiToken:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Users/Domain/Entity'
+                prefix: 'App\Users\Domain\Entity'
+                alias: ApiToken

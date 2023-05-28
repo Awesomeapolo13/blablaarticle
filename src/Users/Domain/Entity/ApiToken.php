@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Users\Domain\Entity;
 
 use App\Repository\ApiTokenRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -33,20 +34,20 @@ class ApiToken
     private $expiresAt;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, inversedBy="apiToken", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=User::class, inversedBy="apiToken")
      * @ORM\JoinColumn(nullable=false)
      */
     private $client;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
      */
@@ -106,7 +107,7 @@ class ApiToken
         return (new self())
             ->setToken(sha1(uniqid('token', true)))
             ->setClient($user)
-            ->setExpiresAt(new \DateTime($dateTime))
+            ->setExpiresAt(new DateTime($dateTime))
             ;
     }
 
@@ -117,6 +118,6 @@ class ApiToken
      */
     public function isExpired(): bool
     {
-        return $this->getExpiresAt() <= new \DateTime();
+        return $this->getExpiresAt() <= new DateTime();
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Command;
 
 use App\Entity\Subscription;
-use App\Entity\User;
 use App\Repository\SubscriptionRepository;
 use App\Repository\UserRepository;
+use App\Users\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -1,7 +1,12 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
+namespace App\Users\Domain\Entity;
+
+use App\Entity\Article;
+use App\Entity\Module;
+use App\Entity\Subscription;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;

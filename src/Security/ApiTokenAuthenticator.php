@@ -2,8 +2,8 @@
 
 namespace App\Security;
 
-use App\Entity\User;
 use App\Repository\ApiTokenRepository;
+use App\Users\Domain\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

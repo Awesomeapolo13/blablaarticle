@@ -6,7 +6,7 @@ use App\ArticleGeneration\Strategy\FreeGenerationStrategy;
 use App\ArticleGeneration\Strategy\PlusGenerationStrategy;
 use App\ArticleGeneration\Strategy\ProGenerationStrategy;
 use App\Entity\Article;
-use App\Entity\User;
+use App\Users\Domain\Entity\User;
 use Exception;
 
 /**
