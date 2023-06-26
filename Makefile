@@ -40,13 +40,13 @@ dc_restart:
 ##################
 
 app_bash:
-	${DOCKER_COMPOSE} exec -u www-data php-8.1-blablaarticle bash
+	${DOCKER_COMPOSE} exec -u www-data ${PHP_SERVICE} bash
 php:
-	${DOCKER_COMPOSE} exec -u www-data php-8.1-blablaarticle bash
+	${DOCKER_COMPOSE} exec -u www-data ${PHP_SERVICE} bash
 test:
-	${DOCKER_COMPOSE} exec -u www-data php-8.1-blablaarticle bin/phpunit
+	${DOCKER_COMPOSE} exec -u www-data ${PHP_SERVICE} bin/phpunit
 jwt:
-	${DOCKER_COMPOSE} exec -u www-data php-8.1-blablaarticle bin/console lexik:jwt:generate-keypair
+	${DOCKER_COMPOSE} exec -u www-data ${PHP_SERVICE} php bin/console lexik:jwt:generate-keypair
 cache:
 	docker-compose -f ./docker/docker-compose.yml exec -u www-data php-fpm bin/console cache:clear
 	docker-compose -f ./docker/docker-compose.yml exec -u www-data php-fpm bin/console cache:clear --env=test

@@ -6,6 +6,8 @@ RUN apk add --no-cache curl git build-base zlib-dev oniguruma-dev autoconf bash
 
 # Если аргумент INSTALL_XDEBUG будет равен true, тоустанавливаем xdebug (теперь можно исп. этот файл и для прод. деплоя)
 ARG INSTALL_XDEBUG=false
+
+RUN apk add --update linux-headers
 # Подтягиваем зависимости для xdebug и включаем расширение xdebug в php.ini
 RUN if [ ${INSTALL_XDEBUG} = true ];  \
     then \
