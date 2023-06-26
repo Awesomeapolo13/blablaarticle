@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ModuleRepository;
+use App\Users\Domain\Entity\User;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;

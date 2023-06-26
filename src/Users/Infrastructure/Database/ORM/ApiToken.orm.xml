@@ -15,7 +15,7 @@
         <one-to-one field="client" target-entity="App\Users\Domain\Entity\User" inversed-by="apiToken">
             <join-column nullable="false"/>
         </one-to-one>
-        <field name="expireAt" type="datetime" nullable="false"/>
+        <field name="expiresAt" type="datetime" nullable="false"/>
         <field name="createdAt" type="datetime" nullable="false"/>
         <field name="updatedAt" type="datetime" nullable="false"/>
     </entity>

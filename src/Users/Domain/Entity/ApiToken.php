@@ -5,6 +5,7 @@ namespace App\Users\Domain\Entity;
 use App\Repository\ApiTokenRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -100,7 +101,7 @@ class ApiToken
      * @param UserInterface $user
      * @param string $dateTime - метка времени для передачи в объект \DateTime
      * @return ApiToken
-     * @throws \Exception
+     * @throws Exception
      */
     public static function create(UserInterface $user, string $dateTime = '+1 day'): ApiToken
     {

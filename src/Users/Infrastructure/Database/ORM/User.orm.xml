@@ -1,11 +1,12 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
-                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
 
     <entity
             name="App\Users\Domain\Entity\User"
-            table="user"
+            table="`user`"
             repository-class="App\Repository\UserRepository"
     >
         <id name="id" type="integer" length="11">
@@ -17,7 +18,9 @@
         <field name="firstName" type="string" length="255" nullable="false"/>
         <field name="isEmailConfirmed" type="boolean" nullable="false"/>
         <field name="createdAt" type="datetime" nullable="false"/>
+        <gedmo:timestampable field="createdAt" on="create"/>
         <field name="updatedAt" type="datetime" nullable="false"/>
+        <gedmo:timestampable field="updatedAt" on="update"/>
         <field name="expireAt" type="datetime" nullable="false"/>
         <many-to-one field="subscription" target-entity="App\Entity\Subscription" inversed-by="users">
             <join-column nullable="false"/>
