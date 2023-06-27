@@ -66,3 +66,5 @@ fixtures_load:
 prepare_db:
 	${DOCKER_COMPOSE} run --rm ${PHP_SERVICE} php bin/console doctrine:migrations:migrate
 	${DOCKER_COMPOSE} run --rm ${PHP_SERVICE} php bin/console doctrine:fixtures:load
+cache_clear:
+	${DOCKER_COMPOSE} run --rm ${PHP_SERVICE} php bin/console cache:clear
