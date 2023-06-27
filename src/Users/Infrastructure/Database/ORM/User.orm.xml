@@ -17,10 +17,12 @@
         <field name="password" type="string" length="255"  nullable="false"/>
         <field name="firstName" type="string" length="255" nullable="false"/>
         <field name="isEmailConfirmed" type="boolean" nullable="false"/>
-        <field name="createdAt" type="datetime" nullable="false"/>
-        <gedmo:timestampable field="createdAt" on="create"/>
-        <field name="updatedAt" type="datetime" nullable="false"/>
-        <gedmo:timestampable field="updatedAt" on="update"/>
+        <field name="createdAt" type="datetime" nullable="false">
+            <gedmo:timestampable on="create" />
+        </field>
+        <field name="updatedAt" type="datetime" nullable="false">
+            <gedmo:timestampable on="update"/>
+        </field>
         <field name="expireAt" type="datetime" nullable="false"/>
         <many-to-one field="subscription" target-entity="App\Entity\Subscription" inversed-by="users">
             <join-column nullable="false"/>
