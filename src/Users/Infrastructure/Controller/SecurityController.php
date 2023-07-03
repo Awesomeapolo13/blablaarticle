@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Users\Infrastructure\Controller;
 
 use App\Form\UserRegistrationFormType;
 use App\Repository\UserRepository;
@@ -25,6 +25,8 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
+        //TODO Вынести авторизацию в общее ядро
+
         // достает текст последней ошибки авторизации
         $error = $authenticationUtils->getLastAuthenticationError();
         $confirmationError = $request->query->get('confirmationError');

@@ -46,7 +46,7 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    App\Controller\SecurityController:
+    App\Users\Infrastructure\Controller\SecurityController:
         tags: [ 'controller.service_arguments' ]
         bind:
             $registrationDataHandler: '@app.registration_data_handler'
