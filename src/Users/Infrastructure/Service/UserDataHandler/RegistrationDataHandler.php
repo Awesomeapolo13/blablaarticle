@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Service\UserDataHandler;
 
-use App\Event\UserRegisteredEvent;
 use App\Repository\SubscriptionRepository;
 use App\Users\Application\DTO\UserRegistrationFormModel;
 use App\Users\Domain\Entity\ApiToken;
+use App\Users\Domain\Event\UserRegisteredEvent;
 use App\Users\Domain\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;

@@ -67,10 +67,10 @@ services:
     App\Mailer\BaseMailer $subscriptionMailer: '@App\Mailer\SubscriptionMailer'
 
     # Сервисы подписчиков на события
-    app.event_subscriber:
-        namespace: App\EventSubscriber\
-        resource: '../src/EventSubscriber/'
-        tags: ['app_event_subscriber']
+    app.users.event_subscriber:
+        namespace: App\Users\Infrastructure\EventSubscriber\
+        resource: '../src/Users/Infrastructure/EventSubscriber/'
+        tags: ['app_users_event_subscriber']
 
     # Сервис для отправки ссылок на подтверждение
     app.mailer.confirm_email:

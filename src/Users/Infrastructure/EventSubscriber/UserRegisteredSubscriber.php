@@ -1,9 +1,11 @@
 <?php
 
-namespace App\EventSubscriber;
+declare(strict_types=1);
 
-use App\Event\UserRegisteredEvent;
+namespace App\Users\Infrastructure\EventSubscriber;
+
 use App\Mailer\BaseMailer;
+use App\Users\Domain\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -11,14 +13,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class UserRegisteredSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var BaseMailer
-     */
-    private $mailer;
-
-    public function __construct(BaseMailer $confirmEmailMailer)
+    public function __construct(private readonly BaseMailer $confirmEmailMailer)
     {
-        $this->mailer = $confirmEmailMailer;
     }
 
     /**
@@ -26,7 +22,7 @@ class UserRegisteredSubscriber implements EventSubscriberInterface
      */
     public function onUserRegistered(UserRegisteredEvent $event): void
     {
-        $this->mailer->sendConfirmEmailLetter(
+        $this->confirmEmailMailer->sendConfirmEmailLetter(
             $event->getUser(),
             'Подтвердите email для завершения регистрации',
             base64_encode(json_encode(['email' => $event->getUser()->getEmail()])),

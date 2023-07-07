@@ -1,9 +1,11 @@
 <?php
 
-namespace App\EventSubscriber;
+declare(strict_types=1);
 
-use App\Event\UserChangeSubscriptionEvent;
+namespace App\Users\Infrastructure\EventSubscriber;
+
 use App\Mailer\BaseMailer;
+use App\Users\Domain\Event\UserChangeSubscriptionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
@@ -12,14 +14,8 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
  */
 class UserChangeSubscriptionSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var BaseMailer
-     */
-    private $mailer;
-
-    public function __construct(BaseMailer $subscriptionMailer)
+    public function __construct(private readonly BaseMailer $subscriptionMailer)
     {
-        $this->mailer = $subscriptionMailer;
     }
 
     /**
@@ -29,7 +25,7 @@ class UserChangeSubscriptionSubscriber implements EventSubscriberInterface
      */
     public function onUserChangeSubscription(UserChangeSubscriptionEvent $event): void
     {
-        $this->mailer->sendUserChangeSubscriptionLetter(
+        $this->subscriptionMailer->sendUserChangeSubscriptionLetter(
             $event->getUser()
         );
     }

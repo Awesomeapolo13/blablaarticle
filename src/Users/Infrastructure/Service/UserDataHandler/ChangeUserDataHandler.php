@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Service\UserDataHandler;
 
-use App\Event\UserChangeEmailEvent;
 use App\Users\Application\DTO\UserRegistrationFormModel;
+use App\Users\Domain\Event\UserChangeEmailEvent;
 use App\Users\Domain\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
