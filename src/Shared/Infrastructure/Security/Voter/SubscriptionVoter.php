@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -26,9 +28,6 @@ class SubscriptionVoter extends Voter
     /**
      * Проверка соответствия правила
      *
-     * @param string $attribute
-     * @param $subject
-     * @param TokenInterface $token
      * @return bool - вернет true, если у пользователя есть доступ к ресурсу
      */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
@@ -39,21 +38,18 @@ class SubscriptionVoter extends Voter
             return false;
         }
 
-        switch ($attribute) {
-            case 'IS_PRO_SUBSCRIBER':
-                return $this->isSubscriberType('PRO', $user) || $this->isAdmin($user);
-            case 'IS_PLUS_SUBSCRIBER':
-                return $this->isSubscriberType('PLUS', $user) || $this->isAdmin($user);
-        }
+        return match ($attribute) {
+            'IS_PRO_SUBSCRIBER' => $this->isSubscriberType('PRO', $user) || $this->isAdmin($user),
+            'IS_PLUS_SUBSCRIBER' => $this->isSubscriberType('PLUS', $user) || $this->isAdmin($user),
+            default => false,
+        };
 
-        return false;
     }
 
     /**
      * Проверяет, является ли пользователь владельцем переданной подписки
      *
      * @param string $subscriptionName - имя подписки
-     * @param UserInterface $user - пользователь
      * @return bool - возвращает true, если есть совпадение с переданной подпиской
      */
     private function isSubscriberType(string $subscriptionName, UserInterface $user): bool
@@ -63,9 +59,6 @@ class SubscriptionVoter extends Voter
 
     /**
      * Проверяет, является ли пользователь администратором
-     *
-     * @param UserInterface $user
-     * @return bool
      */
     private function isAdmin(UserInterface $user): bool
     {

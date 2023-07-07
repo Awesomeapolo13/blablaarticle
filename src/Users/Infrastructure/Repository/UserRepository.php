@@ -6,6 +6,7 @@ namespace App\Users\Infrastructure\Repository;
 
 use App\Users\Domain\Entity\User;
 use App\Users\Domain\Repository\UserRepositoryInterface;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -39,7 +40,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->createQueryBuilder('u')
             ->leftJoin('u.subscription', 's')
             ->addSelect('s')
-            ->setParameter('today', new \DateTime())
+            ->setParameter('today', new DateTime())
             ->andWhere('u.expireAt < :today')
             ->setParameter('subscriptionName', 'FREE')
             ->andWhere('s.name != :subscriptionName')

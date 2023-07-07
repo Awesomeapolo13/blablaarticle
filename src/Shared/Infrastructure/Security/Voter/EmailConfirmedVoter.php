@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -20,7 +22,7 @@ class EmailConfirmedVoter extends Voter
      */
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, ['IS_EMAIL_CONFIRMED'], true);
+        return $attribute === 'IS_EMAIL_CONFIRMED';
     }
 
     /**

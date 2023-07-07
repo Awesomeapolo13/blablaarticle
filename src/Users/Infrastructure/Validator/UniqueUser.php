@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Users\Infrastructure\Validator;
 
 use Symfony\Component\Validator\Constraint;
@@ -12,8 +14,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class UniqueUser extends Constraint
 {
-    /**
-     * @var string - сообщение об ошибке
-     */
-    public $message = 'Пользователь с email"{{ value }}" уже зарегистрирован.';
+    public string $message = 'Пользователь с email"{{ value }}" уже зарегистрирован.';
 }

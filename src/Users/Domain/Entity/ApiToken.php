@@ -1,57 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Users\Domain\Entity;
 
-use App\Users\Infrastructure\Repository\ApiTokenRepository;
 use DateTime;
-use Doctrine\ORM\Mapping as ORM;
+use DateTimeInterface;
 use Exception;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @ORM\Entity(repositoryClass=ApiTokenRepository::class)
- */
 class ApiToken
 {
     use TimestampableEntity;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $token;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $expiresAt;
-
-    /**
-     * @ORM\OneToOne(targetEntity=User::class, inversedBy="apiToken")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $client;
-
-    /**
-     * @var DateTime
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
+    private int $id;
+    private string $token;
+    private DateTimeInterface $expiresAt;
+    private User $client;
     protected $createdAt;
-
-    /**
-     * @var DateTime
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
     protected $updatedAt;
 
     public function getId(): ?int
@@ -71,12 +38,12 @@ class ApiToken
         return $this;
     }
 
-    public function getExpiresAt(): ?\DateTimeInterface
+    public function getExpiresAt(): ?DateTimeInterface
     {
         return $this->expiresAt;
     }
 
-    public function setExpiresAt(\DateTimeInterface $expiresAt): self
+    public function setExpiresAt(DateTimeInterface $expiresAt): self
     {
         $this->expiresAt = $expiresAt;
 
@@ -98,9 +65,6 @@ class ApiToken
     /**
      *  Фабричный метод для создания объекта api-токена
      *
-     * @param UserInterface $user
-     * @param string $dateTime - метка времени для передачи в объект \DateTime
-     * @return ApiToken
      * @throws Exception
      */
     public static function create(UserInterface $user, string $dateTime = '+1 day'): ApiToken
@@ -108,8 +72,7 @@ class ApiToken
         return (new self())
             ->setToken(sha1(uniqid('token', true)))
             ->setClient($user)
-            ->setExpiresAt(new DateTime($dateTime))
-            ;
+            ->setExpiresAt(new DateTime($dateTime));
     }
 
     /**

@@ -7,109 +7,48 @@ namespace App\Users\Domain\Entity;
 use App\Entity\Article;
 use App\Entity\Module;
 use App\Entity\Subscription;
-use App\Users\Infrastructure\Repository\UserRepository;
-use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="`user`")
- * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже заригистрирован")
- */
 class User implements UserInterface
 {
     use TimestampableEntity;
 
+    private int $id;
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=180, unique=true)
      * @Groups("api_user")
      * @Assert\NotBlank()
      * @Assert\Email()
      */
-    private $email;
-
+    private string $email;
+    private array $roles = [];
     /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
-
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Введите пароль")
      * @Assert\Length(min="6", minMessage="Минимальная длина пароля 6 символов")
      */
-    private $password;
-
+    private string $password;
     /**
-     * @ORM\Column(type="string", length=255)
      * @Groups("api_user")
      * @Assert\NotBlank(message="Заполните имя")
      * @Assert\Length(min="2", minMessage="Минимальная длинна имени 2 символа")
      */
-    private $firstName;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isEmailConfirmed;
-
+    private string $firstName;
+    private bool $isEmailConfirmed;
     /**
      * Дата истечения подписки
-     *
-     * @ORM\Column(type="datetime")
      */
-    private $expireAt;
-
-    /**
-     * @var DateTime
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
-     */
+    private DateTimeInterface $expireAt;
     protected $createdAt;
-
-    /**
-     * @var DateTime
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(type="datetime")
-     */
     protected $updatedAt;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Subscription::class, inversedBy="users")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $subscription;
-
-    /**
-     * @ORM\OneToOne(targetEntity=ApiToken::class, mappedBy="client", cascade={"persist", "remove"})
-     */
-    private $apiToken;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Module::class, mappedBy="client")
-     */
-    private $modules;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="client")
-     */
-    private $articles;
+    private ?Subscription $subscription;
+    private ApiToken $apiToken;
+    private Collection $modules;
+    private Collection $articles;
 
     public function __construct()
     {
@@ -135,8 +74,6 @@ class User implements UserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
-     *
      * @see UserInterface
      */
     public function getUsername(): string
@@ -178,9 +115,6 @@ class User implements UserInterface
     }
 
     /**
-     * Returning a salt is only needed, if you are not using a modern
-     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
-     *
      * @see UserInterface
      */
     public function getSalt(): ?string
@@ -233,19 +167,12 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getExpireAt(): DateTime
+    public function getExpireAt(): DateTimeInterface
     {
         return $this->expireAt;
     }
 
-    /**
-     * @param DateTime $expireAt
-     * @return $this
-     */
-    public function setExpireAt(DateTime $expireAt): User
+    public function setExpireAt(DateTimeInterface $expireAt): self
     {
         $this->expireAt = $expireAt;
 
@@ -289,7 +216,6 @@ class User implements UserInterface
     public function removeModule(Module $module): self
     {
         if ($this->modules->removeElement($module)) {
-            // set the owning side to null (unless already changed)
             if ($module->getClient() === $this) {
                 $module->setClient(null);
             }

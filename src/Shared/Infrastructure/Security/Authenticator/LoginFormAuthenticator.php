@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Shared\Infrastructure\Security\Authenticator;
 
 use App\Users\Domain\Entity\User;
@@ -31,22 +33,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public const LOGIN_ROUTE = 'app_login';
 
-    private EntityManagerInterface $entityManager;
-    private UrlGeneratorInterface $urlGenerator;
-    private CsrfTokenManagerInterface $csrfTokenManager;
-    private UserPasswordEncoderInterface $passwordEncoder;
-
     public function __construct(
-        EntityManagerInterface       $entityManager,
-        UrlGeneratorInterface        $urlGenerator,
-        CsrfTokenManagerInterface    $csrfTokenManager,
-        UserPasswordEncoderInterface $passwordEncoder
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->csrfTokenManager = $csrfTokenManager;
-        $this->passwordEncoder = $passwordEncoder;
+        private readonly EntityManagerInterface       $entityManager,
+        private readonly UrlGeneratorInterface        $urlGenerator,
+        private readonly CsrfTokenManagerInterface    $csrfTokenManager,
+        private readonly UserPasswordEncoderInterface $passwordEncoder
+    ) {
     }
 
     /**
@@ -90,12 +82,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
 
-        if (!$user->getIsEmailConfirmed()) {
-            throw new AuthenticationException('Подтвердите свою почту для аутентификации');
-        }
-
         if (!$user) {
             throw new UsernameNotFoundException('Email could not be found.');
+        }
+
+        if (!$user->getIsEmailConfirmed()) {
+            throw new AuthenticationException('Подтвердите свою почту для аутентификации');
         }
 
         return $user;
@@ -121,10 +113,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * Выполняет код в случае успешной аутентификации
      * В данном случае делает редирект на главную страницу
      *
-     * @param Request $request
-     * @param TokenInterface $token
-     * @param string $providerKey
-     * @return RedirectResponse
      * @throws Exception
      */
     public function onAuthenticationSuccess(
