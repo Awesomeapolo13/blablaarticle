@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Команда, сбрасывающая подписку до уровня free, если пользователь вовремя ее не продлил
  */
-class DowngradeExpiredSubscriptionCommand extends Command
+final class DowngradeExpiredSubscriptionCommand extends Command
 {
     protected static $defaultName = 'app:subscription:downgrade';
     protected static string $defaultDescription = 'Команда, сбрасывающая подписку до уровня free, если пользователь вовремя ее не продлил';
