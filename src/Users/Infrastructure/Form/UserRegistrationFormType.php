@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Form;
+namespace App\Users\Infrastructure\Form;
 
-use App\Form\Model\UserRegistrationFormModel;
-use App\Validator\UniqueUser;
+use App\Users\Application\DTO\UserRegistrationFormModel;
+use App\Users\Infrastructure\Validator\UniqueUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -19,14 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class UserRegistrationFormType extends AbstractType
 {
-    /**
-     * @var Security
-     */
-    private $security;
-
-    public function __construct(Security $security)
+    public function __construct(private readonly Security $security)
     {
-        $this->security = $security;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

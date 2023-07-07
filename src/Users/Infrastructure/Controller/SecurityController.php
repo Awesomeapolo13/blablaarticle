@@ -2,11 +2,11 @@
 
 namespace App\Users\Infrastructure\Controller;
 
-use App\Form\UserRegistrationFormType;
-use App\Repository\UserRepository;
-use App\Security\LoginFormAuthenticator;
-use App\Security\Service\UserDataHandlerInterface;
+use App\Shared\Infrastructure\Security\Authenticator\LoginFormAuthenticator;
 use App\Users\Domain\Entity\User;
+use App\Users\Domain\Service\UserDataHandlerInterface;
+use App\Users\Infrastructure\Form\UserRegistrationFormType;
+use App\Users\Infrastructure\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

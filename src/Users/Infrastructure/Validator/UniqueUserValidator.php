@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Validator;
+declare(strict_types=1);
 
-use App\Repository\UserRepository;
+namespace App\Users\Infrastructure\Validator;
+
+use App\Users\Infrastructure\Repository\UserRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -11,23 +13,17 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueUserValidator extends ConstraintValidator
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    public function __construct(UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
     }
 
     /**
      * @param mixed $value - email, который пользователь ввел в форму регистрации
      * @param Constraint $constraint - считывает конфигурации из класса UniqueUser и применяет их для валидации
      */
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
-        /* @var $constraint \App\Validator\UniqueUser */
+        /* @var $constraint UniqueUser */
 
         if (null === $value || '' === $value) {
             return;

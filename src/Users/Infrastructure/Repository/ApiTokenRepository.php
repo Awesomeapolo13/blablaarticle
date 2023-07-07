@@ -1,17 +1,13 @@
 <?php
 
-namespace App\Repository;
+declare(strict_types=1);
+
+namespace App\Users\Infrastructure\Repository;
 
 use App\Users\Domain\Entity\ApiToken;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method ApiToken|null find($id, $lockMode = null, $lockVersion = null)
- * @method ApiToken|null findOneBy(array $criteria, array $orderBy = null)
- * @method ApiToken[]    findAll()
- * @method ApiToken[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class ApiTokenRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

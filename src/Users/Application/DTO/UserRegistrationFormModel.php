@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Form\Model;
+namespace App\Users\Application\DTO;
 
 use App\Validator\ConfirmPassword;
-use App\Validator\UniqueUser;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -18,7 +17,7 @@ class UserRegistrationFormModel
      * @Assert\NotBlank(message="Заполните поле имя")
      * @Assert\Length(min="2", minMessage="Минимальная длина имени 2 символа")
      */
-    public $firstName;
+    public mixed $firstName;
 
     /**
      * Электронная почта
@@ -27,7 +26,7 @@ class UserRegistrationFormModel
      * @Assert\NotBlank()
      * @Assert\Email()
      */
-    public $email;
+    public mixed $email;
 
     /**
      * Пароль
@@ -35,10 +34,11 @@ class UserRegistrationFormModel
      * @var string
      * @Assert\Length(min="6", minMessage="Минимальная длина пароля 6 символов")
      */
-    public $planePassword;
+    public mixed $planePassword;
 
     /**
      * Фабричный метод
+     * ToDo Вынести в класс фабрики или маппер.
      *
      * @param string $firstName
      * @param string $email
@@ -49,8 +49,7 @@ class UserRegistrationFormModel
         string $firstName,
         string $email,
         string $planePassword = ''
-    ): UserRegistrationFormModel
-    {
+    ): UserRegistrationFormModel {
         $model = new self();
 
         $model->firstName = $firstName;

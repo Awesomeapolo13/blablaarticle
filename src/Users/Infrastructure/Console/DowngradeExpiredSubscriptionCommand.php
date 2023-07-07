@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Command;
+namespace App\Users\Infrastructure\Console;
 
 use App\Entity\Subscription;
 use App\Repository\SubscriptionRepository;
-use App\Repository\UserRepository;
 use App\Users\Domain\Entity\User;
+use App\Users\Infrastructure\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,33 +18,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class DowngradeExpiredSubscriptionCommand extends Command
 {
     protected static $defaultName = 'app:subscription:downgrade';
-    protected static $defaultDescription = 'Команда, сбрасывающая подписку до уровня free, если пользователь вовремя ее не продлил';
-
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
-
-    /**
-     * @var SubscriptionRepository
-     */
-    private $subscriptionRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    protected static string $defaultDescription = 'Команда, сбрасывающая подписку до уровня free, если пользователь вовремя ее не продлил';
 
     public function __construct(
-        UserRepository $userRepository,
-        SubscriptionRepository $subscriptionRepository,
-        EntityManagerInterface $em
+        private readonly UserRepository $userRepository,
+        private readonly SubscriptionRepository $subscriptionRepository,
+        private readonly EntityManagerInterface $em
     )
     {
         parent::__construct();
-        $this->userRepository = $userRepository;
-        $this->subscriptionRepository = $subscriptionRepository;
-        $this->em = $em;
     }
 
 

@@ -7,7 +7,7 @@ namespace App\Users\Domain\Entity;
 use App\Entity\Article;
 use App\Entity\Module;
 use App\Entity\Subscription;
-use App\Repository\UserRepository;
+use App\Users\Infrastructure\Repository\UserRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

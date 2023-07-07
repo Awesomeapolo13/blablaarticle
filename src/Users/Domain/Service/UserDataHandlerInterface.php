@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security\Service;
+namespace App\Users\Domain\Service;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;

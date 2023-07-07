@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Security\Service\UserDataHandler;
+namespace App\Users\Infrastructure\Service\UserDataHandler;
 
 use App\Event\UserRegisteredEvent;
-use App\Form\Model\UserRegistrationFormModel;
 use App\Repository\SubscriptionRepository;
-use App\Security\Service\UserDataHandlerInterface;
+use App\Users\Application\DTO\UserRegistrationFormModel;
 use App\Users\Domain\Entity\ApiToken;
+use App\Users\Domain\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,37 +20,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class RegistrationDataHandler implements UserDataHandlerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
-
-    /**
-     * @var SubscriptionRepository
-     */
-    private $subscriptionRepository;
-
     public function __construct(
-        EntityManagerInterface       $em,
-        EventDispatcherInterface     $dispatcher,
-        UserPasswordEncoderInterface $passwordEncoder,
-        SubscriptionRepository       $subscriptionRepository
-    )
-    {
-        $this->em = $em;
-        $this->dispatcher = $dispatcher;
-        $this->passwordEncoder = $passwordEncoder;
-        $this->subscriptionRepository = $subscriptionRepository;
+        private readonly EntityManagerInterface       $em,
+        private readonly EventDispatcherInterface     $dispatcher,
+        private readonly UserPasswordEncoderInterface $passwordEncoder,
+        private readonly SubscriptionRepository       $subscriptionRepository
+    ) {
     }
 
     /**
@@ -59,6 +35,7 @@ class RegistrationDataHandler implements UserDataHandlerInterface
      * @param FormInterface $form - форма для обработки и валидации данных
      * @param UserInterface $user - сущность пользователя для сохранения в БД
      * @return UserInterface|void - вернет объект пользователя, либо null, если форма не валидна
+     * @throws Exception
      */
     public function handleAndSaveUserData(Request $request, FormInterface $form, UserInterface $user)
     {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Security\Service\UserDataHandler;
+namespace App\Users\Infrastructure\Service\UserDataHandler;
 
 use App\Event\UserChangeEmailEvent;
-use App\Form\Model\UserRegistrationFormModel;
-use App\Security\Service\UserDataHandlerInterface;
+use App\Users\Application\DTO\UserRegistrationFormModel;
+use App\Users\Domain\Service\UserDataHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -17,32 +17,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ChangeUserDataHandler implements UserDataHandlerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
-
     public function __construct(
-        EntityManagerInterface       $em,
-        EventDispatcherInterface     $dispatcher,
-        UserPasswordEncoderInterface $passwordEncoder,
-    )
-    {
-        $this->em = $em;
-        $this->dispatcher = $dispatcher;
-        $this->passwordEncoder = $passwordEncoder;
+        private readonly EntityManagerInterface       $em,
+        private readonly EventDispatcherInterface     $dispatcher,
+        private readonly UserPasswordEncoderInterface $passwordEncoder,
+    ) {
     }
-
 
     /**
      * Обработка пользовательских данных при их изменении в профиле пользователя

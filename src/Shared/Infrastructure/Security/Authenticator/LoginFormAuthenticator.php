@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security;
+namespace App\Shared\Infrastructure\Security\Authenticator;
 
 use App\Users\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;

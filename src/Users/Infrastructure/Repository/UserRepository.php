@@ -1,22 +1,18 @@
 <?php
 
-namespace App\Repository;
+declare(strict_types=1);
+
+namespace App\Users\Infrastructure\Repository;
 
 use App\Users\Domain\Entity\User;
+use App\Users\Domain\Repository\UserRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-/**
- * @method User|null find($id, $lockMode = null, $lockVersion = null)
- * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
- * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -37,26 +33,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    /**
-     * Возвращает переданный, либо установленный по умолчанию конструктор запросов
-     *
-     * @param QueryBuilder|null $qb
-     * @return QueryBuilder
-     */
-    private function getOrCreateQueryBuilder(?QueryBuilder $qb): QueryBuilder
+    public function findAllExpiredUsers(): array
     {
-        return $qb ?? $this->createQueryBuilder('u');
-    }
-
-    /**
-     * Метод получения всех пользователем с истекшим сроком подписки кроме FREE
-     *
-     * @param QueryBuilder|null $qb
-     * @return int|mixed|string
-     */
-    public function findAllExpiredUsers(QueryBuilder $qb = null)
-    {
-        return $this->getOrCreateQueryBuilder($qb)
+        return $this
+            ->createQueryBuilder('u')
             ->leftJoin('u.subscription', 's')
             ->addSelect('s')
             ->setParameter('today', new \DateTime())
@@ -64,7 +44,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('subscriptionName', 'FREE')
             ->andWhere('s.name != :subscriptionName')
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 }

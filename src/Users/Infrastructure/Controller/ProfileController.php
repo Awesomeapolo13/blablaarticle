@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Users\Infrastructure\Controller;
 
-use App\Form\Model\UserRegistrationFormModel;
-use App\Form\UserRegistrationFormType;
-use App\Security\Service\UserDataHandlerInterface;
+use App\Users\Application\DTO\UserRegistrationFormModel;
+use App\Users\Domain\Service\UserDataHandlerInterface;
+use App\Users\Infrastructure\Form\UserRegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

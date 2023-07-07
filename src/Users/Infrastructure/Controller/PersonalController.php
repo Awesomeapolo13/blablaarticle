@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Users\Infrastructure\Controller;
 
 use App\Repository\ArticleRepository;
 use Carbon\Carbon;

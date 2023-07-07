@@ -2,7 +2,7 @@
 
 namespace App\Users\Domain\Entity;
 
-use App\Repository\ApiTokenRepository;
+use App\Users\Infrastructure\Repository\ApiTokenRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
