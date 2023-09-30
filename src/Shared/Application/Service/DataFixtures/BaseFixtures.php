@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\Shared\Application\Service\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -19,17 +19,17 @@ abstract class BaseFixtures extends Fixture
     /**
      * @var Generator
      */
-    protected $faker;
+    protected Generator $faker;
 
     /**
      * @var ObjectManager
      */
-    protected $manager;
+    protected ObjectManager $manager;
 
     /**
      * @var array - массив ссылок на уже созданные элементы
      */
-    private $referencesIndex =[];
+    private array $referencesIndex = [];
 
     public function load(ObjectManager $manager): void
     {
@@ -43,9 +43,8 @@ abstract class BaseFixtures extends Fixture
      * Создает и подготавливает объекты для загрузки в БД
      *
      * @param ObjectManager $manager
-     * @return mixed
      */
-    abstract public function loadData(ObjectManager $manager);
+    abstract public function loadData(ObjectManager $manager): void;
 
     /**
      * Создает один экземпляр класса модели className
@@ -54,7 +53,7 @@ abstract class BaseFixtures extends Fixture
      * @param callable $factory
      * @return mixed
      */
-    protected function create(string $className, callable $factory)
+    protected function create(string $className, callable $factory): mixed
     {
         $entity = new $className();
         $factory($entity);
@@ -87,12 +86,11 @@ abstract class BaseFixtures extends Fixture
 
     /**
      * Возвращает рандомный объект переданного класса
+     * @TODO Оформить возвращаемый тип через дженерики psalm
      *
-     * @param $className
-     * @return object
      * @throws Exception
      */
-    protected function getRandomReference($className): object
+    protected function getRandomReference(string $className): object
     {
         // Если данные внутри класса уже есть, если нет то заходит внутрь
         if (!isset($this->referencesIndex[$className])) {

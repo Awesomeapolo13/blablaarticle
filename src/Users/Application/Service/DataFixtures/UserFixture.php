@@ -1,40 +1,42 @@
 <?php
 
-namespace App\DataFixtures;
+declare(strict_types=1);
+
+namespace App\Users\Application\Service\DataFixtures;
 
 use App\Entity\Subscription;
+use App\Shared\Application\Service\DataFixtures\BaseFixtures;
+use App\Shared\Application\Service\DataFixtures\SubscriptionFixtures;
 use App\Users\Domain\Entity\ApiToken;
 use App\Users\Domain\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixture extends BaseFixtures implements DependentFixtureInterface
 {
-    /**
-     * @var UserPasswordEncoderInterface
-     */
-    private $passwordEncoder;
-
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(private readonly UserPasswordEncoderInterface $passwordEncoder)
     {
-        $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function loadData(ObjectManager $manager)
+    /**
+     * @throws Exception
+     */
+    public function loadData(ObjectManager $manager): void
     {
         $this->createUser(
             $manager,
-            'plusSubscriber@mail.ru',
-            'Petrusha',
-            ['ROLE_ADMIN']
+            UserProvider::ADMIN_USER_PLUS['email'],
+            UserProvider::ADMIN_USER_PLUS['firstName'],
+            UserProvider::ADMIN_USER_PLUS['roles']
         );
 
         $this->createUser(
             $manager,
-            'proSubscriber@mail.ru',
-            'Nadezhda',
-            ['ROLE_ADMIN']
+            UserProvider::ADMIN_USER_PRO['email'],
+            UserProvider::ADMIN_USER_PRO['firstName'],
+            UserProvider::ADMIN_USER_PRO['roles']
         );
 
         $this->createMany(User::class, 10, function (User $user) use ($manager) {
@@ -62,7 +64,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
      * @param array $roles - роли пользователя
      * @param string $password - пароль пользователя
      * @param bool $isEmailConfirmed - подтверждена ли электронная почта
-     * @throws \Exception
+     * @throws Exception
      */
     private function createUser(
         ObjectManager $manager,
@@ -72,8 +74,7 @@ class UserFixture extends BaseFixtures implements DependentFixtureInterface
         string        $password = '123456',
         bool          $isEmailConfirmed = false
 
-    ): void
-    {
+    ): void {
         $this->create(User::class, function (User $user) use (
             $manager,
             $email,

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DataFixtures;
+declare(strict_types=1);
+
+namespace App\Shared\Application\Service\DataFixtures;
 
 use App\Entity\Module;
 use Doctrine\Persistence\ObjectManager;
@@ -85,7 +87,7 @@ class ModuleFixtures extends BaseFixtures
      * @param ObjectManager $manager
      * @return void
      */
-    public function loadData(ObjectManager $manager)
+    public function loadData(ObjectManager $manager): void
     {
         foreach ($this->defaultModules as $key => $defaultModule) {
             $entity = $this->create(Module::class, function (Module $module) use ($manager, $defaultModule) {

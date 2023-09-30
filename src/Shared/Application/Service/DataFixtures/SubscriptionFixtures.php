@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DataFixtures;
+declare(strict_types=1);
+
+namespace App\Shared\Application\Service\DataFixtures;
 
 use App\Entity\Subscription;
 use Doctrine\Persistence\ObjectManager;
@@ -13,7 +15,7 @@ class SubscriptionFixtures extends BaseFixtures
     /**
      * @var array[] - дефолтные подписки для фикстур
      */
-    private $defaultSubscription = [
+    private array $defaultSubscriptions = [
         [
             'name' => 'FREE',
             'price' => 0,
@@ -92,20 +94,21 @@ class SubscriptionFixtures extends BaseFixtures
      * @param ObjectManager $manager
      * @return void
      */
-    public function loadData(ObjectManager $manager)
+    public function loadData(ObjectManager $manager): void
     {
-        foreach ($this->defaultSubscription as $key => $defaultSubscription) {
-            $entity = $this->create(Subscription::class, function (Subscription $subscription) use ($manager, $defaultSubscription) {
-                $subscription
-                    ->setName($defaultSubscription['name'])
-                    ->setPrice($defaultSubscription['price'])
-                    ->setOpportunities($defaultSubscription['opportunities'])
-                    ->setBlockTime($defaultSubscription['blockTime'])
-                    ->setBlockCount($defaultSubscription['blockCount'])
-                ;
-            });
+        foreach ($this->defaultSubscriptions as $key => $defaultSubscription) {
+            $entity = $this->create(
+                Subscription::class,
+                function (Subscription $subscription) use ($manager, $defaultSubscription) {
+                    $subscription
+                        ->setName($defaultSubscription['name'])
+                        ->setPrice($defaultSubscription['price'])
+                        ->setOpportunities($defaultSubscription['opportunities'])
+                        ->setBlockTime($defaultSubscription['blockTime'])
+                        ->setBlockCount($defaultSubscription['blockCount']);
+                });
 
-            $this->addReference( Subscription::class . "|$key", $entity);
+            $this->addReference(Subscription::class . "|$key", $entity);
         }
 
         $manager->flush();
