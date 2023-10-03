@@ -16,11 +16,13 @@ class PersonalController extends AbstractController
 {
     /**
      * Отображает рабочий стол пользователя
+     * ToDo: Добавить реализацию из UserDashboardService.
+     *
      * @Route("/admin/personal", name="app_admin_personal")
      * @throws NonUniqueResultException
      * @throws InvalidArgumentException
      */
-    public function index(
+    public function getDashboardAction(
         ArticleRepository $articleRepository,
         AdapterInterface $adapter
     ): Response {
