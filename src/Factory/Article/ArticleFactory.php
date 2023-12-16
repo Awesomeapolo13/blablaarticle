@@ -7,7 +7,7 @@ use App\Entity\ArticleImage;
 use App\Factory\FactoryInterface;
 use App\Form\Model\ArticleDemoFormModel;
 use App\Form\Model\ArticleFormModel;
-use App\Repository\UserRepository;
+use App\Users\Infrastructure\Repository\UserRepository;
 use ArticleThemeProvider\ArticleThemeBundle\ThemeFactory;
 use Exception;
 

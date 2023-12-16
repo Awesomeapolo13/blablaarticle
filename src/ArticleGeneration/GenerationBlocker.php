@@ -2,8 +2,8 @@
 
 namespace App\ArticleGeneration;
 
-use App\Entity\User;
 use App\Repository\ArticleRepository;
+use App\Users\Domain\Entity\User;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\HttpFoundation\Cookie;

@@ -2,7 +2,7 @@
 
 namespace App\Mailer;
 
-use App\Entity\User;
+use App\Users\Domain\Entity\User;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;

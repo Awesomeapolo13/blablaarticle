@@ -46,12 +46,12 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    App\Controller\SecurityController:
+    App\Users\Infrastructure\Controller\SecurityController:
         tags: [ 'controller.service_arguments' ]
         bind:
             $registrationDataHandler: '@app.registration_data_handler'
 
-    App\Controller\Admin\ProfileController:
+    App\Users\Infrastructure\Controller\ProfileController:
         tags: [ 'controller.service_arguments' ]
         bind:
             $changeUserDataHandler: '@app.change_user_data_handler'
@@ -67,10 +67,10 @@ services:
     App\Mailer\BaseMailer $subscriptionMailer: '@App\Mailer\SubscriptionMailer'
 
     # Сервисы подписчиков на события
-    app.event_subscriber:
-        namespace: App\EventSubscriber\
-        resource: '../src/EventSubscriber/'
-        tags: ['app_event_subscriber']
+    app.users.event_subscriber:
+        namespace: App\Users\Infrastructure\EventSubscriber\
+        resource: '../src/Users/Infrastructure/EventSubscriber/'
+        tags: ['app_users_event_subscriber']
 
     # Сервис для отправки ссылок на подтверждение
     app.mailer.confirm_email:
@@ -98,14 +98,14 @@ services:
 
     # Обработчики пользовательских данных
     app.user_data_handler:
-        namespace: App\Security\Service\UserDataHandler\
-        resource: '../src/Security/Service/UserDataHandler'
+        namespace: App\Users\Infrastructure\Service\UserDataHandler\
+        resource: '../src/Users/Infrastructure/Service/UserDataHandler'
         tags: ['apps_user_data_handler']
 
     # Обработчики данных при регистрации нового пользователя
     app.registration_data_handler:
-        class: App\Security\Service\UserDataHandler\RegistrationDataHandler
+        class: App\Users\Infrastructure\Service\UserDataHandler\RegistrationDataHandler
 
     # Обработчик данных при изменении пользовательских данных через форму в профиле
     app.change_user_data_handler:
-        class: App\Security\Service\UserDataHandler\ChangeUserDataHandler
+        class: App\Users\Infrastructure\Service\UserDataHandler\ChangeUserDataHandler

@@ -37,9 +37,9 @@ class SubscriptionRepository extends ServiceEntityRepository
      * Возвращает коллекцию подписок, отсортированную по возрастанию по цене
      *
      * @param QueryBuilder|null $qb
-     * @return int|mixed|string
+     * @return Subscription[]
      */
-    public function findSubscriptionsOrderedByPrice(QueryBuilder $qb = null)
+    public function findSubscriptionsOrderedByPrice(QueryBuilder $qb = null): array
     {
         return $this->getOrCreateQueryBuilder($qb)
             ->orderBy('s.price', 'ASC')

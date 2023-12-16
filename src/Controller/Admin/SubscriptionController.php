@@ -2,8 +2,8 @@
 
 namespace App\Controller\Admin;
 
-use App\Event\UserChangeSubscriptionEvent;
 use App\Repository\SubscriptionRepository;
+use App\Users\Domain\Event\UserChangeSubscriptionEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
