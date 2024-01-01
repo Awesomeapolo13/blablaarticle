@@ -7,7 +7,7 @@
     <entity
             name="App\Users\Domain\Entity\User"
             table="`user`"
-            repository-class="App\Repository\UserRepository"
+            repository-class="App\Users\Infrastructure\Repository\UserRepository"
     >
         <id name="id" type="integer" length="11">
             <generator strategy="AUTO" />
