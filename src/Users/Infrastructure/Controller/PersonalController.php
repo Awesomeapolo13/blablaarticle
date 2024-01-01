@@ -14,6 +14,7 @@ class PersonalController extends AbstractController
      * Отображает рабочий стол пользователя
      *
      * @Route("/admin/personal", name="app_admin_personal")
+     *
      * @throws NonUniqueResultException
      */
     public function getDashboardAction(UserDashboardService $dashboardService,): Response
