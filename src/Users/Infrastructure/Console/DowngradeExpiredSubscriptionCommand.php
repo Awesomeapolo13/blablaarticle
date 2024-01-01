@@ -60,7 +60,6 @@ final class DowngradeExpiredSubscriptionCommand extends Command
 
         foreach ($users as $user) {
             $user->setSubscription($freeSubscription);
-            $this->em->persist($user);
         }
 
         $this->em->flush();

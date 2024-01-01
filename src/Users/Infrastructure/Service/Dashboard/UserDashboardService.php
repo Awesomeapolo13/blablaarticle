@@ -7,6 +7,8 @@ namespace App\Users\Infrastructure\Service\Dashboard;
 use App\Repository\ArticleRepository;
 use App\Users\Domain\Entity\User;
 use Carbon\Carbon;
+use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserDashboardService
 {
@@ -15,7 +17,12 @@ class UserDashboardService
     ) {
     }
 
-    public function getDashboard(User $user): array
+    /**
+     * @param User $user
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getDashboard(UserInterface $user): array
     {
         $expires = Carbon::parse($user->getExpireAt());
 
@@ -28,6 +35,7 @@ class UserDashboardService
             ]
         );
         // Блоки для рабочего стола
+        // ToDo: Формирование блоков вынести в отдельный сервис.
         $blocks = [
             [
                 'title' => $this->articleRepository->getCount($user),
