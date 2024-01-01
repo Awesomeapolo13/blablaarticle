@@ -2,9 +2,9 @@
 # Variables
 ##################
 
-DOCKER_COMPOSE = docker-compose -f ./deployment/docker-compose.yml --env-file ./deployment/.env
+DOCKER_COMPOSE = docker compose -f ./deployment/docker-compose.yml --env-file ./deployment/.env
 DOCKER_COMPOSE_PHP_FPM_EXEC = ${DOCKER_COMPOSE} exec -u www-data php-8.1-blablaarticle
-PHP_SERVICE = php-8.1-fpm
+PHP_SERVICE = php-8.2-fpm
 
 ##################
 # Docker compose

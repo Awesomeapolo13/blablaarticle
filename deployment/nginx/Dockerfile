@@ -6,7 +6,7 @@ COPY default.conf /etc/nginx/conf.d
 RUN apk update && apk upgrade && apk add --no-cache bash
 
 # Вышестоящий контейнер - контейнер от которого зависит сборка текущего
-ARG PHP_UPSTREAM_CONTAINER=php-8.1-fpm
+ARG PHP_UPSTREAM_CONTAINER=php-8.2-fpm
 ARG PHP_UPSTREAM_PORT=9000
 
 RUN set -x ; \
