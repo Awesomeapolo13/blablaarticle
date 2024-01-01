@@ -2,11 +2,9 @@
 
 namespace App\Users\Infrastructure\Controller;
 
-use App\Repository\ArticleRepository;
 use App\Users\Infrastructure\Service\Dashboard\UserDashboardService;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
