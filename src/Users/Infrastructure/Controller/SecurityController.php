@@ -7,6 +7,7 @@ use App\Users\Domain\Entity\User;
 use App\Users\Domain\Service\UserDataHandlerInterface;
 use App\Users\Infrastructure\Form\UserRegistrationFormType;
 use App\Users\Infrastructure\Repository\UserRepository;
+use App\Users\Infrastructure\ReqHandler\LoginHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
@@ -23,21 +23,12 @@ class SecurityController extends AbstractController
      *
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
+    public function login(Request $request, LoginHandler $loginHandler): Response
     {
-        //TODO Вынести авторизацию в общее ядро
-
-        // достает текст последней ошибки авторизации
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $confirmationError = $request->query->get('confirmationError');
-        // достает последний логин
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-            'confirmationError' => $confirmationError,
-        ]);
+        return $this->render(
+            'security/login.html.twig',
+            $loginHandler->handleLogin($request)
+        );
     }
 
     /**

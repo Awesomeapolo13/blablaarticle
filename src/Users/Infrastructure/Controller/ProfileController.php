@@ -6,6 +6,7 @@ use App\Users\Application\DTO\UserRegistrationFormModel;
 use App\Users\Domain\Service\UserDataHandlerInterface;
 use App\Users\Infrastructure\Form\UserRegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +28,7 @@ class ProfileController extends AbstractController
      *
      * @Route("/admin/profile", name="app_admin_profile")
      * @IsGranted("IS_AUTHENTICATED_FULLY")
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(
         Request                  $request,
@@ -72,7 +73,7 @@ class ProfileController extends AbstractController
      * @param EntityManagerInterface $em
      * @param LoggerInterface $emailConfirmLogger
      * @return RedirectResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function confirmEmail(
         Request                $request,
