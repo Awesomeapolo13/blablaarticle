@@ -14,4 +14,9 @@ interface UserRepositoryInterface
      * @return User[]
      */
     public function findAllExpiredUsers(): array;
+
+    /**
+     * Сохраняет пользователя.
+     */
+    public function save(User $user): void;
 }
