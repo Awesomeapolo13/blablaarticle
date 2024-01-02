@@ -3,12 +3,12 @@
 namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Infrastructure\Security\Authenticator\LoginFormAuthenticator;
-use App\Users\Domain\Entity\User;
-use App\Users\Domain\Service\UserDataHandlerInterface;
-use App\Users\Infrastructure\Form\UserRegistrationFormType;
+use App\Users\Domain\Dictionary\SecurityDictionary;
 use App\Users\Infrastructure\Repository\UserRepository;
 use App\Users\Infrastructure\ReqHandler\LoginHandler;
+use App\Users\Infrastructure\ReqHandler\RegisterHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,31 +36,33 @@ class SecurityController extends AbstractController
      *
      * @Route("/register", name="app_register")
      */
-    public function register(
-        Request                  $request,
-        UserDataHandlerInterface $registrationDataHandler
-    ): Response {
-        $form = $this->createForm(UserRegistrationFormType::class);
-        $user = new User();
-        $user = $registrationDataHandler->handleAndSaveUserData($request, $form, $user);
-        $success = isset($user);
-        if ($success) {
-            $this->addFlash('success', 'Для завершения регистрации подтвердите ваш email');
+    public function register(Request $request, RegisterHandler $registerHandler): Response
+    {
+        /**
+         * Тест для регистрации:
+         *  1) При первом открытии страницы
+         *      - success: false,
+         *      - registrationForm: FormView,
+         *      - errors: FromErrorInterface|emptyCollection,
+         *      - confirmationError: null.
+         *  2) При введении некорректных данных (класс формы протестировать отдельно):
+         *      - success: false,
+         *      - registrationForm: FormView,
+         *      - errors: FromErrorInterface|nonEmpty,
+         *      - confirmationError: null.
+         *  3) П.2 проверить для каждого поля формы.
+         *  4) Ошибку подтверждения почты проверить отдельно.
+         *  5) После успеха проверить создался ли пользователь с указанным email.
+         */
+        $response = $registerHandler->handleRegister($request);
+        if (isset($response['success']) && $response['success']) {
+            $this->addFlash('success', SecurityDictionary::CONFIRM_EMAIL_TO_FINISH_REGISTER);
         }
 
-        // Сообщение об ошибке при подтверждении email
-        $confirmationError = $request->query->get('confirmationError');
-
-        // отдельно достаем ошибки, чтобы отобразить их над формой, параметр true используется для получения
-        // ошибок отдельных полей
-        $errors = $form->getErrors(true);
-
-        return $this->render('security/register.html.twig', [
-            'registrationForm' => $form->createView(),
-            'success' => $success,
-            'errors' => $errors,
-            'confirmationError' => $confirmationError,
-        ]);
+        return $this->render(
+            'security/register.html.twig',
+            $response
+        );
     }
 
     /**
@@ -135,6 +137,6 @@ class SecurityController extends AbstractController
      */
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 }

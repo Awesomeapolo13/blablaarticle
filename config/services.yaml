@@ -46,11 +46,6 @@ services:
         resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
-    App\Users\Infrastructure\Controller\SecurityController:
-        tags: [ 'controller.service_arguments' ]
-        bind:
-            $registrationDataHandler: '@app.registration_data_handler'
-
     App\Users\Infrastructure\Controller\ProfileController:
         tags: [ 'controller.service_arguments' ]
         bind:
@@ -109,3 +104,8 @@ services:
     # Обработчик данных при изменении пользовательских данных через форму в профиле
     app.change_user_data_handler:
         class: App\Users\Infrastructure\Service\UserDataHandler\ChangeUserDataHandler
+
+    App\Users\Infrastructure\ReqHandler\RegisterHandler:
+        class: App\Users\Infrastructure\ReqHandler\RegisterHandler
+        arguments:
+            $registrationDataHandler: '@App\Users\Infrastructure\Service\UserDataHandler\RegistrationDataHandler'
