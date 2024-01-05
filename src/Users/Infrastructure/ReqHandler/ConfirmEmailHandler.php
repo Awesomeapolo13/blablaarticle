@@ -23,7 +23,6 @@ class ConfirmEmailHandler
 
     public function confirmEmail(string $hash): User
     {
-        $confirmationError = SecurityDictionary::CONFIRM_EMAIL_ERROR;
         if (empty($hash)) {
             $this->emailConfirmLogger->error(SecurityDictionary::CONFIRM_EMAIL_HASH_IS_EMPTY);
             throw new EmptyEmailConfirmHashException();
