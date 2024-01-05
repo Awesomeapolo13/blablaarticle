@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Users\Infrastructure\Controller;
 
+use App\Shared\Domain\Dictionary\GuardDictionary;
+use App\Shared\Infrastructure\Http\RespCodeDictionary;
+use App\Users\Domain\Exception\UndefinedUserException;
+use App\Users\Infrastructure\ReqHandler\ApiTokenGenerateHandler;
 use App\Users\Infrastructure\ReqHandler\ProfileHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -32,7 +36,7 @@ class ProfileController extends AbstractController
      * @throws Exception
      */
     public function index(
-        Request                  $request,
+        Request        $request,
         ProfileHandler $profileHandler,
     ): Response
     {
@@ -113,32 +117,25 @@ class ProfileController extends AbstractController
      * Обновляет токен
      *
      * @Route("/admin/update_api_token", name="app_admin_profile_update_api_token")
-     *
-     * @param EntityManagerInterface $em
-     * @return JsonResponse
      */
-    public function generateNewApiToken(EntityManagerInterface $em): JsonResponse
+    public function generateNewApiToken(ApiTokenGenerateHandler $apiTokenGenerateHandler): JsonResponse
     {
-        $user = $this->getUser();
-
-        if (!isset($user)) {
-            $this->json(['message' => 'Такой пользователь не обнаружен пользователь'], 403);
+        try {
+            return $this->json(
+                $apiTokenGenerateHandler->handleApiTokenGeneration($this->getUser()),
+                RespCodeDictionary::OK_CODE,
+                [],
+                [
+                    'groups' => [GuardDictionary::API_TOKEN_KEY]
+                ]);
+        } catch (UndefinedUserException $exception) {
+            return $this->json(
+                [
+                    'message' => $exception->getMessage(),
+                ],
+                RespCodeDictionary::FORBIDDEN_CODE,
+            );
         }
 
-        $token = $user->getApiToken();
-        $token->setToken(sha1(uniqid('token', true)));
-        $token->setExpiresAt(new \DateTime('+1 day'));
-        $em->persist($token);
-        $em->flush();
-
-        return $this->json([
-            'message' => 'Новый апи токен успешно сгенерирован',
-            'token' => $token->getToken(),
-            ],
-            200,
-            [],
-            [
-                'groups' => ['api_user']
-            ]);
     }
 }

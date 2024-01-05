@@ -14,4 +14,10 @@ class ApiTokenRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ApiToken::class);
     }
+
+    public function save(ApiToken $apiToken): void
+    {
+        $this->getEntityManager()->persist($apiToken);
+        $this->getEntityManager()->flush();
+    }
 }

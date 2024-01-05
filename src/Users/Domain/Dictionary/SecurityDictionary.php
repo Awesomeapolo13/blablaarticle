@@ -15,4 +15,6 @@ class SecurityDictionary
     . ' Отсутствует параметр email для подтверждения почты';
     public const CONFIRM_EMAIL_EMPTY_USER = 'Пользователь с email %s не проходил регистрацию.';
     public const CONFIRM_EMAIL_ALREADY_CONFIRMED = 'Пользователь с email %s уже подтвердил свою почту.';
+    public const UNDEFINED_USER_MSG = 'Такой пользователь не обнаружен пользователь';
+    public const NEW_TOKEN_GENERATED_MSG = 'Новый апи токен успешно сгенерирован';
 }
