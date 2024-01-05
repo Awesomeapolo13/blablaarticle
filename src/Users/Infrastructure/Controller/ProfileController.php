@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Users\Infrastructure\Controller;
 
-use App\Users\Application\DTO\UserRegistrationFormModel;
-use App\Users\Domain\Service\UserDataHandlerInterface;
-use App\Users\Infrastructure\Form\UserRegistrationFormType;
+use App\Users\Infrastructure\ReqHandler\ProfileHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -28,40 +28,18 @@ class ProfileController extends AbstractController
      *
      * @Route("/admin/profile", name="app_admin_profile")
      * @IsGranted("IS_AUTHENTICATED_FULLY")
+     *
      * @throws Exception
      */
     public function index(
         Request                  $request,
-        UserDataHandlerInterface $changeUserDataHandler
+        ProfileHandler $profileHandler,
     ): Response
     {
-        $user = $this->getUser();
-
-        $token = $user->getApiToken();
-
-        $isConfirmed = $request->query->get('isConfirmed');
-        // Создаем DTO для передачи в форму
-        $userModel = UserRegistrationFormModel::create($user->getFirstName(), $user->getEmail());
-        $form = $this->createForm(UserRegistrationFormType::class, $userModel);
-
-        $user = $changeUserDataHandler->handleAndSaveUserData($request, $form, $user);
-
-        $success = isset($user);
-
-        $errors = $form->getErrors(true);
-        // Ошибка подтверждения электронной почты
-        $confirmationError = $request->query->get('confirmationError');
-
-        return $this->render('admin/profile/index.html.twig', [
-            'userForm' => $form->createView(),
-            'errors' => $errors,
-            'success' => $success,
-            'isConfirmed' => $isConfirmed,
-            'confirmationError' => $confirmationError,
-            'token' => $token,
-            'expiredMessage' => 'Срок действия Вашего токена истек.'
-                . ' Выполните генерацию нового токена для продолжения работы с API',
-        ]);
+        return $this->render(
+            'admin/profile/index.html.twig',
+            $profileHandler->handleProfile($request, $this->getUser())
+        );
     }
 
     /**

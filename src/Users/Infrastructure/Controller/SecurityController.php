@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Domain\Dictionary\GuardDictionary;
