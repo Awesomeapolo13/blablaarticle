@@ -7,6 +7,7 @@ namespace App\Users\Infrastructure\Controller;
 use App\Shared\Domain\Dictionary\GuardDictionary;
 use App\Shared\Infrastructure\Http\RespCodeDictionary;
 use App\Users\Domain\Exception\UndefinedUserException;
+use App\Users\Domain\Service\EmailConfirmHashDecoder;
 use App\Users\Infrastructure\ReqHandler\ApiTokenGenerateHandler;
 use App\Users\Infrastructure\ReqHandler\ProfileHandler;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,7 +74,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute($redirectAlias, ['confirmationError' => $confirmationError]);
         }
 
-        $data = json_decode(base64_decode($request->query->get('hash')), true);
+        $data = EmailConfirmHashDecoder::decode($request->query->get('hash'));
         $email = !empty($data['email']) ? $data['email'] : null;
         $newEmail = !empty($data['newEmail']) ? $data['newEmail'] : null;
         // Проверяем есть ли необходимые для подтверждения email данные, если нет то редирект на регистрацию и вывод ошибки

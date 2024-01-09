@@ -11,6 +11,7 @@ use App\Users\Domain\Exception\EmptyEmailConfirmException;
 use App\Users\Domain\Exception\EmptyEmailConfirmHashException;
 use App\Users\Domain\Exception\EmptyUserException;
 use App\Users\Domain\Repository\UserRepositoryInterface;
+use App\Users\Domain\Service\EmailConfirmHashDecoder;
 use Psr\Log\LoggerInterface;
 
 class ConfirmEmailHandler
@@ -27,7 +28,8 @@ class ConfirmEmailHandler
             $this->emailConfirmLogger->error(SecurityDictionary::CONFIRM_EMAIL_HASH_IS_EMPTY);
             throw new EmptyEmailConfirmHashException();
         }
-        $data = json_decode(base64_decode($hash), true);
+
+        $data = EmailConfirmHashDecoder::decode($hash);
         $email = !empty($data['email']) ? $data['email'] : null;
         // Проверяем есть ли необходимые для подтверждения email данные, если нет то редирект на регистрацию и вывод ошибки
         if (!$email) {
