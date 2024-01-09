@@ -140,4 +140,14 @@ class ProfileController extends AbstractController
         }
 
     }
+
+    private function redirectToErrorProfile(string $confirmationError): Response
+    {
+        return $this->redirectToRoute('app_admin_profile', ['confirmationError' => $confirmationError]);
+    }
+
+    private function redirectToSuccessProfile(): Response
+    {
+        return $this->redirectToRoute('app_admin_profile', ['isConfirmed' => true]);
+    }
 }
