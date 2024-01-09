@@ -45,7 +45,9 @@ class ConfirmEmailHandler
         }
         // Если почта подтверждена - редирект на аутентификацию
         if ($user->getIsEmailConfirmed()) {
-            $this->emailConfirmLogger->info(sprintf(SecurityDictionary::CONFIRM_EMAIL_ALREADY_CONFIRMED, $email));
+            $this->emailConfirmLogger->info(
+                sprintf(SecurityDictionary::CONFIRM_EMAIL_ALREADY_CONFIRMED, $email)
+            );
             throw new AlreadyConfirmedEmailException($email);
         }
 

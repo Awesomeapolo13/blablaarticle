@@ -6,6 +6,7 @@ namespace App\Users\Infrastructure\Controller;
 
 use App\Shared\Domain\Dictionary\GuardDictionary;
 use App\Shared\Infrastructure\Http\RespCodeDictionary;
+use App\Users\Domain\Dictionary\SecurityDictionary;
 use App\Users\Domain\Exception\UndefinedUserException;
 use App\Users\Domain\Service\EmailConfirmHashDecoder;
 use App\Users\Infrastructure\ReqHandler\ApiTokenGenerateHandler;
@@ -99,7 +100,7 @@ class ProfileController extends AbstractController
         // Если почта, указанная в сессии равна текущей почте пользователя, то очищаем сессию
         if ($newEmail === $user->getEmail()) {
             $emailConfirmLogger->info('Почта ' .$newEmail. ' уже подтверждена.');
-            $session->remove('newEmail');
+            $session->remove(SecurityDictionary::NEW_EMAIL_SESS_KEY);
             return $this->redirectToRoute($redirectAlias, ['isConfirmed' => true]);
         }
 
